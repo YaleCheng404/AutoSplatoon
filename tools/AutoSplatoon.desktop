@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=AutoSplatoon
+Comment=Splatoon image workbench and ESP32 drawing controller
+Exec=AutoSplatoon
+Icon=autosplatoon
+Categories=Graphics;
+Terminal=false

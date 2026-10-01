@@ -1,0 +1,149 @@
+name: Build and package
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            platform: windows-amd64
+          - os: macos-15
+            platform: macos-arm64
+          - os: ubuntu-22.04
+            platform: linux-amd64
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+      - name: Build tools
+        run: python -m pip install -r tools/requirements-build.txt
+      - name: Linux system libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y p7zip-full libgl1-mesa-dev libxkbcommon-dev libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libwayland-client0 libwayland-cursor0 libwayland-egl1 libegl1 libfontconfig1 xvfb xauth weston
+      - name: macOS tools
+        if: runner.os == 'macOS'
+        run: |
+          test "$(uname -m)" = arm64
+          brew install sevenzip
+      - name: Pinned Qt SDK
+        run: |
+          python tools/install_qt.py --platform ${{ matrix.platform }}
+          echo "QT_ROOT=$GITHUB_WORKSPACE/.deps/qt" >> "$GITHUB_ENV"
+          echo "$GITHUB_WORKSPACE/.deps/qt/bin" >> "$GITHUB_PATH"
+          if [ "${{ runner.os }}" = Windows ]; then echo "$GITHUB_WORKSPACE/.deps/compiler/mingw64/bin" >> "$GITHUB_PATH"; fi
+      - name: Bundled esptool
+        run: python tools/fetch_assets.py --platform ${{ matrix.platform }} --output build/release/assets
+      - name: Configure
+        run: |
+          extra=()
+          if [ "${{ runner.os }}" = Windows ]; then extra+=(-DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++); fi
+          if [ "${{ runner.os }}" = macOS ]; then extra+=(-DCMAKE_OSX_ARCHITECTURES=arm64); fi
+          cmake --preset release -DCMAKE_PREFIX_PATH="$QT_ROOT" "${extra[@]}"
+      - name: Build
+        run: cmake --build --preset release --parallel 3
+      - name: Tests at multiple display scales
+        run: |
+          if [ "${{ runner.os }}" = Windows ]; then
+            windeployqt --release --no-opengl-sw --no-system-d3d-compiler --no-system-dxc-compiler --skip-plugin-types generic,networkinformation,tls --include-plugins qoffscreen build/release/autosplatoon_tests.exe
+          fi
+          for scale in 1 1.25 1.5 2 2.5 3; do
+            QT_QPA_PLATFORM=offscreen QT_SCALE_FACTOR=$scale ctest --preset release
+          done
+      - name: Package Windows / macOS
+        if: runner.os != 'Linux'
+        run: |
+          cmake --install build/release --prefix "$GITHUB_WORKSPACE/dist/stage" --component Unspecified
+          python tools/verify_package.py dist/stage --platform ${{ matrix.platform }}
+          if [ "${{ runner.os }}" = Windows ]; then python tools/check_gui.py dist/stage/AutoSplatoon.exe; fi
+          if [ "${{ runner.os }}" = macOS ]; then python tools/check_gui.py dist/stage/AutoSplatoon.app/Contents/MacOS/AutoSplatoon; fi
+          if [ "${{ runner.os }}" = Windows ]; then QT_QPA_PLATFORM=offscreen dist/stage/AutoSplatoon.exe --smoke-test; fi
+          if [ "${{ runner.os }}" = macOS ]; then QT_QPA_PLATFORM=offscreen dist/stage/AutoSplatoon.app/Contents/MacOS/AutoSplatoon --smoke-test; fi
+          cd build/release
+          cpack
+      - name: Package Linux
+        if: runner.os == 'Linux'
+        run: |
+          python tools/package_linux.py --qt "$QT_ROOT"
+          python tools/verify_package.py build/release/AutoSplatoon.AppDir --platform linux-amd64
+          python tools/check_gui.py build/release/AutoSplatoon.AppDir/AppRun
+          QT_QPA_PLATFORM=offscreen build/release/AutoSplatoon.AppDir/AppRun --smoke-test
+      - name: Linux X11 and Wayland startup
+        if: runner.os == 'Linux'
+        run: |
+          xvfb-run -a env QT_QPA_PLATFORM=xcb build/release/AutoSplatoon.AppDir/AppRun --smoke-test
+          export XDG_RUNTIME_DIR="$(mktemp -d)"
+          weston --backend=headless-backend.so --socket=autosplatoon-test --idle-time=0 --log="$GITHUB_WORKSPACE/build/wayland.log" &
+          weston_pid=$!
+          trap 'kill "$weston_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 20); do
+            if [ -S "$XDG_RUNTIME_DIR/autosplatoon-test" ]; then break; fi
+            sleep 0.25
+          done
+          QT_QPA_PLATFORM=wayland WAYLAND_DISPLAY=autosplatoon-test build/release/AutoSplatoon.AppDir/AppRun --smoke-test
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: AutoSplatoon-${{ matrix.platform }}
+          path: |
+            build/release/AutoSplatoon-*.zip
+            build/release/AutoSplatoon-*.dmg
+            build/release/AutoSplatoon-*.AppImage
+            build/release/AutoSplatoon-*.tar.gz
+          if-no-files-found: error
+  linux-portability:
+    needs: build
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        image: ['ubuntu:24.04', 'debian:12']
+    steps:
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: AutoSplatoon-linux-amd64
+          path: package
+      - name: Start with no Qt / Python / development SDK
+        run: |
+          mkdir app
+          tar -xzf package/AutoSplatoon-linux-x64.tar.gz -C app
+          docker run --rm -v "$PWD/app:/app:ro" ${{ matrix.image }} sh -c 'apt-get update && apt-get install -y libgl1 libegl1 libfontconfig1 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libwayland-client0 libwayland-cursor0 libwayland-egl1 && QT_QPA_PLATFORM=offscreen /app/AutoSplatoon/AppRun --smoke-test && /app/AutoSplatoon/usr/bin/tools/esptool version'
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build, linux-portability]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          pattern: AutoSplatoon-*
+          merge-multiple: true
+          path: release-assets
+      - name: Validate complete release and write checksums
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: python3 tools/prepare_release.py release-assets "$RELEASE_TAG"
+      - name: Publish all platforms together
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$RELEASE_TAG" release-assets/* --verify-tag \
+            --title "AutoSplatoon $RELEASE_TAG" --notes-file "docs/release-notes/$RELEASE_TAG.md"

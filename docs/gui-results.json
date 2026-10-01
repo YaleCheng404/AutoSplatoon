@@ -1,0 +1,221 @@
+{
+  "output_sha256": "5d654034631f23fd6a762833ca7f1575180f1e97089a44deaa57198273adc43e",
+  "cases": [
+    {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "scale": 1,
+      "dpr": 1,
+      "height": 720,
+      "screenHeight": 1080,
+      "screenWidth": 1920,
+      "width": 1100
+    },
+    {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "scale": 1.25,
+      "dpr": 1.25,
+      "height": 720,
+      "screenHeight": 864,
+      "screenWidth": 1536,
+      "width": 1100
+    },
+    {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "scale": 1.5,
+      "dpr": 1.5,
+      "height": 656,
+      "screenHeight": 720,
+      "screenWidth": 1280,
+      "width": 1100
+    },
+    {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "scale": 2,
+      "dpr": 2,
+      "height": 476,
+      "screenHeight": 540,
+      "screenWidth": 960,
+      "width": 928
+    },
+    {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "scale": 2.5,
+      "dpr": 2.5,
+      "height": 368,
+      "screenHeight": 432,
+      "screenWidth": 768,
+      "width": 736
+    },
+    {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "scale": 3,
+      "dpr": 3,
+      "height": 296,
+      "screenHeight": 360,
+      "screenWidth": 640,
+      "width": 608
+    },
+    {
+      "resolution": [
+        2560,
+        1440
+      ],
+      "scale": 1,
+      "dpr": 1,
+      "height": 720,
+      "screenHeight": 1440,
+      "screenWidth": 2560,
+      "width": 1100
+    },
+    {
+      "resolution": [
+        2560,
+        1440
+      ],
+      "scale": 1.25,
+      "dpr": 1.25,
+      "height": 720,
+      "screenHeight": 1152,
+      "screenWidth": 2048,
+      "width": 1100
+    },
+    {
+      "resolution": [
+        2560,
+        1440
+      ],
+      "scale": 1.5,
+      "dpr": 1.5,
+      "height": 720,
+      "screenHeight": 960,
+      "screenWidth": 1707,
+      "width": 1100
+    },
+    {
+      "resolution": [
+        2560,
+        1440
+      ],
+      "scale": 2,
+      "dpr": 2,
+      "height": 656,
+      "screenHeight": 720,
+      "screenWidth": 1280,
+      "width": 1100
+    },
+    {
+      "resolution": [
+        2560,
+        1440
+      ],
+      "scale": 2.5,
+      "dpr": 2.5,
+      "height": 512,
+      "screenHeight": 576,
+      "screenWidth": 1024,
+      "width": 992
+    },
+    {
+      "resolution": [
+        2560,
+        1440
+      ],
+      "scale": 3,
+      "dpr": 3,
+      "height": 416,
+      "screenHeight": 480,
+      "screenWidth": 853,
+      "width": 821
+    },
+    {
+      "resolution": [
+        3840,
+        2160
+      ],
+      "scale": 1,
+      "dpr": 1,
+      "height": 720,
+      "screenHeight": 2160,
+      "screenWidth": 3840,
+      "width": 1100
+    },
+    {
+      "resolution": [
+        3840,
+        2160
+      ],
+      "scale": 1.25,
+      "dpr": 1.25,
+      "height": 720,
+      "screenHeight": 1728,
+      "screenWidth": 3072,
+      "width": 1100
+    },
+    {
+      "resolution": [
+        3840,
+        2160
+      ],
+      "scale": 1.5,
+      "dpr": 1.5,
+      "height": 720,
+      "screenHeight": 1440,
+      "screenWidth": 2560,
+      "width": 1100
+    },
+    {
+      "resolution": [
+        3840,
+        2160
+      ],
+      "scale": 2,
+      "dpr": 2,
+      "height": 720,
+      "screenHeight": 1080,
+      "screenWidth": 1920,
+      "width": 1100
+    },
+    {
+      "resolution": [
+        3840,
+        2160
+      ],
+      "scale": 2.5,
+      "dpr": 2.5,
+      "height": 720,
+      "screenHeight": 864,
+      "screenWidth": 1536,
+      "width": 1100
+    },
+    {
+      "resolution": [
+        3840,
+        2160
+      ],
+      "scale": 3,
+      "dpr": 3,
+      "height": 656,
+      "screenHeight": 720,
+      "screenWidth": 1280,
+      "width": 1100
+    }
+  ]
+}
