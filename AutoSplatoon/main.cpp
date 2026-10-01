@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setOrganizationName("AutoSplatoon");
     a.setApplicationName("AutoSplatoon");
-    a.setApplicationVersion("1.0.2");
+    a.setApplicationVersion("1.0.3");
     a.setStyle("Fusion");
     QTranslator translations;
 #ifdef Q_OS_MACOS

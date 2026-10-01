@@ -26,7 +26,7 @@ Windows/macOS 在 build/release 执行 `cpack` 生成 ZIP/DMG。Linux 执行 `py
 
 ## 自动构建
 
-`.github/workflows/build.yml` 在 Windows、macOS ARM64、Ubuntu 22.04 原生构建、测试和打包。Qt SDK 与烧录工具来自锁定的官方发行包。Linux 配置 Xvfb 的 X11 和 Weston 的 Wayland 启动检查，产物再在 Ubuntu 24.04 和 Debian 12 的无开发环境容器启动。普通分支推送与 PR 上传 Actions 产物；推送与项目版本相符的 `v*` 标签（例如 `v1.0.2`）时，在三平台构建、包内固件与 esptool 检查、显示模拟以及 Linux 两个容器检查全部通过后，自动创建正式 GitHub Release。四个产物必须齐全，附 `SHA256SUMS.txt`；任何检查失败都不会发布部分平台的 Release。
+`.github/workflows/build.yml` 在 Windows、macOS ARM64、Ubuntu 22.04 原生构建、测试和打包。Qt SDK 与烧录工具来自锁定的官方发行包。Linux 配置 Xvfb 的 X11 和 Weston 的 Wayland 启动检查，产物再在 Ubuntu 24.04 和 Debian 12 的无开发环境容器启动。普通分支推送与 PR 上传 Actions 产物；推送与项目版本相符的 `v*` 标签（例如 `v1.0.3`）时，在三平台构建、包内固件与 esptool 检查、显示模拟以及 Linux 两个容器检查全部通过后，自动创建正式 GitHub Release。四个产物必须齐全，附 `SHA256SUMS.txt`；任何检查失败都不会发布部分平台的 Release。
 
 正式签名不作为首版条件。后续签名应在运行库部署完成、CPack 归档前对暂存的完整应用包执行，可通过 CPack 的 CPACK_PRE_BUILD_SCRIPTS 扩展；直接签名 dist/stage 不会作用于 CPack 重新安装的归档目录。macOS 使用开发者证书签名，再通过 notarytool 提交并 stapler；Windows 使用 signtool。证书与账号凭据只来自 CI secrets。当前未配置正式证书或公证，未经签名的应用可能需要用户在系统安全设置中允许启动。
 
@@ -38,8 +38,10 @@ Windows/macOS 在 build/release 执行 `cpack` 生成 ZIP/DMG。Linux 执行 `py
 
 1. 更新 CMakeLists.txt 的项目版本与 main.cpp 的应用版本，编写 `docs/release-notes/v<版本>.md`。
 2. 提交源码、内置固件、字体、依赖锁和文档；禁止提交 build、dist 或 .deps。
-3. 推送提交，检查 Actions；创建并推送同版本标签：`git tag -a v1.0.2 -m "AutoSplatoon v1.0.2"`、`git push origin v1.0.2`。
+3. 推送提交，检查 Actions；创建并推送同版本标签：`git tag -a v1.0.3 -m "AutoSplatoon v1.0.3"`、`git push origin v1.0.3`。
 4. 查看 Build and package 工作流。发布任务使用 GitHub 自带 GITHUB_TOKEN 的 contents: write 权限，无需额外发布密钥。仅在完整检查通过后发布，下载文件由 GitHub 原生 runner 构建。
 5. 下载 Release 产物，按 SHA256SUMS.txt 校验；保持标签不可变。修复已发布版本时提升版本并创建新标签，不覆盖旧版本。
 
 工作流支持选择已有版本标签手动运行，或对失败任务重新运行。GitHub CLI 按官方流程先创建草稿、上传全部资源再公开，避免上传过程中暴露不完整发行包。发布失败后先检查是否存在未公开草稿，在确认资产完整前不要手动公开。
+
+Linux 部署检查必须清除 LD_LIBRARY_PATH、QT_PLUGIN_PATH 等 SDK 变量，以避免依赖构建机的插件。linuxdeploy 官方参数 EXTRA_PLATFORM_PLUGINS 明确选择 offscreen / Wayland，EXTRA_QT_MODULES 提供 svg / Wayland 集成插件；使用精简容器复验最终目录包。

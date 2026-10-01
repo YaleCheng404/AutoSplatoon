@@ -32,8 +32,14 @@ for asset in lock["appimage"].values():
     download(asset["url"], path, asset["sha256"])
     path.chmod(0o755)
 environment = os.environ.copy()
+platform_plugins = [args.qt / "plugins/platforms/libqoffscreen.so",
+                    *sorted((args.qt / "plugins/platforms").glob("libqwayland*.so"))]
+if len(platform_plugins) < 2 or not all(plugin.is_file() for plugin in platform_plugins):
+    raise RuntimeError("Missing offscreen / Wayland SDK platform plugins")
 environment.update({"APPIMAGE_EXTRACT_AND_RUN": "1", "QMAKE": str(args.qt.resolve() / "bin" / "qmake"),
-                    "EXTRA_QT_PLUGINS": "imageformats;iconengines;platforms", "OUTPUT": str(build / "AutoSplatoon-linux-x64.AppImage")})
+                    "EXTRA_QT_MODULES": "svg;waylandcompositor",
+                    "EXTRA_PLATFORM_PLUGINS": ";".join(plugin.name for plugin in platform_plugins),
+                    "OUTPUT": str(build / "AutoSplatoon-linux-x64.AppImage")})
 environment["PATH"] = str(build) + os.pathsep + str(args.qt.resolve() / "bin") + os.pathsep + environment["PATH"]
 # Wayland plugins may depend on QtWayland libraries; the Qt plugin resolves them.
 icon = build / "autosplatoon.svg"

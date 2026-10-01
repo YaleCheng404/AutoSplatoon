@@ -14,6 +14,10 @@ args = parser.parse_args()
 if os.name == "nt":
     ctypes.windll.kernel32.SetErrorMode(3)  # Tests must never spawn loader error dialogs.
 environment = os.environ.copy()
+for variable in ["LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH", "QT_PLUGIN_PATH", "QT_QPA_PLATFORM_PLUGIN_PATH", "QTDIR"]:
+    environment.pop(variable, None)
+if os.name != "nt":
+    environment["PATH"] = "/usr/bin:/bin"
 if os.name == "nt":
     system_root = os.environ["SystemRoot"]
     environment["PATH"] = system_root + "/System32"

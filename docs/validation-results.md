@@ -43,3 +43,9 @@
 [GitHub Actions 36881974088](https://github.com/YaleCheng404/AutoSplatoon/actions/runs/36881974088) 的 Windows x64、macOS ARM64、Linux x64 三个 build 任务均通过：原生编译、26 项核心测试 × 六档缩放、包内固件和 esptool、18 个显示模拟案例及部署启动。Windows ZIP、macOS DMG、Linux AppImage 和目录压缩包已生成；Linux 的 X11、Wayland 启动也通过。
 
 该轮精简 Ubuntu 24.04 / Debian 12 容器缺少操作系统图形栈的 libOpenGL.so.0，检查失败。后续任务已补齐系统 libopengl0；正式 Release 仍要求两个容器检查成功。最新官方 Actions 固定为 checkout v7.0.1、setup-python v7.0.0、upload-artifact v7.0.1、download-artifact v8.0.1，使用 Node.js 24。完整发布结果请查看 [v1.0.2 对应工作流](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml) 和 [Release](https://github.com/YaleCheng404/AutoSplatoon/releases/tag/v1.0.2)，不得将首轮容器失败标为通过。
+
+### v1.0.2 容器阻止发布与 1.0.3 修复
+
+v1.0.2 正式任务 [36883580496](https://github.com/YaleCheng404/AutoSplatoon/actions/runs/36883580496) 的三个 build 任务通过，但 Debian 容器找不到 offscreen 插件，发布被阻止。发现 Linux 构建机的 LD_LIBRARY_PATH 会使此前启动检查使用 SDK 库和插件，因此首轮 Linux 的显示及 X11/Wayland 检查不能作为自包含部署成功的证据。
+
+1.0.3 改用官方 EXTRA_PLATFORM_PLUGINS / EXTRA_QT_MODULES 参数，并在 GUI 与 X11/Wayland 启动测试移除 SDK 搜索路径。v1.0.2 标签保留，不覆盖；完整发行以 [v1.0.3](https://github.com/YaleCheng404/AutoSplatoon/releases/tag/v1.0.3) 及其 Actions 执行结果为准。Windows 1.0.2 的用户实机反馈继续保留，1.0.3 的 Windows 功能保持一致，升级无需重刷。

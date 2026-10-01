@@ -35,8 +35,8 @@ jobs:
       - name: Linux system libraries
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y p7zip-full libgl1-mesa-dev libxkbcommon-dev libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libxcb-shape0 libxcb-xfixes0 libxcb-randr0 libxcb-sync1 libxcb-xkb1 libxcb-glx0 libxcb-util1 libxcomposite1 libxcursor1 libxi6 libxrender1 libsm6 libice6 libwayland-client0 libwayland-cursor0 libwayland-egl1 libegl1 libfontconfig1 xvfb xauth weston
+          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
+          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y p7zip-full libgl1-mesa-dev libxkbcommon-dev libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libxcb-shape0 libxcb-xfixes0 libxcb-randr0 libxcb-sync1 libxcb-xkb1 libxcb-glx0 libxcb-util1 libxcomposite1 libxcursor1 libxi6 libxrender1 libsm6 libice6 libwayland-client0 libwayland-cursor0 libwayland-egl1 libegl1 libfontconfig1 xvfb xauth weston
       - name: macOS tools
         if: runner.os == 'macOS'
         run: |
@@ -84,11 +84,11 @@ jobs:
           python tools/package_linux.py --qt "$QT_ROOT"
           python tools/verify_package.py build/release/AutoSplatoon.AppDir --platform linux-amd64
           python tools/check_gui.py build/release/AutoSplatoon.AppDir/AppRun
-          QT_QPA_PLATFORM=offscreen build/release/AutoSplatoon.AppDir/AppRun --smoke-test
+          env -u LD_LIBRARY_PATH -u QT_PLUGIN_PATH -u QT_QPA_PLATFORM_PLUGIN_PATH QT_QPA_PLATFORM=offscreen build/release/AutoSplatoon.AppDir/AppRun --smoke-test
       - name: Linux X11 and Wayland startup
         if: runner.os == 'Linux'
         run: |
-          xvfb-run -a env QT_QPA_PLATFORM=xcb build/release/AutoSplatoon.AppDir/AppRun --smoke-test
+          xvfb-run -a env -u LD_LIBRARY_PATH -u QT_PLUGIN_PATH -u QT_QPA_PLATFORM_PLUGIN_PATH QT_QPA_PLATFORM=xcb build/release/AutoSplatoon.AppDir/AppRun --smoke-test
           export XDG_RUNTIME_DIR="$(mktemp -d)"
           weston --backend=headless-backend.so --socket=autosplatoon-test --idle-time=0 --log="$GITHUB_WORKSPACE/build/wayland.log" &
           weston_pid=$!
@@ -97,7 +97,7 @@ jobs:
             if [ -S "$XDG_RUNTIME_DIR/autosplatoon-test" ]; then break; fi
             sleep 0.25
           done
-          QT_QPA_PLATFORM=wayland WAYLAND_DISPLAY=autosplatoon-test build/release/AutoSplatoon.AppDir/AppRun --smoke-test
+          env -u LD_LIBRARY_PATH -u QT_PLUGIN_PATH -u QT_QPA_PLATFORM_PLUGIN_PATH QT_QPA_PLATFORM=wayland WAYLAND_DISPLAY=autosplatoon-test build/release/AutoSplatoon.AppDir/AppRun --smoke-test
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: AutoSplatoon-${{ matrix.platform }}
