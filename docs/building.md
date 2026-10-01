@@ -6,7 +6,7 @@
 
 ## 本地构建
 
-安装 Python 3.12、7z 和对应 C++ 编译器。Windows 安装脚本同时安装并校验 MinGW x64 15.1（Qt 6.12 对应版本），macOS 使用 Xcode/Apple Clang，Linux 使用 GCC。Linux 基线 Ubuntu 22.04，需要图形系统的 GL/EGL、XCB、Wayland 和字体系统库。
+安装 Python 3.12、7z 和对应 C++ 编译器。Windows 安装脚本同时安装并校验 MinGW x64 15.1（Qt 6.12 对应版本），macOS 使用 Xcode/Apple Clang，Linux 使用 GCC。Linux 基线 Ubuntu 22.04，需要操作系统图形栈的 GL/OpenGL/EGL、XCB、Wayland 和字体系统库（含 libopengl0；这些系统库不等于 Qt SDK）。
 
 ```sh
 python -m pip install -r tools/requirements-build.txt

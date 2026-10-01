@@ -26,8 +26,8 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
-      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: '3.12'
       - name: Build tools
@@ -98,7 +98,7 @@ jobs:
             sleep 0.25
           done
           QT_QPA_PLATFORM=wayland WAYLAND_DISPLAY=autosplatoon-test build/release/AutoSplatoon.AppDir/AppRun --smoke-test
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: AutoSplatoon-${{ matrix.platform }}
           path: |
@@ -114,7 +114,7 @@ jobs:
       matrix:
         image: ['ubuntu:24.04', 'debian:12']
     steps:
-      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: AutoSplatoon-linux-amd64
           path: package
@@ -122,7 +122,7 @@ jobs:
         run: |
           mkdir app
           tar -xzf package/AutoSplatoon-linux-x64.tar.gz -C app
-          docker run --rm -v "$PWD/app:/app:ro" ${{ matrix.image }} sh -c 'apt-get update && apt-get install -y libgl1 libegl1 libfontconfig1 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libxcb-shape0 libxcb-xfixes0 libxcb-randr0 libxcb-sync1 libxcb-xkb1 libxcb-glx0 libxcb-util1 libxcomposite1 libxcursor1 libxi6 libxrender1 libsm6 libice6 libwayland-client0 libwayland-cursor0 libwayland-egl1 && QT_QPA_PLATFORM=offscreen /app/AutoSplatoon/AppRun --smoke-test && /app/AutoSplatoon/usr/bin/tools/esptool version'
+          docker run --rm -v "$PWD/app:/app:ro" ${{ matrix.image }} sh -c 'apt-get update && apt-get install -y libgl1 libopengl0 libegl1 libfontconfig1 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libxcb-shape0 libxcb-xfixes0 libxcb-randr0 libxcb-sync1 libxcb-xkb1 libxcb-glx0 libxcb-util1 libxcomposite1 libxcursor1 libxi6 libxrender1 libsm6 libice6 libwayland-client0 libwayland-cursor0 libwayland-egl1 && QT_QPA_PLATFORM=offscreen /app/AutoSplatoon/AppRun --smoke-test && /app/AutoSplatoon/usr/bin/tools/esptool version'
   release:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: [build, linux-portability]
@@ -130,8 +130,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
-      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           pattern: AutoSplatoon-*
           merge-multiple: true
