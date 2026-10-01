@@ -155,10 +155,12 @@ private slots:
         QSignalSpy action(&player, &ActionQueuePlayer::sendAction);
         QSignalSpy finished(&player, &ActionQueuePlayer::finished);
         player.start(plan); player.pause();
-        QTRY_VERIFY_WITH_TIMEOUT(player.isPaused(), 500);
+        // Wait in the event loop, without QtTest's polling delays affecting playback timing.
+        QVERIFY(action.wait(1000));
+        QVERIFY(player.isPaused());
         QCOMPARE(action.last().at(0).toULongLong(), InputEmulator::NO_INPUT);
         const int index = player.currentIndex(); QTest::qWait(50); QCOMPARE(player.currentIndex(), index);
-        player.resume(); QTRY_COMPARE_WITH_TIMEOUT(finished.size(), 1, 500);
+        player.resume(); QVERIFY(finished.wait(1000));
         player.start(plan); player.stop();
         const int count = action.size(); QTest::qWait(80); QCOMPARE(action.size(), count);
         QVERIFY(!player.isRunning()); QCOMPARE(action.last().at(0).toULongLong(), InputEmulator::NO_INPUT);

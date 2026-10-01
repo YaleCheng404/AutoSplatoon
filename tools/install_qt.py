@@ -46,6 +46,10 @@ def main():
     if not (prefix / "lib" / "cmake" / "Qt6" / "Qt6Config.cmake").is_file():
         raise RuntimeError(f"Missing SDK configuration: {prefix}")
     (prefix / "bin" / "qt.conf").write_text("[Paths]\nPrefix=..\n")
+    if args.platform == "linux-amd64":
+        # The official ICU archive is flat; Qt's shared libraries need it in lib/.
+        for library in prefix.glob("libicu*.so*"):
+            shutil.copy2(library, prefix / "lib" / library.name)
     if args.platform == "windows-amd64":
         # Runtime archives use a flat layout, while deployment tools expect bin/.
         for library in prefix.glob("*.dll"):

@@ -48,6 +48,7 @@ jobs:
           echo "QT_ROOT=$GITHUB_WORKSPACE/.deps/qt" >> "$GITHUB_ENV"
           echo "$GITHUB_WORKSPACE/.deps/qt/bin" >> "$GITHUB_PATH"
           if [ "${{ runner.os }}" = Windows ]; then echo "$GITHUB_WORKSPACE/.deps/compiler/mingw64/bin" >> "$GITHUB_PATH"; fi
+          if [ "${{ runner.os }}" = Linux ]; then echo "LD_LIBRARY_PATH=$GITHUB_WORKSPACE/.deps/qt/lib" >> "$GITHUB_ENV"; fi
       - name: Bundled esptool
         run: python tools/fetch_assets.py --platform ${{ matrix.platform }} --output build/release/assets
       - name: Configure
