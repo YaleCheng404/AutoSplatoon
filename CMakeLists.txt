@@ -113,16 +113,21 @@ install(FILES README.md DESTINATION "${asset_dest}")
 install(DIRECTORY docs DESTINATION "${asset_dest}")
 # Static OpenCV is built from source; exclude its SDK from application packages.
 set(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_BINARY_DIR};AutoSplatoon;Unspecified;/")
+get_filename_component(qt_prefix "${Qt6_DIR}/../../.." ABSOLUTE)
 set(deploy_options)
 if(WIN32)
     # Widgets use raster rendering; software OpenGL and shader compilers are unused.
     set(deploy_options --no-opengl-sw --no-system-d3d-compiler --no-system-dxc-compiler)
+elseif(APPLE)
+    # macdeployqt only selects Cocoa by default; also relocate the QA platform plugin.
+    install(FILES "${qt_prefix}/plugins/platforms/libqoffscreen.dylib"
+        DESTINATION "AutoSplatoon.app/Contents/PlugIns/platforms")
+    set(deploy_options "-executable=AutoSplatoon.app/Contents/PlugIns/platforms/libqoffscreen.dylib")
 endif()
 qt_generate_deploy_app_script(TARGET AutoSplatoon OUTPUT_SCRIPT qt_deploy NO_UNSUPPORTED_PLATFORM_ERROR
     EXCLUDE_PLUGIN_TYPES generic networkinformation tls INCLUDE_PLUGINS qoffscreen
     DEPLOY_TOOL_OPTIONS ${deploy_options})
 install(SCRIPT ${qt_deploy})
-get_filename_component(qt_prefix "${Qt6_DIR}/../../.." ABSOLUTE)
 install(FILES "${qt_prefix}/translations/qtbase_zh_CN.qm" DESTINATION "${asset_dest}/translations")
 install(DIRECTORY "${qt_prefix}/sbom/" DESTINATION "${asset_dest}/licenses/Qt-SBOM")
 if(MINGW)

@@ -28,7 +28,7 @@ Windows/macOS 在 build/release 执行 `cpack` 生成 ZIP/DMG。Linux 执行 `py
 
 `.github/workflows/build.yml` 在 Windows、macOS ARM64、Ubuntu 22.04 原生构建、测试和打包。Qt SDK 与烧录工具来自锁定的官方发行包。Linux 配置 Xvfb 的 X11 和 Weston 的 Wayland 启动检查，产物再在 Ubuntu 24.04 和 Debian 12 的无开发环境容器启动。普通分支推送与 PR 上传 Actions 产物；推送与项目版本相符的 `v*` 标签（例如 `v1.0.2`）时，在三平台构建、包内固件与 esptool 检查、显示模拟以及 Linux 两个容器检查全部通过后，自动创建正式 GitHub Release。四个产物必须齐全，附 `SHA256SUMS.txt`；任何检查失败都不会发布部分平台的 Release。
 
-正式签名不作为首版条件。macOS 发布方可在 CPack 前使用 `codesign --deep --force --options runtime --sign "$IDENTITY" dist/stage/AutoSplatoon.app`，随后以配置好的 `xcrun notarytool submit ... --keychain-profile ... --wait` 提交 DMG 并 stapler；Windows 发布方可用 signtool 对可执行文件签名后再打 ZIP。证书、账号及密码应只来自 CI secrets。未经签名的应用可能需要用户在系统安全设置中允许启动。
+正式签名不作为首版条件。后续签名应在运行库部署完成、CPack 归档前对暂存的完整应用包执行，可通过 CPack 的 CPack_PRE_BUILD_SCRIPTS 扩展；直接签名 dist/stage 不会作用于 CPack 重新安装的归档目录。macOS 使用开发者证书签名，再通过 notarytool 提交并 stapler；Windows 使用 signtool。证书与账号凭据只来自 CI secrets。当前未配置正式证书或公证，未经签名的应用可能需要用户在系统安全设置中允许启动。
 
 ## 离线与许可证
 

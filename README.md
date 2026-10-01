@@ -41,7 +41,7 @@ Windows/macOS 找不到串口时，先在设备管理器/系统信息确认 USB 
 
 ## 开发与验证
 
-[构建说明](docs/building.md) · [验收与验证边界](docs/validation.md) · [本次验证记录](docs/validation-results.md) · [第三方与参考来源](licenses/THIRD_PARTY.md)。依赖固定于 `dependencies.lock.json`。项目使用 C++17、CMake/CTest/CPack，移除 qmake、未使用的网络库及旧实验界面。
+[硬件与故障排查](docs/hardware.md) · [构建与发布说明](docs/building.md) · [验收与验证边界](docs/validation.md) · [本次验证记录](docs/validation-results.md) · [第三方与参考来源](licenses/THIRD_PARTY.md)。依赖固定于 `dependencies.lock.json`。项目使用 C++17、CMake/CTest/CPack，移除 qmake、未使用的网络库及旧实验界面。
 
 参考 [jiangotto 原项目](https://github.com/jiangotto/AutoSplatoon)、[zhougz520 的动作队列和串口修复](https://github.com/zhougz520/AutoSplatoon/tree/1309d77af0210cd951d49d7aaf4e2b1e2baf7d1c)、[Exception0x0194](https://github.com/Exception0x0194/AutoSplatoon)、[splatplost](https://github.com/Victrid/splatplost) 和 [img2splat](https://github.com/JonathanNye/img2splat)。借用范围与许可证在第三方声明中记录。
 

@@ -36,7 +36,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y p7zip-full libgl1-mesa-dev libxkbcommon-dev libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libwayland-client0 libwayland-cursor0 libwayland-egl1 libegl1 libfontconfig1 xvfb xauth weston
+          sudo apt-get install -y p7zip-full libgl1-mesa-dev libxkbcommon-dev libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libxcb-shape0 libxcb-xfixes0 libxcb-randr0 libxcb-sync1 libxcb-xkb1 libxcb-glx0 libxcb-util1 libxcomposite1 libxcursor1 libxi6 libxrender1 libsm6 libice6 libwayland-client0 libwayland-cursor0 libwayland-egl1 libegl1 libfontconfig1 xvfb xauth weston
       - name: macOS tools
         if: runner.os == 'macOS'
         run: |
@@ -122,7 +122,7 @@ jobs:
         run: |
           mkdir app
           tar -xzf package/AutoSplatoon-linux-x64.tar.gz -C app
-          docker run --rm -v "$PWD/app:/app:ro" ${{ matrix.image }} sh -c 'apt-get update && apt-get install -y libgl1 libegl1 libfontconfig1 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libwayland-client0 libwayland-cursor0 libwayland-egl1 && QT_QPA_PLATFORM=offscreen /app/AutoSplatoon/AppRun --smoke-test && /app/AutoSplatoon/usr/bin/tools/esptool version'
+          docker run --rm -v "$PWD/app:/app:ro" ${{ matrix.image }} sh -c 'apt-get update && apt-get install -y libgl1 libegl1 libfontconfig1 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libxcb-shape0 libxcb-xfixes0 libxcb-randr0 libxcb-sync1 libxcb-xkb1 libxcb-glx0 libxcb-util1 libxcomposite1 libxcursor1 libxi6 libxrender1 libsm6 libice6 libwayland-client0 libwayland-cursor0 libwayland-egl1 && QT_QPA_PLATFORM=offscreen /app/AutoSplatoon/AppRun --smoke-test && /app/AutoSplatoon/usr/bin/tools/esptool version'
   release:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: [build, linux-portability]
