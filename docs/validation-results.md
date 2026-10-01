@@ -49,3 +49,11 @@
 v1.0.2 正式任务 [36883580496](https://github.com/YaleCheng404/AutoSplatoon/actions/runs/36883580496) 的三个 build 任务通过，但 Debian 容器找不到 offscreen 插件，发布被阻止。发现 Linux 构建机的 LD_LIBRARY_PATH 会使此前启动检查使用 SDK 库和插件，因此首轮 Linux 的显示及 X11/Wayland 检查不能作为自包含部署成功的证据。
 
 1.0.3 改用官方 EXTRA_PLATFORM_PLUGINS / EXTRA_QT_MODULES 参数，并在 GUI 与 X11/Wayland 启动测试移除 SDK 搜索路径。v1.0.2 标签保留，不覆盖；完整发行以 [v1.0.3](https://github.com/YaleCheng404/AutoSplatoon/releases/tag/v1.0.3) 及其 Actions 执行结果为准。Windows 1.0.2 的用户实机反馈继续保留，1.0.3 的 Windows 功能保持一致，升级无需重刷。
+
+## v1.0.3 正式发布结果
+
+2026-10-01，[正式版本 GitHub Actions](https://github.com/YaleCheng404/AutoSplatoon/actions/runs/36886063567) 已完成：Windows x64、macOS ARM64、Linux x64 原生构建、26 项核心测试 × 六档缩放、18 个显示模拟案例与部署启动检查全部通过。Linux 部署检查清除 SDK 库与插件路径后通过，X11 / Wayland 启动通过；精简 Ubuntu 24.04、Debian 12 容器的应用启动和内置 esptool version 均通过，不包含 Qt / Python / 开发 SDK 安装。容器使用操作系统基础 GL/OpenGL/EGL 与字体等图形库。
+
+首次 Release 创建遇到 GitHub HTTP 500，仅重试发布后成功。四份原生安装包与 SHA256SUMS.txt 已正式公开，逐项对照 GitHub 服务端资产 digest 校验一致，清单见 [release-assets-v1.0.3.sha256](release-assets-v1.0.3.sha256)。发布地址：[v1.0.3](https://github.com/YaleCheng404/AutoSplatoon/releases/tag/v1.0.3)。
+
+这些结果覆盖云端编译、模拟和部署运行，不代替 macOS/Linux 真实桌面交互、物理跨屏或其他硬件组合验收；Windows 用户实机反馈范围见上文。
