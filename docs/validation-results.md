@@ -18,7 +18,7 @@
 
 初次运行测试目录曾缺少 Qt DLL 并产生系统弹窗，已通过部署 Qt 依赖及匹配编译器运行库修复。后续验证工具设置 Windows SetErrorMode，避免依赖错误弹窗打断桌面。初次 offscreen 截图缺少系统字体，现使用系统字体目录并提供内置中文字体回退。1080p 高缩放下的最小高度超屏问题已由整体滚动容器修复。
 
-**本次未验证**：真实 2K/4K 显示器跨屏移动；macOS ARM64 原生构建/DMG 启动；Linux 原生 AppImage、Ubuntu 24.04/Debian 12 与 X11/Wayland；ESP32 实机烧录、USB 断连/响应超时、Switch 配对、完整绘图与保存。对应 CI 或实机验收步骤已提供，但不能把配置流程视为运行通过。照片对比只覆盖一个标准素材，更多题材仍需视觉验收。
+**初次 Windows 本地验证未涵盖**：真实 2K/4K 显示器跨屏移动；macOS ARM64 原生构建/DMG 启动；Linux 原生 AppImage、Ubuntu 24.04/Debian 12 与 X11/Wayland；ESP32 实机烧录、USB 断连/响应超时、Switch 配对、完整绘图与保存。对应 CI 或实机验收步骤已提供，但不能把配置流程视为运行通过。照片对比只覆盖一个标准素材，更多题材仍需视觉验收。
 
 ## 1.0.1 手动控制误超时修复
 
@@ -37,3 +37,9 @@
 ## GitHub 原生构建与 Release
 
 发布流程包含 Windows x64、macOS ARM64、Linux x64 原生构建，Linux Ubuntu 24.04 / Debian 12 容器启动，以及四份产物的完整性与 SHA-256 清单检查。各项执行结果以对应标签的 GitHub Actions 日志为准；此文档中的本地结果不代表云端任务已通过。
+
+### 首次跨平台云端结果
+
+[GitHub Actions 36881974088](https://github.com/YaleCheng404/AutoSplatoon/actions/runs/36881974088) 的 Windows x64、macOS ARM64、Linux x64 三个 build 任务均通过：原生编译、26 项核心测试 × 六档缩放、包内固件和 esptool、18 个显示模拟案例及部署启动。Windows ZIP、macOS DMG、Linux AppImage 和目录压缩包已生成；Linux 的 X11、Wayland 启动也通过。
+
+该轮精简 Ubuntu 24.04 / Debian 12 容器缺少操作系统图形栈的 libOpenGL.so.0，检查失败。后续任务已补齐系统 libopengl0；正式 Release 仍要求两个容器检查成功。最新官方 Actions 固定为 checkout v7.0.1、setup-python v7.0.0、upload-artifact v7.0.1、download-artifact v8.0.1，使用 Node.js 24。完整发布结果请查看 [v1.0.2 对应工作流](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml) 和 [Release](https://github.com/YaleCheng404/AutoSplatoon/releases/tag/v1.0.2)，不得将首轮容器失败标为通过。
