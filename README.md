@@ -6,7 +6,7 @@
 
 ## 下载与首次使用
 
-[下载最新 Release](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [构建状态](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml) · [1.0.3 更新说明](docs/release-notes/v1.0.3.md)
+[下载最新 Release](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [构建状态](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml) · [1.0.4 更新说明](docs/release-notes/v1.0.4.md)
 
 发行目标：Windows 10/11 x64 ZIP、macOS 14.4+ Apple Silicon DMG、Linux x64 AppImage/目录压缩包。不提供 Intel macOS。包内包含 Qt 运行库、图片格式插件、esptool 5.4.0 与 UARTSwitchCon 1.2 固件；无需安装 Python 或开发环境。
 
@@ -17,6 +17,14 @@
 5. 导入图片，在“调整构图”标签拖动、滚轮缩放，选择预设，检查结果后开始绘图。按下/释放默认各 70 ms；可暂停、继续或停止，结束可自动保存。
 
 没有开发板也能处理图片和导出 PNG。预览、导出和动作计划使用同一黑白结果，缩放窗口与显示器 DPI 不改变画布像素。界面优先使用系统字体，缺少中文字形时使用内置 Noto Sans CJK 回退；使用自适应布局与滚动参数栏，提供浅色、深色及系统主题。
+
+## 手动控制 / 配对
+
+顶部为 ZL、L、L + R 配对、R、ZR；左侧十字方向键用于移动光标，中央 L3 为左摇杆按压；右侧 ABXY 按 Switch 手柄位置排列，底部为 −、+、截图和 Home。
+
+鼠标按住按钮生效，松开释放；切换窗口、关闭弹窗会释放当前输入，重新打开后需再次按下。串口断开时弹窗关闭。绘图运行和暂停期间均不可进入手动控制；校准光标前请先停止绘图。小窗口可滚动查看全部按钮。
+
+![手动控制布局（Windows offscreen 渲染）](docs/images/manual-control.png)
 
 ## 图片处理
 
@@ -46,6 +54,10 @@ Windows/macOS 找不到串口时，先在设备管理器/系统信息确认 USB 
 参考 [jiangotto 原项目](https://github.com/jiangotto/AutoSplatoon)、[zhougz520 的动作队列和串口修复](https://github.com/zhougz520/AutoSplatoon/tree/1309d77af0210cd951d49d7aaf4e2b1e2baf7d1c)、[Exception0x0194](https://github.com/Exception0x0194/AutoSplatoon)、[splatplost](https://github.com/Victrid/splatplost) 和 [img2splat](https://github.com/JonathanNye/img2splat)。借用范围与许可证在第三方声明中记录。
 
 项目及固件沿用 GPL-3.0，见 LICENSE。用户已反馈 1.0.2 测试无问题；具体型号与逐项硬件覆盖未提供，详见验证记录。构建/模拟测试与用户实机反馈分别记录。
+
+### 1.0.4 手动控制布局
+
+参考 ClubchatGames 重新组织 18 个鼠标控制按钮，加入按压反馈以及失活、关闭和断线释放处理；小窗口支持滚动。清理无用输入编码、旧图标与播放器统计。固件和依赖不变，升级无需重刷。
 
 ### 1.0.3 Linux 发行修复
 

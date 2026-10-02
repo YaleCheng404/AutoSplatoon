@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "flashdialog.h"
+#include "manualcontroldialog.h"
 #include <QtConcurrent>
 #include <QApplication>
 #include <QComboBox>
@@ -15,7 +16,6 @@
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QGridLayout>
 #include <QStatusBar>
 #include <QFileDialog>
 #include <QImageReader>
@@ -340,6 +340,7 @@ void AutoSplatoon::applyTheme()
         "QPushButton { padding: 8px 12px; border-radius: 6px; border: 1px solid " + QString(dark ? "#454754" : "#dde0e9") +
         "; background: " + QString(dark ? "#30323b" : "#ffffff") + "; }"
         "QPushButton:hover { border-color: #635bdf; }"
+        "QPushButton:pressed { background: #635bdf; color: white; border-color: #635bdf; }"
         "QPushButton[primary=true] { background: #635bdf; color: white; }"
         "QPushButton[primary=true]:disabled { background: #9894b7; }"
         "QSpinBox, QComboBox { padding: 5px; } QScrollArea { border: none; }"
@@ -369,22 +370,9 @@ void AutoSplatoon::showGuide()
 }
 void AutoSplatoon::manualControl()
 {
-    QDialog dialog(this); dialog.setWindowTitle(tr("手动控制 / 配对"));
-    auto* layout = new QVBoxLayout(&dialog);
-    auto* instruction = new QLabel(tr("配对时按 L + R；松开按钮即释放。")); instruction->setWordWrap(true);
-    layout->addWidget(instruction);
-    auto* grid = new QGridLayout;
-    using I = InputEmulator;
-    const QList<QPair<QString, quint64>> actions = {{"↑", I::DPAD_U}, {"A", I::BTN_A}, {"B", I::BTN_B},
-        {"←", I::DPAD_L}, {"↓", I::DPAD_D}, {"→", I::DPAD_R}, {"X", I::BTN_X}, {"Y", I::BTN_Y},
-        {"L + R", I::BTN_L | I::BTN_R}, {"−", I::BTN_MINUS}, {"+", I::BTN_PLUS}, {"Home", I::BTN_HOME},
-        {"L", I::BTN_L}, {"R", I::BTN_R}, {"L 点击", I::BTN_LCLICK}, {"ZL", I::BTN_ZL}, {"ZR", I::BTN_ZR}, {"截图", I::BTN_CAPTURE}};
-    for (int i = 0; i < actions.size(); ++i) {
-        auto* control = button(actions[i].first); grid->addWidget(control, i / 3, i % 3);
-        connect(control, &QPushButton::pressed, &dialog, [this, action = actions[i].second] { serial.sendAction(action); });
-        connect(control, &QPushButton::released, &dialog, [this] { serial.sendAction(I::NO_INPUT); });
-    }
-    layout->addLayout(grid);
+    if (player.isRunning() || !serial.isReady()) return;
+    ManualControlDialog dialog(this);
+    connect(&dialog, &ManualControlDialog::sendAction, &serial, &SerialController::sendAction);
     connect(&serial, &SerialController::connectionChanged, &dialog, [&dialog](bool ready) { if (!ready) dialog.reject(); });
-    dialog.exec(); serial.sendAction(I::NO_INPUT);
+    dialog.exec();
 }

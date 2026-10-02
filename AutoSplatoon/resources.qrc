@@ -1,5 +1,16 @@
 <RCC>
   <qresource prefix="/firmware"><file alias="PRO-UART0.bin">../firmware/PRO-UART0.bin</file></qresource>
-  <qresource prefix="/icons"><file alias="app.svg">app.svg</file></qresource>
+  <qresource prefix="/icons">
+    <file alias="app.svg">app.svg</file>
+    <file>Switch-Control-Up.png</file>
+    <file>Switch-Control-Down.png</file>
+    <file>Switch-Control-Left.png</file>
+    <file>Switch-Control-Right.png</file>
+    <file>Switch-Control-Press.png</file>
+    <file>Switch-Button-Top.png</file>
+    <file>Switch-Button-Left.png</file>
+    <file>Switch-Button-Right.png</file>
+    <file>Switch-Button-Bottom.png</file>
+  </qresource>
   <qresource prefix="/fonts"><file alias="NotoSansCJKsc-Regular.otf">fonts/NotoSansCJKsc-Regular.otf</file></qresource>
 </RCC>

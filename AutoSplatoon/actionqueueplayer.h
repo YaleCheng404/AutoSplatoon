@@ -16,7 +16,6 @@ public:
     bool isRunning() const;
     bool isPaused() const;
     int currentIndex() const;
-    int totalFrames() const;
 
 public slots:
     void start(const DrawPlan& plan);
@@ -27,7 +26,6 @@ public slots:
 signals:
     void sendAction(quint64 action);
     void progressChanged(int currentFrame, int totalFrames, int row, int column);
-    void timingWarning(int currentFrame, int expectedElapsedMs, int actualElapsedMs, int lateByMs);
     void timingOverrun(int currentFrame, int lateByMs);
     void finished();
     void stopped();
@@ -43,8 +41,6 @@ private:
     QElapsedTimer _elapsedTimer;
     int _currentIndex = 0;
     int _expectedNextTimeoutMs = 0;
-    int _maxLateMs = 0;
-    int _lateFrameCount = 0;
     int _overrunThresholdMs = 25;
     int _generation = 0;
     bool _running = false;

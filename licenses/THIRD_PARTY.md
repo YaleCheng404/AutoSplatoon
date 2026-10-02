@@ -6,6 +6,7 @@ AutoSplatoon retains the original GPL-3.0 license and attribution.
 |---|---|---|
 | Original application | [jiangotto/AutoSplatoon](https://github.com/jiangotto/AutoSplatoon), [wang-ji-yuan fork](https://github.com/wang-ji-yuan/AutoSplatoon) | GPL-3.0, project LICENSE |
 | Action queue and transport reference | [zhougz520 fork](https://github.com/zhougz520/AutoSplatoon/tree/1309d77af0210cd951d49d7aaf4e2b1e2baf7d1c) | GPL-3.0; queue adapted, planner and transport simplified |
+| Manual control layout and retained button icons | [nullstalgia/ClubchatGames, af2bdace90e0f0641aa4e21e0a24ca998a676ad0](https://github.com/nullstalgia/ClubchatGames/tree/af2bdace90e0f0641aa4e21e0a24ca998a676ad0) | GPL-3.0, project LICENSE |
 | Qt | 6.12.0, official SDK | LGPL-3.0 / GPL-3.0; see Qt notices shipped from SDK |
 | OpenCV | 4.14.0, core/imgproc/photo only | Apache-2.0, OpenCV.txt |
 | Chinese glyph fallback | [Noto Sans CJK SC, Sans2.004](https://github.com/notofonts/noto-cjk/tree/Sans2.004) | SIL OFL-1.1, Noto-CJK-OFL.txt; unmodified font embedded for missing system glyphs |
@@ -27,3 +28,11 @@ No code from the greedy / Bluetooth-only plotters is incorporated.
 SDK and build-only release archive URLs, SHA-256 hashes, tool versions and GitHub
 Action commit IDs are recorded in dependencies.lock.json. The build utilities
 linuxdeploy and linuxdeploy-plugin-qt are not installed in application packages.
+
+Manual control follows ClubchatGames `manualcontrol.ui`: shoulder buttons above,
+directional pad on the left, X/Y/A/B on the right, and system buttons below.
+Existing matching PNG assets are embedded without modification. The Qt 6 dialog
+uses layout managers and typed pressed/released connections, following
+[QAbstractButton](https://doc.qt.io/qt-6/qabstractbutton.html) and
+[QEvent](https://doc.qt.io/qt-6/qevent.html). Twitch/IRC, vote handling,
+QSignalMapper and string-based action dispatch are not incorporated.

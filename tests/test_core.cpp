@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 #include "flashdialog.h"
 #include "serialconnection.h"
+#include "manualcontroldialog.h"
 #include <QtTest>
 #include <QComboBox>
 #include <QSpinBox>
@@ -15,11 +16,143 @@
 #include <QPlainTextEdit>
 #include <QLinearGradient>
 #include <QDir>
+#include <QScrollArea>
 
 class CoreTests : public QObject {
     Q_OBJECT
     QTemporaryDir settings;
 private slots:
+    void manualButtons_data()
+    {
+        QTest::addColumn<QString>("name");
+        QTest::addColumn<quint64>("action");
+        using I = InputEmulator;
+        const QList<QPair<const char*, quint64>> buttons = {
+            {"Up", I::DPAD_U}, {"Down", I::DPAD_D}, {"Left", I::DPAD_L}, {"Right", I::DPAD_R},
+            {"A", I::BTN_A}, {"B", I::BTN_B}, {"X", I::BTN_X}, {"Y", I::BTN_Y},
+            {"L", I::BTN_L}, {"R", I::BTN_R}, {"ZL", I::BTN_ZL}, {"ZR", I::BTN_ZR},
+            {"LR", I::BTN_L | I::BTN_R}, {"LClick", I::BTN_LCLICK},
+            {"Minus", I::BTN_MINUS}, {"Plus", I::BTN_PLUS}, {"Capture", I::BTN_CAPTURE}, {"Home", I::BTN_HOME}};
+        for (const auto& button : buttons) QTest::newRow(button.first) << QString(button.first) << button.second;
+    }
+    void manualButtons()
+    {
+        QFETCH(QString, name); QFETCH(quint64, action);
+        ManualControlDialog dialog; dialog.show();
+        QSignalSpy actions(&dialog, &ManualControlDialog::sendAction);
+        auto* button = dialog.findChild<QPushButton*>("manual_" + name);
+        QVERIFY(button); QVERIFY(!button->autoRepeat()); QVERIFY(!button->isCheckable());
+        QCOMPARE(dialog.findChildren<QPushButton*>().size(), 18);
+        QTest::mousePress(button, Qt::LeftButton);
+        QCOMPARE(actions.size(), 1); QCOMPARE(actions.last().at(0).toULongLong(), action);
+        QTest::qWait(80); QCOMPARE(actions.size(), 1);
+        QTest::mouseRelease(button, Qt::LeftButton);
+        QCOMPARE(actions.last().at(0).toULongLong(), InputEmulator::NO_INPUT);
+        QVERIFY(!button->isDown());
+    }
+    void manualReleaseOnExit()
+    {
+        ManualControlDialog dialog; dialog.show();
+        auto* button = dialog.findChild<QPushButton*>("manual_A");
+        QSignalSpy actions(&dialog, &ManualControlDialog::sendAction);
+        QTest::mousePress(button, Qt::LeftButton);
+        QTest::mouseMove(button, QPoint(-10, -10));
+        QTest::mouseRelease(button, Qt::LeftButton, Qt::NoModifier, QPoint(-10, -10));
+        QCOMPARE(actions.last().at(0).toULongLong(), InputEmulator::NO_INPUT);
+        QTest::mousePress(button, Qt::LeftButton);
+        QEvent deactivate(QEvent::WindowDeactivate);
+        QApplication::sendEvent(&dialog, &deactivate);
+        QCOMPARE(actions.last().at(0).toULongLong(), InputEmulator::NO_INPUT);
+        QVERIFY(!button->isDown());
+        const int count = actions.size();
+        QEvent activate(QEvent::WindowActivate);
+        QApplication::sendEvent(&dialog, &activate);
+        QCOMPARE(actions.size(), count);
+        QTest::mouseRelease(button, Qt::LeftButton);
+        QTest::mousePress(button, Qt::LeftButton);
+        dialog.close();
+        QCOMPARE(actions.last().at(0).toULongLong(), InputEmulator::NO_INPUT);
+        dialog.show(); QVERIFY(!button->isDown());
+        QTest::qWait(20); QCOMPARE(actions.last().at(0).toULongLong(), InputEmulator::NO_INPUT);
+    }
+    void manualDisconnect()
+    {
+        AutoSplatoon window;
+        auto* serial = window.findChild<SerialController*>();
+        serial->ready = true; emit serial->connectionChanged(true);
+        bool opened = false;
+        QTimer::singleShot(0, &window, [&] {
+            auto* dialog = window.findChild<ManualControlDialog*>();
+            if (!dialog) return;
+            opened = true;
+            auto* button = dialog->findChild<QPushButton*>("manual_A");
+            QSignalSpy actions(dialog, &ManualControlDialog::sendAction);
+            QTest::mousePress(button, Qt::LeftButton);
+            serial->close();
+            QVERIFY(!dialog->isVisible());
+            QVERIFY(!button->isDown());
+            QCOMPARE(actions.last().at(0).toULongLong(), InputEmulator::NO_INPUT);
+        });
+        QTest::mouseClick(window.findChild<QPushButton*>("manualButton"), Qt::LeftButton);
+        QVERIFY(opened); QVERIFY(!serial->isReady());
+    }
+    void manualLayout()
+    {
+        AutoSplatoon window;
+        QComboBox* theme = nullptr;
+        // Select by its three theme labels rather than child creation order.
+        for (auto* combo : window.findChildren<QComboBox*>())
+            if (combo->count() == 3 && combo->itemText(1) == QString::fromUtf8("浅色")) theme = combo;
+        QVERIFY(theme);
+        for (int mode : {1, 2}) {
+            theme->setCurrentIndex(mode);
+            ManualControlDialog dialog(&window); dialog.show();
+            QTest::qWait(10);
+            const auto qa = qEnvironmentVariable("AUTOSPLATOON_QA_OUTPUT");
+            if (!qa.isEmpty()) {
+                QDir().mkpath(qa);
+                dialog.grab().save(qa + QString("/manual-%1.png").arg(mode));
+                auto* button = dialog.findChild<QPushButton*>("manual_LR");
+                QTest::mousePress(button, Qt::LeftButton);
+                dialog.grab().save(qa + QString("/manual-%1-pressed.png").arg(mode));
+                QTest::mouseRelease(button, Qt::LeftButton);
+            }
+            auto* up = dialog.findChild<QPushButton*>("manual_Up");
+            auto* left = dialog.findChild<QPushButton*>("manual_Left");
+            auto* a = dialog.findChild<QPushButton*>("manual_A");
+            auto* x = dialog.findChild<QPushButton*>("manual_X");
+            QVERIFY(up->y() < left->y()); QVERIFY(up->x() > left->x());
+            QVERIFY(x->y() < a->y()); QVERIFY(x->x() < a->x());
+            for (auto* button : dialog.findChildren<QPushButton*>()) {
+                QVERIFY2(button->width() >= button->minimumSizeHint().width(), qPrintable(button->objectName()));
+                QVERIFY(!button->accessibleName().isEmpty());
+            }
+            dialog.resize(320, 240); QTest::qWait(10);
+            auto* scroll = dialog.findChild<QScrollArea*>();
+            QVERIFY(scroll->widget()->width() > scroll->viewport()->width());
+            QVERIFY(scroll->widget()->height() > scroll->viewport()->height());
+            if (!qa.isEmpty()) dialog.grab().save(qa + QString("/manual-%1-small.png").arg(mode));
+            auto* home = dialog.findChild<QPushButton*>("manual_Home");
+            scroll->ensureWidgetVisible(home);
+            QVERIFY(scroll->viewport()->rect().contains(home->mapTo(scroll->viewport(), home->rect().center())));
+        }
+        theme->setCurrentIndex(0);
+    }
+    void playerOverrunPauses()
+    {
+        ActionQueuePlayer player;
+        DrawPlan plan; plan.frames = {{InputEmulator::BTN_A, 10, 0, 0}, {InputEmulator::DPAD_R, 10, 0, 1}};
+        QSignalSpy actions(&player, &ActionQueuePlayer::sendAction);
+        QSignalSpy overrun(&player, &ActionQueuePlayer::timingOverrun);
+        player.start(plan);
+        QTest::qSleep(80); // Delay delivery of the timer deliberately.
+        QTRY_COMPARE(overrun.size(), 1);
+        QVERIFY(player.isRunning()); QVERIFY(player.isPaused());
+        QCOMPARE(actions.last().at(0).toULongLong(), InputEmulator::NO_INPUT);
+        QCOMPARE(player.currentIndex(), 1);
+        QSignalSpy finished(&player, &ActionQueuePlayer::finished);
+        player.resume(); QVERIFY(finished.wait(1000));
+    }
     void initTestCase()
     {
         QCoreApplication::setOrganizationName("AutoSplatoonTests");
@@ -229,6 +362,9 @@ private slots:
         serial->handleResponse(QByteArray(1, char(0x90)));
         QVERIFY(start->isEnabled());
         QTest::mouseClick(start, Qt::LeftButton); QVERIFY(player->isRunning());
+        QVERIFY(!manual->isEnabled());
+        player->pause();
+        QVERIFY(!manual->isEnabled());
         serial->checkHidActivity(serial->lastHidReport + 5001);
         QVERIFY(!player->isRunning()); QVERIFY(serial->isReady());
         QVERIFY(manual->isEnabled()); QVERIFY(!start->isEnabled());

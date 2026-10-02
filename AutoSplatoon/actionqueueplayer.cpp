@@ -25,11 +25,6 @@ int ActionQueuePlayer::currentIndex() const
     return _currentIndex;
 }
 
-int ActionQueuePlayer::totalFrames() const
-{
-    return _plan.frames.size();
-}
-
 void ActionQueuePlayer::start(const DrawPlan& plan)
 {
     _timer.stop();
@@ -97,15 +92,8 @@ void ActionQueuePlayer::playNextFrame()
         } else {
             const int actualElapsed = static_cast<int>(_elapsedTimer.elapsed());
             const int lateBy = actualElapsed - _expectedNextTimeoutMs;
-            if (lateBy > 0) {
-                _maxLateMs = qMax(_maxLateMs, lateBy);
-                _lateFrameCount++;
-                emit timingWarning(_currentIndex, _expectedNextTimeoutMs, actualElapsed, lateBy);
-            }
             if (lateBy > _overrunThresholdMs) {
-                _running = true;
                 _paused = true;
-                _frameActive = false;
                 _skipNextTimingCheck = true;
                 emit sendAction(InputEmulator::NO_INPUT);
                 emit timingOverrun(_currentIndex, lateBy);
@@ -154,8 +142,6 @@ void ActionQueuePlayer::resetState()
     _plan = DrawPlan();
     _currentIndex = 0;
     _expectedNextTimeoutMs = 0;
-    _maxLateMs = 0;
-    _lateFrameCount = 0;
     _running = false;
     _paused = false;
     _pauseRequested = false;

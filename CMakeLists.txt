@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(AutoSplatoon VERSION 1.0.3 LANGUAGES CXX)
+project(AutoSplatoon VERSION 1.0.4 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
@@ -71,7 +71,7 @@ add_library(autosplatoon_core STATIC
     AutoSplatoon/drawingplanner.cpp AutoSplatoon/actionqueueplayer.cpp
     AutoSplatoon/imageprocessor.cpp AutoSplatoon/serialconnection.cpp
     AutoSplatoon/canvasview.cpp AutoSplatoon/flashdialog.cpp
-    AutoSplatoon/mainwindow.cpp AutoSplatoon/resources.qrc)
+    AutoSplatoon/mainwindow.cpp AutoSplatoon/manualcontroldialog.cpp AutoSplatoon/resources.qrc)
 target_include_directories(autosplatoon_core PUBLIC AutoSplatoon ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(autosplatoon_core PUBLIC Qt6::Widgets Qt6::SerialPort Qt6::Concurrent Qt6::Svg ${OpenCV_LIBS})
 if(MSVC)

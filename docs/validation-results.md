@@ -57,3 +57,15 @@ v1.0.2 正式任务 [36883580496](https://github.com/YaleCheng404/AutoSplatoon/a
 首次 Release 创建遇到 GitHub HTTP 500，仅重试发布后成功。四份原生安装包与 SHA256SUMS.txt 已正式公开，逐项对照 GitHub 服务端资产 digest 校验一致，清单见 [release-assets-v1.0.3.sha256](release-assets-v1.0.3.sha256)。发布地址：[v1.0.3](https://github.com/YaleCheng404/AutoSplatoon/releases/tag/v1.0.3)。
 
 这些结果覆盖云端编译、模拟和部署运行，不代替 macOS/Linux 真实桌面交互、物理跨屏或其他硬件组合验收；Windows 用户实机反馈范围见上文。
+
+## 2026-10-02 v1.0.4 手动控制布局与代码精简
+
+保留 18 个鼠标控制按钮，按 ClubchatGames 分区排列；使用现有九张图标，Git blob SHA 与参考提交 af2bdace90e0f0641aa4e21e0a24ca998a676ad0 相同。移除未使用的输入编码、六份遗留资源，以及播放器无人使用的查询、通知和只写统计。构建和发布脚本检查未发现需要改写的明显冗余，保留原实现。
+
+Windows 本地 Release 构建成功。QtTest 共 48 项通过、0 失败、0 跳过；CTest 在 100%、125%、150%、200%、250%、300% 六档缩放全部通过。新增覆盖全部按钮动作、L+R、按住不重复发送、松开/拖出释放、窗口失活、关闭和重新打开、按住时断线关闭、绘图运行/暂停禁用手动控制，以及动作播放器调度超限后暂停并恢复。
+
+浅色、深色、按压高亮及小窗口 offscreen 截图已目视检查；小窗口滚动至 Home 按钮的可达性检查通过。200% 缩放曾发现按钮宽度小于 Qt 最小建议值，已按文字和图标的实际 sizeHint 设置最小尺寸，六档复验通过。手动控制截图见 [manual-control.png](images/manual-control.png)。
+
+现有 GUI 检查的三档分辨率 × 六档缩放共 18 个 offscreen 案例通过，Windows 开发 PATH 已移除，输出图像像素一致；SHA-256 为 `5d654034631f23fd6a762833ca7f1575180f1e97089a44deaa57198273adc43e`。本地日志和截图位于 build/qa/manual-final-*、build/qa/manual-final-tests.txt、build/qa/manual-gui-final/。
+
+此次未连接 ESP32 或 Switch；断线、配对状态和烧录检查使用现有模拟测试。未执行 macOS/Linux 原生构建、真实桌面跨屏或新版本实机验证。实现验证时依赖、固件和软件版本不变。用户随后确认“检查没问题了”，授权打包、推送和更新文档；发布准备将软件版本提升为 1.0.4，依赖和固件不变。该确认没有附新的逐项实机测试清单。
