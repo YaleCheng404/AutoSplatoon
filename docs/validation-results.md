@@ -66,6 +66,22 @@ Windows 本地 Release 构建成功。QtTest 共 48 项通过、0 失败、0 跳
 
 浅色、深色、按压高亮及小窗口 offscreen 截图已目视检查；小窗口滚动至 Home 按钮的可达性检查通过。200% 缩放曾发现按钮宽度小于 Qt 最小建议值，已按文字和图标的实际 sizeHint 设置最小尺寸，六档复验通过。手动控制截图见 [manual-control.png](images/manual-control.png)。
 
-现有 GUI 检查的三档分辨率 × 六档缩放共 18 个 offscreen 案例通过，Windows 开发 PATH 已移除，输出图像像素一致；SHA-256 为 `5d654034631f23fd6a762833ca7f1575180f1e97089a44deaa57198273adc43e`。本地日志和截图位于 build/qa/manual-final-*、build/qa/manual-final-tests.txt、build/qa/manual-gui-final/。
+现有 GUI 检查的三档分辨率 × 六档缩放共 18 个 offscreen 案例通过，Windows 开发 PATH 已移除，输出图像像素一致；SHA-256 为 `5d654034631f23fd6a762833ca7f1575180f1e97089a44deaa57198273adc43e`。原始本地日志和截图生成于 build/qa/；清理后保留的测试、构建日志和发行包 GUI 检查结果位于 dist/v1.0.4/validation/。
 
 此次未连接 ESP32 或 Switch；断线、配对状态和烧录检查使用现有模拟测试。未执行 macOS/Linux 原生构建、真实桌面跨屏或新版本实机验证。实现验证时依赖、固件和软件版本不变。用户随后确认“检查没问题了”，授权打包、推送和更新文档；发布准备将软件版本提升为 1.0.4，依赖和固件不变。该确认没有附新的逐项实机测试清单。
+
+### v1.0.4 本地打包与推送
+
+2026-10-02，使用项目固定 MinGW 编译器的发行构建目录重新构建并通过 CTest。CPack 生成 Windows x64 ZIP；解压后的安装包通过固件 SHA-256、内置 esptool 5.4.0 以及清除开发 PATH 的 18 个 GUI 案例，输出图像与原基线一致。本地 ZIP SHA-256：`3f11650703f56d74b5688d9129dbd0fd9dd266c7c89a13b9d71c599bc8260ad6`。
+
+源码提交 f2fead2 和 v1.0.4 标签已推送；[多平台发布工作流](https://github.com/YaleCheng404/AutoSplatoon/actions/runs/36957441464)负责原生构建与发布。云端最终检查已通过，详见下方正式发布结果。
+
+清理旧构建中间文件、旧安装包、解压验证目录和下载缓存，释放约 2.30 GiB；保留当前 ZIP、校验清单、验证日志及 Qt SDK、固定编译器、构建工具。源码和内置固件不在清理范围。
+
+### v1.0.4 正式发布结果
+
+2026-10-02，[GitHub Actions 36957441464](https://github.com/YaleCheng404/AutoSplatoon/actions/runs/36957441464) 全部通过：Windows x64、macOS ARM64、Linux x64 原生构建、六档缩放测试、安装包校验与 GUI 检查；Linux X11 / Wayland 启动，以及 Ubuntu 24.04 / Debian 12 无 Qt SDK、无 Python 开发环境的容器启动检查成功。
+
+[正式 Release v1.0.4](https://github.com/YaleCheng404/AutoSplatoon/releases/tag/v1.0.4) 已公开 Windows ZIP、macOS DMG、Linux AppImage 和目录压缩包及 SHA256SUMS.txt。下载的清单与 GitHub 服务端全部资产 digest 逐项一致，保存于 [release-assets-v1.0.4.sha256](release-assets-v1.0.4.sha256)。本地 Windows ZIP 与云端 ZIP 分别构建，使用各自的校验清单。
+
+上述结果涵盖编译、模拟和部署运行；本版本未新增逐项 Switch 实机或物理跨屏验证记录。
