@@ -1,4 +1,4 @@
-"""Check a staged package, without Qt or a Python runtime installed in it."""
+"""Verify a packaged application, plugins, firmware and bundled esptool."""
 import argparse
 import hashlib
 import json

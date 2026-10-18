@@ -56,7 +56,8 @@ add_library(autosplatoon_core STATIC
     AutoSplatoon/imageprocessor.cpp AutoSplatoon/serialconnection.cpp
     AutoSplatoon/canvasview.cpp AutoSplatoon/flashdialog.cpp
     AutoSplatoon/mainwindow.cpp AutoSplatoon/manualcontroldialog.cpp AutoSplatoon/resources.qrc)
-target_include_directories(autosplatoon_core PUBLIC AutoSplatoon ${OpenCV_INCLUDE_DIRS})
+target_include_directories(autosplatoon_core PUBLIC AutoSplatoon)
+target_include_directories(autosplatoon_core SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(autosplatoon_core PUBLIC Qt6::Widgets Qt6::SerialPort Qt6::Concurrent Qt6::Svg ${OpenCV_LIBS})
 target_compile_definitions(autosplatoon_core PRIVATE AUTOSPLATOON_FIRMWARE_SHA256="${firmware_hash}")
 if(MSVC)
