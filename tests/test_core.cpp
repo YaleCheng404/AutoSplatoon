@@ -244,6 +244,11 @@ private slots:
             for (ImagePreset preset : {ImagePreset::LineArt, ImagePreset::Pencil, ImagePreset::Threshold, ImagePreset::Dither}) {
                 ProcessOptions options; options.preset = preset;
                 auto result = processImage(image, options);
+                const auto qa = qEnvironmentVariable("AUTOSPLATOON_QA_OUTPUT");
+                if (!qa.isEmpty()) {
+                    QDir().mkpath(qa);
+                    result.save(qa + QString("/tiny-%1-%2.png").arg(color == Qt::black ? "black" : "white").arg(int(preset)));
+                }
                 if (preset != ImagePreset::Pencil) {
                     QCOMPARE(result.pixelColor(0, 0), color); QCOMPARE(result.pixelColor(319, 119), color);
                 } else {
@@ -265,6 +270,11 @@ private slots:
         for (int mode = 0; mode < 4; ++mode) {
             ProcessOptions options; options.preset = ImagePreset(mode);
             const auto result = processImage(canvas.composition(), options);
+            const auto qa = qEnvironmentVariable("AUTOSPLATOON_QA_OUTPUT");
+            if (!qa.isEmpty()) {
+                QDir().mkpath(qa);
+                result.save(qa + QString("/photo-%1.png").arg(mode));
+            }
             QCOMPARE(result.size(), QSize(320,120));
             QCOMPARE(result, processImage(canvas.composition(), options));
             int black = 0;

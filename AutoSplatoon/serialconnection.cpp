@@ -86,13 +86,12 @@ void SerialController::close()
     if (hidActive) { hidActive = false; emit hidActivityChanged(false); }
     emit connectionChanged(false);
 }
-bool SerialController::write(const QByteArray& bytes)
+void SerialController::write(const QByteArray& bytes)
 {
-    if (!port.isOpen()) return false;
+    if (!port.isOpen()) return;
     const qint64 written = port.write(bytes);
-    if (written != bytes.size()) { fail(tr("串口写入失败：") + port.errorString()); return false; }
-    if (port.bytesToWrite() > 256) { fail(tr("串口积压，绘图已停止。")); return false; }
-    return true;
+    if (written != bytes.size()) { fail(tr("串口写入失败：") + port.errorString()); return; }
+    if (port.bytesToWrite() > 256) fail(tr("串口积压，绘图已停止。"));
 }
 void SerialController::sendAction(quint64 action)
 {

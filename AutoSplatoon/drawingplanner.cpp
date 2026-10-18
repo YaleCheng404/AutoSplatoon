@@ -21,8 +21,7 @@ DrawPlan makeDrawPlan(const QImage& image, int row, int column,
                                              (row % 2 != 0 && x > column))))
                     ++plan.skippedPixels;
             }
-    // Full-width serpentine scanning avoids the old ambiguous zero-distance
-    // sentinel and next-row bounds bugs. Cursor starts at the user's position.
+    // Scan full rows in alternating directions, starting at the user's cursor.
     if (plan.blackPixels > plan.skippedPixels) {
         for (int y = row; y < image.height(); ++y) {
             const int step = y % 2 == 0 ? 1 : -1;

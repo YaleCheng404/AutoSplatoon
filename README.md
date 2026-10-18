@@ -1,14 +1,14 @@
 # AutoSplatoon
 
-将图片转换成 Splatoon 的 **320×120 黑白画布**，通过 ESP32 模拟 Pro Controller 自动绘制。保留原项目的串口协议，更新为 Qt 6 界面、OpenCV 图像处理与自包含发行包。
+将图片转换成 Splatoon 的 **320×120 黑白画布**，通过 ESP32 模拟 Pro Controller 自动绘制。使用 Qt 6 界面和 OpenCV 图像处理，提供自包含发行包。
 
 ![新版工作台（Windows offscreen 渲染）](docs/images/workbench.png)
 
 ## 下载与首次使用
 
-[下载最新 Release](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [构建状态](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml) · [1.0.4 更新说明](docs/release-notes/v1.0.4.md)
+[下载最新 Release](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [构建状态](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml) · [1.0.5 更新说明](docs/release-notes/v1.0.5.md)
 
-发行目标：Windows 10/11 x64 ZIP、macOS 14.4+ Apple Silicon DMG、Linux x64 AppImage/目录压缩包。不提供 Intel macOS。包内包含 Qt 运行库、图片格式插件、esptool 5.4.0 与 UARTSwitchCon 1.2 固件；无需安装 Python 或开发环境。
+发行目标：Windows 10/11 x64 ZIP、macOS 14.4+ Apple Silicon DMG、Linux x64 AppImage/目录压缩包。不提供 Intel macOS。包内包含 Qt 运行库、图片格式插件、esptool 与 UARTSwitchCon 1.2 固件；无需安装 Python 或开发环境。
 
 1. 用可传输数据的 USB 线连接传统 ESP32，选择串口。
 2. 点击“烧录内置固件”。程序先确认芯片，再写入内置 PRO-UART0.bin（地址 0x0）；烧录会覆盖已有固件。失败时检查 USB 线并按住 BOOT 重试。
@@ -49,26 +49,8 @@ Windows/macOS 找不到串口时，先在设备管理器/系统信息确认 USB 
 
 ## 开发与验证
 
-[硬件与故障排查](docs/hardware.md) · [构建与发布说明](docs/building.md) · [验收与验证边界](docs/validation.md) · [本次验证记录](docs/validation-results.md) · [第三方与参考来源](licenses/THIRD_PARTY.md)。依赖固定于 `dependencies.lock.json`。项目使用 C++17、CMake/CTest/CPack，移除 qmake、未使用的网络库及旧实验界面。
+[硬件与故障排查](docs/hardware.md) · [构建与发布](docs/building.md) · [验证方法与范围](docs/validation.md) · [第三方来源与许可证](licenses/THIRD_PARTY.md)。
 
-参考 [jiangotto 原项目](https://github.com/jiangotto/AutoSplatoon)、[zhougz520 的动作队列和串口修复](https://github.com/zhougz520/AutoSplatoon/tree/1309d77af0210cd951d49d7aaf4e2b1e2baf7d1c)、[Exception0x0194](https://github.com/Exception0x0194/AutoSplatoon)、[splatplost](https://github.com/Victrid/splatplost) 和 [img2splat](https://github.com/JonathanNye/img2splat)。借用范围与许可证在第三方声明中记录。
+项目使用 C++17、Qt Widgets、OpenCV、CMake/CTest/CPack。SDK 与下载资产固定在 `dependencies.lock.json`，Python 构建工具固定在 `tools/requirements-build.txt`。运行应用无需 Python 或开发环境。
 
-项目及固件沿用 GPL-3.0，见 LICENSE。用户已反馈 1.0.2 测试无问题；具体型号与逐项硬件覆盖未提供，详见验证记录。构建/模拟测试与用户实机反馈分别记录。
-
-### 1.0.4 手动控制布局
-
-参考 ClubchatGames 重新组织 18 个鼠标控制按钮，加入按压反馈以及失活、关闭和断线释放处理；小窗口支持滚动。清理无用输入编码、旧图标与播放器统计。固件和依赖不变，升级无需重刷。三平台构建、测试及 Linux 容器检查通过，[v1.0.4 安装包](https://github.com/YaleCheng404/AutoSplatoon/releases/tag/v1.0.4)已发布。
-
-### 1.0.3 Linux 发行修复
-
-补齐 offscreen、Wayland 平台及集成插件，部署检查清除 SDK 搜索路径，并在精简 Ubuntu / Debian 容器验证发行包。v1.0.2 的容器检查阻止了发布，1.0.3 为首个完整多平台 Release；固件不变。
-
-### 1.0.2 画布边框
-
-“最终效果”和“调整构图”均显示固定比例的蓝色画布边框，画布外使用灰色背景。拖动或放大图片时超出画布的部分隐藏，便于确认裁切范围。边框只用于预览，不影响导出、绘图像素或构图结果。
-
-### 1.0.1 串口修复
-
-串口握手成功后可以直接进入手动控制，在 Switch 的“更改握法 / 顺序”页面按 L + R 配对。配对之前不会因为没有手柄报告而断开串口；收到蓝牙手柄报告后启用自动绘图。报告中断超过 5 秒时停止绘图，保留串口和手动控制供重新配对。内置固件没有改变，升级软件不需要重新烧录。
-
-UARTSwitchCon 1.2 的 `0x90` 来自定时发送蓝牙 HID 报告的 `send_buttons()`，不是每个串口输入包的确认，见 [对应版本源码](https://github.com/nullstalgia/UARTSwitchCon/blob/1.2/ESP32/source/firmware/main/main.c)。1.0.0 的逐包超时判断已移除，并修复已配对设备持续发送报告时阻塞握手的问题。
+项目采用 GPL-3.0，见 [LICENSE](LICENSE)。固件、字体及依赖的来源和声明随安装包提供。构建、模拟与部署测试的范围见验证文档；真实设备和物理显示器的覆盖取决于具体测试环境。

@@ -1,38 +1,18 @@
 # Third-party software and sources
 
-AutoSplatoon retains the original GPL-3.0 license and attribution.
+AutoSplatoon is distributed under GPL-3.0; see LICENSE.
 
-| Component | Version / source | License / notice |
+| Component | Source | License / notice |
 |---|---|---|
 | Original application | [jiangotto/AutoSplatoon](https://github.com/jiangotto/AutoSplatoon), [wang-ji-yuan fork](https://github.com/wang-ji-yuan/AutoSplatoon) | GPL-3.0, project LICENSE |
-| Action queue and transport reference | [zhougz520 fork](https://github.com/zhougz520/AutoSplatoon/tree/1309d77af0210cd951d49d7aaf4e2b1e2baf7d1c) | GPL-3.0; queue adapted, planner and transport simplified |
-| Manual control layout and retained button icons | [nullstalgia/ClubchatGames, af2bdace90e0f0641aa4e21e0a24ca998a676ad0](https://github.com/nullstalgia/ClubchatGames/tree/af2bdace90e0f0641aa4e21e0a24ca998a676ad0) | GPL-3.0, project LICENSE |
-| Qt | 6.12.0, official SDK | LGPL-3.0 / GPL-3.0; see Qt notices shipped from SDK |
-| OpenCV | 4.14.0, core/imgproc/photo only | Apache-2.0, OpenCV.txt |
-| Chinese glyph fallback | [Noto Sans CJK SC, Sans2.004](https://github.com/notofonts/noto-cjk/tree/Sans2.004) | SIL OFL-1.1, Noto-CJK-OFL.txt; unmodified font embedded for missing system glyphs |
-| esptool | 5.4.0, official standalone executable | GPL-2.0-or-later, esptool.txt; [source](https://github.com/espressif/esptool/tree/v5.4.0) |
-| UARTSwitchCon firmware | 1.2, PRO-UART0.bin | GPL-3.0, UARTSwitchCon.txt; [source](https://github.com/nullstalgia/UARTSwitchCon) |
+| Action queue and serial transport | [zhougz520 fork, 1309d77](https://github.com/zhougz520/AutoSplatoon/tree/1309d77af0210cd951d49d7aaf4e2b1e2baf7d1c) | GPL-3.0, project LICENSE |
+| Manual control layout and icons | [ClubchatGames, af2bdac](https://github.com/nullstalgia/ClubchatGames/tree/af2bdace90e0f0641aa4e21e0a24ca998a676ad0) | GPL-3.0, project LICENSE |
+| Qt | Official SDK pinned in dependencies.lock.json | LGPL-3.0 / GPL-3.0, Qt-LGPL-3.0.txt and SDK notices in Qt-SBOM |
+| OpenCV | [5.0.0](https://github.com/opencv/opencv/tree/5.0.0), core/imgproc/photo and required geometry/flann modules | Apache-2.0, OpenCV.txt; FLANN notices in OpenCV-FLANN.txt; dependency notices installed from OpenCV's licenses component in OpenCV-third-party |
+| Chinese glyph fallback | [Noto Sans CJK SC, Sans2.004](https://github.com/notofonts/noto-cjk/tree/Sans2.004) | SIL OFL-1.1, Noto-CJK-OFL.txt |
+| esptool | [Official standalone releases](https://github.com/espressif/esptool/releases), version pinned in dependencies.lock.json | GPL-2.0-or-later, esptool.txt |
+| UARTSwitchCon firmware | [1.2](https://github.com/nullstalgia/UARTSwitchCon/tree/1.2), PRO-UART0.bin | GPL-3.0, UARTSwitchCon.txt |
 
-The action player preserves the reference fork's frame-boundary pause, generation
-guard against reentrant stop, and timing-overrun protection. Qt signal connections
-are updated to typed connections. The planner keeps only full-width serpentine
-scanning and omits RLE / drawing-while-moving strategies.
+Algorithm references: [OpenCV thresholding](https://docs.opencv.org/5.0.0/d7/d4d/tutorial_py_thresholding.html) and [pencilSketch](https://docs.opencv.org/5.0.0/df/dac/group__photo__render.html). Manual control uses Qt Widgets layouts and [pressed/released signals](https://doc.qt.io/qt-6/qabstractbutton.html). Deployment uses [Qt's CMake deployment API](https://doc.qt.io/qt-6/qt-generate-deploy-app-script.html) and the official linuxdeploy Qt plugin.
 
-Algorithm and workflow references: [OpenCV image thresholding](https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html),
-[OpenCV pencilSketch](https://docs.opencv.org/4.x/df/dac/group__photo__render.html),
-[Exception0x0194 greedy fork](https://github.com/Exception0x0194/AutoSplatoon),
-[splatplost](https://github.com/Victrid/splatplost), [img2splat](https://github.com/JonathanNye/img2splat),
-[amowu desktop/resource fork](https://github.com/amowu/AutoSplatoon).
-No code from the greedy / Bluetooth-only plotters is incorporated.
-
-SDK and build-only release archive URLs, SHA-256 hashes, tool versions and GitHub
-Action commit IDs are recorded in dependencies.lock.json. The build utilities
-linuxdeploy and linuxdeploy-plugin-qt are not installed in application packages.
-
-Manual control follows ClubchatGames `manualcontrol.ui`: shoulder buttons above,
-directional pad on the left, X/Y/A/B on the right, and system buttons below.
-Existing matching PNG assets are embedded without modification. The Qt 6 dialog
-uses layout managers and typed pressed/released connections, following
-[QAbstractButton](https://doc.qt.io/qt-6/qabstractbutton.html) and
-[QEvent](https://doc.qt.io/qt-6/qevent.html). Twitch/IRC, vote handling,
-QSignalMapper and string-based action dispatch are not incorporated.
+Build-only tools (Python, CMake, Ninja, 7-Zip, linuxdeploy) are not installed in application packages. Download URLs and SHA-256 values are recorded in dependencies.lock.json, Python build packages in tools/requirements-build.txt, and GitHub Action commit IDs in .github/workflows/build.yml.

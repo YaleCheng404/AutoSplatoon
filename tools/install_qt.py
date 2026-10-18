@@ -1,15 +1,11 @@
-"""Extract pinned official Qt SDK archives using the existing 7-Zip utility.
-
-Qt 6.12 uses architecture-specific repository directories that aqt 3.3 does
-not resolve. This small installer only handles this project's three SDKs.
-"""
+"""Install the pinned Qt SDK, compiler and official 7-Zip command-line tool."""
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import json
 from pathlib import Path
 import shutil
 import subprocess
-import os
+import tarfile
 from fetch_assets import ROOT, download
 
 
@@ -18,16 +14,23 @@ def main():
     parser.add_argument("--platform", required=True, choices=["windows-amd64", "macos-arm64", "linux-amd64"])
     parser.add_argument("--output", type=Path, default=ROOT / ".deps" / "qt")
     args = parser.parse_args()
-    sevenzip = shutil.which("7z") or shutil.which("7zz") or shutil.which("7za")
-    if not sevenzip and os.name == "nt":
-        candidate = Path(os.environ["ProgramFiles"]) / "7-Zip" / "7z.exe"
-        if candidate.is_file():
-            sevenzip = str(candidate)
-    if not sevenzip:
-        raise RuntimeError("Install 7-Zip / p7zip before installing the build SDK")
     lock = json.loads((ROOT / "dependencies.lock.json").read_text())
     assets = lock["qt"]["sdk"][args.platform]
     cache = ROOT / ".deps" / "downloads" / args.platform
+
+    extractor = lock["build"]["sevenzip"]["assets"][args.platform]
+    archive = cache / extractor["name"]
+    download(extractor["url"], archive, extractor["sha256"])
+    if args.platform == "windows-amd64":
+        sevenzip = archive.resolve()
+    else:
+        directory = ROOT / ".deps" / "7zip"
+        directory.mkdir(parents=True, exist_ok=True)
+        with tarfile.open(archive) as bundle:
+            bundle.extractall(directory, filter="data")
+        sevenzip = directory / "7zz"
+        sevenzip.chmod(0o755)
+    sevenzip = str(sevenzip)
 
     def fetch(asset):
         path = cache / asset["name"]

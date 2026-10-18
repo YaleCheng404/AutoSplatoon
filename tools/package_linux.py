@@ -26,6 +26,9 @@ shutil.copy2(ROOT / "LICENSE", appdir / "usr" / "share" / "autosplatoon" / "LICE
 shutil.copy2(ROOT / "README.md", appdir / "usr" / "share" / "autosplatoon" / "README.md")
 shutil.copy2(ROOT / "dependencies.lock.json", appdir / "usr" / "share" / "autosplatoon" / "dependencies.lock.json")
 shutil.copytree(args.qt / "sbom", appdir / "usr" / "share" / "autosplatoon" / "licenses" / "Qt-SBOM", dirs_exist_ok=True)
+subprocess.run(["cmake", "--install", str(build / "_deps" / "opencv-build"),
+                "--component", "licenses", "--prefix", str(build / "opencv-licenses")], check=True)
+shutil.copytree(build / "opencv-licenses", appdir / "usr" / "share" / "autosplatoon" / "licenses" / "OpenCV-third-party", dirs_exist_ok=True)
 lock = json.loads((ROOT / "dependencies.lock.json").read_text())
 for asset in lock["appimage"].values():
     path = build / asset["name"]

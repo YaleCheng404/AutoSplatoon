@@ -1,1 +1,1 @@
-`fruits.jpg` is copied unchanged from [OpenCV 4.14.0 samples/data](https://github.com/opencv/opencv/blob/4.14.0/samples/data/fruits.jpg), downloaded as part of the SHA-256 pinned source archive in dependencies.lock.json. It is used only as a test input. OpenCV's repository license is recorded in licenses/OpenCV.txt.
+`fruits.jpg` is copied unchanged from [OpenCV 4.14.0 samples/data](https://github.com/opencv/opencv/blob/4.14.0/samples/data/fruits.jpg). It remains a fixed test input across dependency upgrades. OpenCV's repository license is recorded in licenses/OpenCV.txt.

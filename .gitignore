@@ -2,5 +2,7 @@
 /.deps/
 /dist/
 __pycache__/
-aqtinstall.log
+*.pyc
 *.user
+.DS_Store
+Thumbs.db

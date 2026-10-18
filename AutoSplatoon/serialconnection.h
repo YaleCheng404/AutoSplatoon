@@ -28,7 +28,7 @@ private:
     void handleResponse(const QByteArray& bytes);
     void checkHidActivity(qint64 now);
     void fail(const QString& reason);
-    bool write(const QByteArray& bytes);
+    void write(const QByteArray& bytes);
     QSerialPort port;
     QTimer syncTimeout, replyTimer, hidTimer;
     QElapsedTimer clock;

@@ -33,7 +33,7 @@ QByteArray verifiedFirmware()
     if (!file.open(QIODevice::ReadOnly)) throw std::runtime_error("Bundled firmware is missing");
     const QByteArray data = file.readAll();
     if (QCryptographicHash::hash(data, QCryptographicHash::Sha256).toHex() !=
-        "d8b2e49b221bb363ef1d72908582ce48690e3b9538500aeb77f470b433b66039")
+        AUTOSPLATOON_FIRMWARE_SHA256)
         throw std::runtime_error("Firmware checksum mismatch");
     return data;
 }

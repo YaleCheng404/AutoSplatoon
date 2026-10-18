@@ -27,6 +27,12 @@ lock = json.loads((resources / "dependencies.lock.json").read_text())
 firmware = resources / "firmware" / "PRO-UART0.bin"
 assert hashlib.sha256(firmware.read_bytes()).hexdigest() == lock["firmware"]["sha256"]
 assert executable.is_file()
+plugins = root / "AutoSplatoon.app" / "Contents" / "PlugIns" if args.platform == "macos-arm64" else root
+assert any(plugins.rglob("*qoffscreen*")), "Missing offscreen platform plugin"
+assert any(plugins.rglob("*qsvg*")), "Missing SVG plugin"
+if args.platform == "linux-amd64":
+    assert any(plugins.rglob("*qwayland*")), "Missing Wayland platform plugin"
+assert (resources / "licenses" / "OpenCV-third-party").is_dir(), "Missing OpenCV dependency notices"
 tool = (resources if args.platform == "macos-arm64" else executable.parent) / "tools" / ("esptool.exe" if args.platform == "windows-amd64" else "esptool")
 result = subprocess.run([str(tool), "version"], capture_output=True, text=True, check=True, timeout=30)
 assert lock["esptool"]["version"] in result.stdout
