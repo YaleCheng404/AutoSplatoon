@@ -41,7 +41,9 @@ def main():
     args.output.mkdir(parents=True, exist_ok=True)
     with ThreadPoolExecutor(max_workers=3) as executor:
         for archive in executor.map(fetch, assets):
-            subprocess.run([sevenzip, "x", "-y", str(archive), f"-o{args.output.resolve()}"], check=True, stdout=subprocess.DEVNULL)
+            # Verified Qt SDKs contain framework / .so symlinks pointing to other symlinks.
+            links = ["-snld20"] if args.platform != "windows-amd64" else []
+            subprocess.run([sevenzip, "x", "-y", *links, str(archive), f"-o{args.output.resolve()}"], check=True, stdout=subprocess.DEVNULL)
     platform_folder = {"windows-amd64": "mingw_64", "macos-arm64": "macos", "linux-amd64": "gcc_64"}[args.platform]
     prefix = args.output.resolve()
     if not (prefix / "lib" / "cmake" / "Qt6" / "Qt6Config.cmake").is_file():
