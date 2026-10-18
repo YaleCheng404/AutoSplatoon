@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.25...4.4)
 project(AutoSplatoon VERSION 1.0.5 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -47,6 +47,7 @@ set(CMAKE_AUTORCC ON)
 set(OpenCV_LIBS opencv_core opencv_imgproc opencv_photo)
 set(OpenCV_INCLUDE_DIRS "${OPENCV_CONFIG_FILE_INCLUDE_DIR}")
 foreach(module IN ITEMS core flann geometry imgproc photo)
+    set_target_properties(opencv_${module} PROPERTIES AUTOMOC OFF AUTOUIC OFF AUTORCC OFF)
     list(APPEND OpenCV_INCLUDE_DIRS "${opencv_SOURCE_DIR}/modules/${module}/include")
 endforeach()
 add_library(autosplatoon_core STATIC
