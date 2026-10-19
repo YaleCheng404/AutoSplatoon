@@ -1,0 +1,58 @@
+name: 问题反馈
+description: 反馈图片处理、设备连接或自动绘图中遇到的问题。
+title: "[问题反馈] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈。可以先搜索已有 Issue，并查看 [使用说明](https://github.com/YaleCheng404/AutoSplatoon#readme) 和 [连接排查](https://github.com/YaleCheng404/AutoSplatoon/blob/master/docs/hardware.md)。
+  - type: input
+    id: version
+    attributes:
+      label: AutoSplatoon 版本
+      description: 填写发行包版本；自行编译时填写提交号。
+      placeholder: 例如 v1.0.5
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: 操作系统与版本
+      placeholder: 例如 Windows 11 x64、macOS 15 Apple Silicon、Ubuntu 24.04 x64
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 问题现象
+      description: 描述实际发生的情况，以及你期望的结果。可以拖入截图。
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 按操作顺序填写，并说明问题是每次出现还是偶尔出现。图片处理问题可附原图、预设和参数。
+      placeholder: |
+        1. 打开软件后……
+        2. 点击……
+        3. 出现……
+    validations:
+      required: true
+  - type: textarea
+    id: devices
+    attributes:
+      label: 开发板与主机
+      description: 涉及连接、烧录或绘图时填写板卡型号、Switch 机型、主机系统和游戏版本，记得多少写多少。
+      placeholder: 例如源地 YD-ESP32、Switch 2，以及对应系统和游戏版本
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志或报错
+      description: 粘贴出错前后的软件日志或完整报错。
+      render: text
+  - type: textarea
+    id: additional
+    attributes:
+      label: 补充信息
+      description: 可以补充已经尝试的方法，或拖入截图、录屏及相关文件。

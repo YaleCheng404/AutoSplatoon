@@ -1,0 +1,23 @@
+name: 功能建议
+description: 提出新功能或现有功能的改进建议。
+title: "[功能建议] "
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: 使用场景
+      description: 描述你正在做什么，以及希望解决的问题。
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: 期望的功能
+      description: 描述你希望软件如何工作，可以举一个具体操作例子。
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: 参考或补充
+      description: 可以附其他软件的做法、截图、链接，或你现在采用的替代方法。

@@ -77,7 +77,7 @@ Linux 先检查 `/dev/ttyUSB*` 或 `/dev/ttyACM*` 的所属组。Debian/Ubuntu �
 
 ## 问题反馈和开发说明集中在仓库
 
-遇到问题可以 [提交 Issue](https://github.com/YaleCheng404/AutoSplatoon/issues)。请附软件版本、操作系统、板卡型号、Switch 系统和游戏版本、复现步骤及错误日志，方便判断问题出在哪一步。
+遇到问题可以 [提交 Issue](https://github.com/YaleCheng404/AutoSplatoon/issues/new/choose)，选择“问题反馈”后按表单填写版本、系统、现象和复现步骤。设备相关问题可补充板卡型号、Switch 系统和游戏版本，以及错误日志；改进想法可以选择“功能建议”。
 
 项目使用 C++17、Qt Widgets、OpenCV 和 CMake。依赖版本固定在 `dependencies.lock.json`，构建用 Python 工具固定在 `tools/requirements-build.txt`。发行包已包含运行所需组件。
 
