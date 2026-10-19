@@ -1,0 +1,8 @@
+{
+    "options": "detail=50 denoise=1 thickness=1 threshold=160 invert=false",
+    "pipeline": "CanvasView::composition -> processImage; UI output pixel equality checked",
+    "squid-preset-0.png": "d6cce9f9b177f27fbbc14f52ddd080e349f7bb04c5df2e269f5037cde9c41b45",
+    "squid-preset-1.png": "e9cb76c61c34379f3f817ad1487581ce6b919bcc3577938f1d7b14d12c4e74cb",
+    "squid-preset-2.png": "bb612d009ac185dd03c224513c6fe6ebfd8131069f8baf8f7cefd06cc7b02cf4",
+    "squid-preset-3.png": "ddd6f17e21e90f20d59894fd93f7497740af6a1e8cfd64a4d91421e67c2f6a28"
+}

@@ -1,56 +1,86 @@
-# AutoSplatoon
+# AutoSplatoon 可以自动绘制广场涂鸦
 
-将图片转换成 Splatoon 的 **320×120 黑白画布**，通过 ESP32 模拟 Pro Controller 自动绘制。使用 Qt 6 界面和 OpenCV 图像处理，提供自包含发行包。
+把喜欢的图片变成 Splatoon 广场上的黑白涂鸦。
 
-![新版工作台（Windows offscreen 渲染）](docs/images/workbench.png)
+AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 模拟 Pro Controller，逐步完成绘制。导入后可以拖动、缩放和调整预设，确认结果再开始。图片处理和 PNG 导出可以在电脑上独立使用。
 
-## 下载与首次使用
+[国内代理下载](#国内下载优先使用代理) · [GitHub 官方发行页](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [第一次使用](#首次绘图需要连接和校准) · [硬件与故障排查](docs/hardware.md)
 
-[下载最新 Release](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [构建状态](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml) · [1.0.5 更新说明](docs/release-notes/v1.0.5.md)
+![彩色鱿鱼原图与 AutoSplatoon 清晰线稿输出](docs/images/squid-before-after.png)
 
-发行目标：Windows 10/11 x64 ZIP、macOS 14.4+ Apple Silicon DMG、Linux x64 AppImage/目录压缩包。不提供 Intel macOS。包内包含 Qt 运行库、图片格式插件、esptool 与 UARTSwitchCon 1.2 固件；无需安装 Python 或开发环境。
+上方为彩色鱿鱼构图，下方为清晰线稿效果。
 
-1. 用可传输数据的 USB 线连接传统 ESP32，选择串口。
-2. 点击“烧录内置固件”。程序先确认芯片，再写入内置 PRO-UART0.bin（地址 0x0）；烧录会覆盖已有固件。失败时检查 USB 线并按住 BOOT 重试。
-3. 点击“连接”，进入“手动控制 / 配对”，在 Switch“更改握法 / 顺序”中按 L + R 配对；显示“Switch 手柄通信正常”后可自动绘图。参考 [上游硬件与配对说明](https://github.com/nullstalgia/UARTSwitchCon)。
-4. 打开游戏绘图画布，用手动控制校准到指定起点。坐标从 0 开始；默认左上角 (0,0)。
-5. 导入图片，在“调整构图”标签拖动、滚轮缩放，选择预设，检查结果后开始绘图。按下/释放默认各 70 ms；可暂停、继续或停止，结束可自动保存。
+## 国内下载优先使用代理
 
-没有开发板也能处理图片和导出 PNG。预览、导出和动作计划使用同一黑白结果，缩放窗口与显示器 DPI 不改变画布像素。界面优先使用系统字体，缺少中文字形时使用内置 Noto Sans CJK 回退；使用自适应布局与滚动参数栏，提供浅色、深色及系统主题。
+国内用户优先使用下表的代理链接，通过 [github.sukii.net](https://github.sukii.net/) 下载本仓库的 Release 文件。下表提供 **v1.0.5** 发行包。
 
-## 手动控制 / 配对
+| 系统 | 国内代理下载 · v1.0.5 | 使用条件 |
+| --- | --- | --- |
+| Windows | [ZIP 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.5/AutoSplatoon-1.0.5-Windows-AMD64.zip) | Windows 10/11 x64，完整解压后运行 |
+| macOS | [DMG 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.5/AutoSplatoon-1.0.5-Darwin-arm64.dmg) | macOS 14.4 或更新版本，Apple Silicon |
+| Linux | [AppImage 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.5/AutoSplatoon-linux-x64.AppImage) · [目录包下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.5/AutoSplatoon-linux-x64.tar.gz) | x64；AppImage 和目录包均可选择 |
 
-顶部为 ZL、L、L + R 配对、R、ZR；左侧十字方向键用于移动光标，中央 L3 为左摇杆按压；右侧 ABXY 按 Switch 手柄位置排列，底部为 −、+、截图和 Home。
+[下载 SHA-256 校验清单](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.5/SHA256SUMS.txt) · [GitHub 官方下载与版本记录](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [v1.0.5 更新说明](docs/release-notes/v1.0.5.md)
 
-鼠标按住按钮生效，松开释放；切换窗口、关闭弹窗会释放当前输入，重新打开后需再次按下。串口断开时弹窗关闭。绘图运行和暂停期间均不可进入手动控制；校准光标前请先停止绘图。小窗口可滚动查看全部按钮。
+也可以打开代理首页，粘贴具体的 Release 文件链接后下载。代理输入框需要文件地址，例如包含 `releases/download/` 的 ZIP 或 DMG 链接，GitHub 官方发行页也提供各平台下载。
 
-![手动控制布局（Windows offscreen 渲染）](docs/images/manual-control.png)
+发行包包含 Qt 运行库、图片插件、esptool 和 UARTSwitchCon 1.2 固件，**解压后即可运行**。升级时完整解压新包。
 
-## 图片处理
+## 图片可以调整构图和风格
 
-| 预设 | 用途 |
-|---|---|
-| 清晰线稿（默认） | 保边去噪、自适应阈值、小区域清理，保留连续轮廓 |
-| 铅笔素描 | OpenCV pencilSketch 后转换为黑白，适合照片轮廓 |
-| 纯黑白 | 可调阈值，适合文字和已有线稿 |
-| 经典抖动 | Qt 黑白误差扩散，表达照片明暗 |
+导入图片后，在“调整构图”中拖动位置、滚轮缩放。透明区域会叠到白底，只有蓝框内的画布参与导出和绘制。
 
-可调整细节、去噪、线条粗细、阈值及反色；只显示当前预设使用的参数。默认等比居中，透明区域叠到白底。处理在后台执行，快速调参只展示最新结果。“手绘感”指最终图像效果，绘制动作采用可验证的蛇形扫描。
+![导入鱿鱼图片后的工作台](docs/images/squid-workbench.png)
 
-![同一照片的四预设对比](docs/images/photo-comparison.png)
+四种预设可以直接切换，下面展示同一张鱿鱼构图的处理效果。
 
-对比素材来自 [OpenCV 4.14.0 fruits.jpg](https://github.com/opencv/opencv/blob/4.14.0/samples/data/fruits.jpg)，方形照片等比居中到 320×120 画布，左右留白；图中输出未做额外美化。
+![同一张鱿鱼构图的四种预设输出](docs/images/squid-presets.png)
 
-## 串口与硬件
+| 预设 | 可以先用在哪些图上 |
+| --- | --- |
+| 清晰线稿 | 插画和轮廓清楚的图，默认从这里开始 |
+| 铅笔素描 | 照片，尝试提取明暗和线条 |
+| 纯黑白 | 文字、已有线稿，或想直接控制黑白阈值的图 |
+| 经典抖动 | 需要用黑白点阵表现明暗的照片 |
 
-协议为 19200 波特率、CRC-8 和上游握手。固件 SHA-256：`d8b2e49b221bb363ef1d72908582ce48690e3b9538500aeb77f470b433b66039`，来源和许可证见 [firmware/README.md](firmware/README.md)。支持范围限传统 ESP32；其他 ESP32 系列和 Switch 2 未验证。
+细节、去噪、线条粗细、阈值和反色可以按需调整，界面只显示当前预设用到的参数。预览、导出和绘图计划使用同一份黑白结果，画布保持 320×120 像素。不同素材的表现会有差异，开始绘图前先检查眼睛、细线和小字是否清楚。
 
-Windows/macOS 找不到串口时，先在设备管理器/系统信息确认 USB 转串口芯片，按板卡型号安装 [Silicon Labs CP210x 驱动](https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers) 或 [WCH CH34x 驱动](https://www.wch.cn/downloads/CH341SER_EXE.html)，不要盲目安装全部驱动。Linux 检查 `/dev/ttyUSB*`、`/dev/ttyACM*` 和 `ls -l` 的所属组；Debian/Ubuntu 通常执行 `sudo usermod -aG dialout "$USER"` 后注销并重新登录。不建议以 root 运行应用。AppImage 无 FUSE 时可用 `APPIMAGE_EXTRACT_AND_RUN=1 ./AutoSplatoon-*.AppImage`，或使用目录包中的 AppRun。
+## 首次绘图需要连接和校准
 
-## 开发与验证
+自动绘制需要一块带 USB 转串口的**传统 ESP32**、一根支持数据传输的 USB 线，以及电脑和 Switch。内置固件使用经典蓝牙。板卡选择和接线细节见 [硬件说明](docs/hardware.md)。
 
-[硬件与故障排查](docs/hardware.md) · [构建与发布](docs/building.md) · [验证方法与范围](docs/validation.md) · [第三方来源与许可证](licenses/THIRD_PARTY.md)。
+1. 将开发板连接电脑，刷新并选择串口。
+2. 点击“烧录内置固件”。程序确认芯片后写入 UARTSwitchCon 1.2，**这会覆盖开发板原有固件**。烧录完成后可以重复使用。
+3. 点击“连接”，打开“手动控制 / 配对”。在 Switch 的“更改握法 / 顺序”中，用软件的 **L + R 配对**按钮完成配对，等待“Switch 手柄通信正常”。
+4. 进入游戏绘图界面，校准光标。软件默认起点是左上角 **(0,0)**，主机上的实际位置要与它一致。先用少量像素检查方向和位置。
+5. 导入图片、调整构图和预设，检查黑白结果后开始绘图。过程中可以暂停、继续或停止，结束可自动保存。默认按下和释放各 70 ms，绘图期间保持主机光标和页面稳定。
 
-项目使用 C++17、Qt Widgets、OpenCV、CMake/CTest/CPack。SDK 与下载资产固定在 `dependencies.lock.json`，Python 构建工具固定在 `tools/requirements-build.txt`。运行应用无需 Python 或开发环境。
+### 源地 YD-ESP32 可以连接 Switch 2 绘图
 
-项目采用 GPL-3.0，见 [LICENSE](LICENSE)。固件、字体及依赖的来源和声明随安装包提供。构建、模拟与部署测试的范围见验证文档；真实设备和物理显示器的覆盖取决于具体测试环境。
+我使用源地 YD-ESP32 开发板和 Switch 2 完成了绘图。开发板通过 USB 连接电脑，再通过蓝牙与 Switch 2 配对。
+
+## 手动控制可以配对和校准光标
+
+左侧方向键用于校准光标，右侧 ABXY 按 Switch 手柄位置排列。顶部提供 ZL、L、L + R 配对、R、ZR，中央 L3 为左摇杆按压，底部为 −、+、截图和 Home。
+
+![手动控制布局](docs/images/manual-control.png)
+
+鼠标按住按钮生效，松开释放；切换窗口或关闭弹窗也会释放输入。串口断开时弹窗关闭。重新校准时，先停止绘图再打开手动面板。
+
+## 串口连接需要数据线和对应驱动
+
+找不到串口时，先确认数据线和 USB 转串口芯片。Windows 在设备管理器查看，macOS 在系统信息查看，再按板卡选择 [Silicon Labs CP210x](https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers) 或 [WCH CH34x](https://www.wch.cn/downloads/CH341SER_EXE.html) 驱动。
+
+Linux 先检查 `/dev/ttyUSB*` 或 `/dev/ttyACM*` 的所属组。Debian/Ubuntu 常见做法是运行 `sudo usermod -aG dialout "$USER"`，然后注销并重新登录。AppImage 无 FUSE 时可以运行 `APPIMAGE_EXTRACT_AND_RUN=1 ./AutoSplatoon-*.AppImage`，或使用目录包中的 AppRun。
+
+内置协议采用 19200 波特率、CRC-8 和上游握手。固件 SHA-256 为 `d8b2e49b221bb363ef1d72908582ce48690e3b9538500aeb77f470b433b66039`，来源和许可证见 [firmware/README.md](firmware/README.md)。更多连接问题见 [故障排查](docs/hardware.md#连接问题可以逐项排查)。
+
+## 问题反馈和开发说明集中在仓库
+
+遇到问题可以 [提交 Issue](https://github.com/YaleCheng404/AutoSplatoon/issues)。请附软件版本、操作系统、板卡型号、Switch 系统和游戏版本、复现步骤及错误日志，方便判断问题出在哪一步。
+
+项目使用 C++17、Qt Widgets、OpenCV 和 CMake。依赖版本固定在 `dependencies.lock.json`，构建用 Python 工具固定在 `tools/requirements-build.txt`。发行包已包含运行所需组件。
+
+[构建与发布](docs/building.md) · [验证方法](docs/validation.md) · [构建状态](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml) · [第三方来源与许可证](licenses/THIRD_PARTY.md)
+
+本项目在 [jiangotto/AutoSplatoon](https://github.com/jiangotto/AutoSplatoon) 和相关上游工作基础上继续维护，感谢原作者及贡献者。代码采用 GPL-3.0，见 [LICENSE](LICENSE)。固件、字体和示例图片按各自的来源声明使用，Splatoon 相关角色归 Nintendo 所有。

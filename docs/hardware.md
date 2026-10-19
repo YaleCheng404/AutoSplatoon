@@ -1,12 +1,16 @@
-# 硬件、首次连接与故障排查
+# 开发板通过 USB 和蓝牙连接设备
 
-## 支持范围
+## 开发板需要支持经典蓝牙
 
-使用带 USB 转串口的传统 ESP32 开发板，例如上游支持的 WROOM/WROVER/PICO。内置 UARTSwitchCon 1.2 使用 Bluetooth Classic、UART0 和 19200 波特率；不支持 ESP32-S2/S3/C3/C6，也未验证 Switch 2。参考 [固件来源与哈希](../firmware/README.md) 和 [上游项目说明](https://github.com/nullstalgia/UARTSwitchCon/tree/1.2)。
+使用带 USB 转串口的传统 ESP32 开发板，例如上游支持的 WROOM/WROVER/PICO。内置 UARTSwitchCon 1.2 使用 Bluetooth Classic、UART0 和 19200 波特率；不支持 ESP32-S2/S3/C3/C6。参考 [固件来源与哈希](../firmware/README.md) 和 [上游项目说明](https://github.com/nullstalgia/UARTSwitchCon/tree/1.2)。
 
 通常可直接通过开发板的 USB 转串口连接；自制板或外接串口需按上游及板卡手册确认 UART0、共地和电平，不套用 UART2 固件的接线。USB 线必须支持数据传输。
 
-## 首次使用
+## 源地 YD-ESP32 可以连接 Switch 2 绘图
+
+我使用源地 YD-ESP32 开发板和 Switch 2 完成了绘图。选板时应确认开发板使用支持经典蓝牙的传统 ESP32。
+
+## 首次使用需要烧录和配对
 
 1. 连接开发板，刷新串口，选择对应设备。Windows 常见描述为 CH340/CH9102 或 CP210x；不要根据端口编号认定板卡型号。
 2. 点击“烧录内置固件”。程序释放串口，使用包内 esptool 探测传统 ESP32，再将已校验的合并固件写入 0x0。日志显示成功后关闭烧录窗口。烧录覆盖开发板原有固件。
@@ -18,7 +22,7 @@
 
 手动面板左侧为方向键，右侧为 ABXY；L3 表示左摇杆按压。切换窗口或关闭面板会释放输入，绘图及暂停期间禁用手动面板。
 
-## 故障排查
+## 连接问题可以逐项排查
 
 | 现象 | 检查与处理 |
 |---|---|
