@@ -1,6 +1,7 @@
 /build*/
 /.deps/
 /dist/
+/promotion/
 __pycache__/
 *.pyc
 *.user

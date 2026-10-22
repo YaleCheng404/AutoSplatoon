@@ -35,7 +35,7 @@ private:
     QComboBox *ports, *preset, *theme;
     QSpinBox *detail, *denoise, *thickness, *threshold, *interval, *startRow, *startColumn;
     QCheckBox *inverse, *saveWhenFinished;
-    QPushButton *connectButton, *flashButton, *startButton, *pauseButton, *stopButton, *manualButton, *exportButton;
+    QPushButton *connectButton, *refreshButton, *flashButton, *startButton, *pauseButton, *stopButton, *manualButton, *exportButton;
     QLabel *statistics, *state, *elapsed;
     QProgressBar* progress;
     QScrollArea* parameters;

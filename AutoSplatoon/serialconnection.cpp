@@ -1,5 +1,7 @@
 #include "serialconnection.h"
 #include "inputemulator.h"
+#include <QScopedValueRollback>
+#include <QSignalBlocker>
 
 QByteArray controllerPacket(quint64 action)
 {
@@ -35,12 +37,28 @@ SerialController::SerialController(QObject* parent) : QObject(parent)
     clock.start();
     syncTimeout.setSingleShot(true);
     replyTimer.setSingleShot(true);
+    startupTimer.setSingleShot(true);
+    startupTimer.setTimerType(Qt::PreciseTimer);
     hidTimer.setInterval(250);
     connect(&port, &QSerialPort::readyRead, this, &SerialController::receive);
     connect(&port, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
-        if (error != QSerialPort::NoError && port.isOpen()) fail(port.errorString());
+        if (error != QSerialPort::NoError && port.isOpen() && !changingControlLines && !closing)
+            fail(port.errorString());
     });
-    connect(&syncTimeout, &QTimer::timeout, this, [this] { fail(tr("连接超时，请检查固件和开发板。")); });
+    connect(&syncTimeout, &QTimer::timeout, this, [this] {
+        fail(resetUnavailable ? tr("连接超时，当前串口不支持自动复位；请手动按 RST 后重新连接。")
+                              : tr("连接超时，请检查固件和开发板。"));
+    });
+    connect(&startupTimer, &QTimer::timeout, this, [this] {
+        if (!connecting || !port.isOpen()) return;
+        if (startupPhase == StartupPhase::ResetHeld) {
+            if (!setResetLine(false)) { fail(tr("无法释放 ESP32 复位线：") + port.errorString()); return; }
+            startupPhase = StartupPhase::BootWait;
+            startupTimer.start(1000);
+        } else if (startupPhase == StartupPhase::BootWait) {
+            beginHandshake();
+        }
+    });
     connect(&hidTimer, &QTimer::timeout, this, [this] {
         checkHidActivity(clock.elapsed());
     });
@@ -56,33 +74,84 @@ SerialController::SerialController(QObject* parent) : QObject(parent)
             stage = 3; write(QByteArray(1, char(0xee)));
         } else if (stage == 3 && bytes.contains(char(0x03))) {
             ready = true; syncTimeout.stop(); hidTimer.start();
+            setConnecting(false);
             emit connectionChanged(true);
-            emit message(tr("串口已连接 · 请在 Switch 上配对，可使用手动控制。"));
+            emit message(resetUnavailable
+                ? tr("串口已连接 · 自动复位不可用；无法配对时请手动按 RST。")
+                : tr("串口已连接 · 请在 Switch 上配对，可使用手动控制。"));
             handleResponse(bytes); // HID reports can already follow the controller-type byte.
             sendAction(InputEmulator::NO_INPUT);
         }
     });
 }
+SerialController::~SerialController()
+{
+    const QSignalBlocker blocker(this);
+    close();
+}
+void SerialController::setConnecting(bool value)
+{
+    if (connecting == value) return;
+    connecting = value;
+    emit connectingChanged(value);
+}
+bool SerialController::setResetLine(bool asserted)
+{
+    // DTR stays deasserted so GPIO0 is not held in download mode.
+    // Like esptool HardReset: assert RTS (EN low), then release it.
+    const QScopedValueRollback<bool> guard(changingControlLines, true);
+    return port.setDataTerminalReady(false) && port.setRequestToSend(asserted);
+}
 void SerialController::open(const QString& name)
 {
+    if (connecting) return;
     close();
+    setConnecting(true);
     port.setPortName(name);
     port.setBaudRate(19200);
+    port.setFlowControl(QSerialPort::NoFlowControl);
     if (!port.open(QIODevice::ReadWrite)) { fail(port.errorString()); return; }
-    emit message(tr("正在连接 ESP32…"));
+    if (!setResetLine(true)) {
+        if (port.error() != QSerialPort::UnsupportedOperationError) {
+            fail(tr("无法复位 ESP32：") + port.errorString()); return;
+        }
+        resetUnavailable = true;
+        port.clearError();
+        beginHandshake();
+        return;
+    }
+    startupPhase = StartupPhase::ResetHeld;
+    emit message(tr("正在重启 ESP32…"));
+    startupTimer.start(100);
+}
+void SerialController::beginHandshake()
+{
+    if (!connecting || !port.isOpen()) return;
+    startupPhase = StartupPhase::Idle;
+    port.clear(QSerialPort::Input);
+    if (!connecting || !port.isOpen()) return;
+    response.clear(); stage = 0;
+    emit message(resetUnavailable
+        ? tr("正在连接 ESP32… 自动复位不可用，无法配对时请手动按 RST。")
+        : tr("正在连接 ESP32…"));
     syncTimeout.start(5000);
     write(QByteArray(10, char(0xff)));
 }
 void SerialController::close()
 {
+    const QScopedValueRollback<bool> guard(closing, true);
     const bool wasReady = ready;
     ready = false;
     if (wasReady && port.isOpen()) {
         port.write(controllerPacket(InputEmulator::NO_INPUT));
         port.flush();
     }
-    syncTimeout.stop(); replyTimer.stop(); hidTimer.stop();
+    startupTimer.stop(); syncTimeout.stop(); replyTimer.stop(); hidTimer.stop();
+    if (startupPhase == StartupPhase::ResetHeld && port.isOpen()) setResetLine(false);
+    startupPhase = StartupPhase::Idle;
     port.close(); response.clear(); stage = 0; lastHidReport = -1;
+    resetUnavailable = false;
+    setConnecting(false);
     if (hidActive) { hidActive = false; emit hidActivityChanged(false); }
     emit connectionChanged(false);
 }
@@ -103,6 +172,7 @@ void SerialController::receive()
 }
 void SerialController::handleResponse(const QByteArray& bytes)
 {
+    if (startupPhase != StartupPhase::Idle) return; // Discard ROM/firmware startup output.
     if (ready) {
         for (char byte : bytes) {
             // UARTSwitchCon 1.2 emits 0x90 periodically from send_buttons(),
@@ -127,7 +197,7 @@ void SerialController::checkHidActivity(qint64 now)
     if (ready && hidActive && now - lastHidReport > 5000) {
         hidActive = false;
         emit hidActivityChanged(false);
-        emit message(tr("Switch 手柄通信中断，绘图已停止；串口保留，请重新配对。"));
+        emit message(tr("Switch 手柄通信中断，绘图已停止；无法配对时请断开后重新连接。"));
     }
 }
 void SerialController::fail(const QString& reason)

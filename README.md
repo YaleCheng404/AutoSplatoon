@@ -12,15 +12,15 @@ AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 �
 
 ## 国内下载优先使用代理
 
-国内用户优先使用下表的代理链接，通过 [github.sukii.net](https://github.sukii.net/) 下载本仓库的 Release 文件。下表提供 **v1.0.5** 发行包。
+国内用户优先使用下表的代理链接，通过 [github.sukii.net](https://github.sukii.net/) 下载本仓库的 Release 文件。下表提供 **v1.0.6** 发行包。
 
-| 系统 | 国内代理下载 · v1.0.5 | 使用条件 |
+| 系统 | 国内代理下载 · v1.0.6 | 使用条件 |
 | --- | --- | --- |
-| Windows | [ZIP 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.5/AutoSplatoon-1.0.5-Windows-AMD64.zip) | Windows 10/11 x64，完整解压后运行 |
-| macOS | [DMG 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.5/AutoSplatoon-1.0.5-Darwin-arm64.dmg) | macOS 14.4 或更新版本，Apple Silicon |
-| Linux | [AppImage 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.5/AutoSplatoon-linux-x64.AppImage) · [目录包下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.5/AutoSplatoon-linux-x64.tar.gz) | x64；AppImage 和目录包均可选择 |
+| Windows | [ZIP 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.6/AutoSplatoon-1.0.6-Windows-AMD64.zip) | Windows 10/11 x64，完整解压后运行 |
+| macOS | [DMG 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.6/AutoSplatoon-1.0.6-Darwin-arm64.dmg) | macOS 14.4 或更新版本，Apple Silicon |
+| Linux | [AppImage 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.6/AutoSplatoon-linux-x64.AppImage) · [目录包下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.6/AutoSplatoon-linux-x64.tar.gz) | x64；AppImage 和目录包均可选择 |
 
-[下载 SHA-256 校验清单](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.5/SHA256SUMS.txt) · [GitHub 官方下载与版本记录](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [v1.0.5 更新说明](docs/release-notes/v1.0.5.md)
+[下载 SHA-256 校验清单](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.6/SHA256SUMS.txt) · [GitHub 官方下载与版本记录](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [v1.0.6 更新说明](docs/release-notes/v1.0.6.md)
 
 也可以打开代理首页，粘贴具体的 Release 文件链接后下载。代理输入框需要文件地址，例如包含 `releases/download/` 的 ZIP 或 DMG 链接，GitHub 官方发行页也提供各平台下载。
 
@@ -51,9 +51,11 @@ AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 �
 
 1. 将开发板连接电脑，刷新并选择串口。
 2. 点击“烧录内置固件”。程序确认芯片后写入 UARTSwitchCon 1.2，**这会覆盖开发板原有固件**。烧录完成后可以重复使用。
-3. 点击“连接”，打开“手动控制 / 配对”。在 Switch 的“更改握法 / 顺序”中，用软件的 **L + R 配对**按钮完成配对，等待“Switch 手柄通信正常”。
+3. 点击“连接”，等待开发板重启并完成串口连接，再打开“手动控制 / 配对”。在 Switch 的“更改握法 / 顺序”中，按住软件的 **L + R 配对**按钮，等待“Switch 手柄通信正常”。
 4. 进入游戏绘图界面，校准光标。软件默认起点是左上角 **(0,0)**，主机上的实际位置要与它一致。先用少量像素检查方向和位置。
 5. 导入图片、调整构图和预设，检查黑白结果后开始绘图。过程中可以暂停、继续或停止，结束可自动保存。默认按下和释放各 70 ms，绘图期间保持主机光标和页面稳定。
+
+再次无法配对时，点击“断开连接”再“连接”，等待开发板重启后重新配对，随后校准游戏光标。每次连接都会重启开发板，无需重新烧录固件。
 
 ### 源地 YD-ESP32 可以连接 Switch 2 绘图
 
@@ -73,7 +75,7 @@ AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 �
 
 Linux 先检查 `/dev/ttyUSB*` 或 `/dev/ttyACM*` 的所属组。Debian/Ubuntu 常见做法是运行 `sudo usermod -aG dialout "$USER"`，然后注销并重新登录。AppImage 无 FUSE 时可以运行 `APPIMAGE_EXTRACT_AND_RUN=1 ./AutoSplatoon-*.AppImage`，或使用目录包中的 AppRun。
 
-内置协议采用 19200 波特率、CRC-8 和上游握手。固件 SHA-256 为 `d8b2e49b221bb363ef1d72908582ce48690e3b9538500aeb77f470b433b66039`，来源和许可证见 [firmware/README.md](firmware/README.md)。更多连接问题见 [故障排查](docs/hardware.md#连接问题可以逐项排查)。
+固件来源、适用芯片和校验值见 [内置固件说明](firmware/README.md)。找不到串口、烧录失败或再次无法配对时，可以按 [故障排查](docs/hardware.md#连接问题可以逐项排查) 逐项检查。
 
 ## 问题反馈和开发说明集中在仓库
 

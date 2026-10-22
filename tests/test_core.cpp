@@ -17,6 +17,7 @@
 #include <QLinearGradient>
 #include <QDir>
 #include <QScrollArea>
+#include <QLabel>
 
 class CoreTests : public QObject {
     Q_OBJECT
@@ -354,6 +355,80 @@ private slots:
         QVERIFY(serial.hasHidReports()); QCOMPARE(activity.size(), 3);
         serial.handleResponse(QByteArray(1, char(0x92)));
         QVERIFY(!serial.isReady()); QCOMPARE(failed.size(), 1);
+    }
+    void connectionStartupCanBeCancelled()
+    {
+        SerialController serial;
+        QSignalSpy activity(&serial, &SerialController::hidActivityChanged);
+        QSignalSpy connecting(&serial, &SerialController::connectingChanged);
+        QSignalSpy timeout(&serial.startupTimer, &QTimer::timeout);
+        serial.setConnecting(true);
+        serial.startupPhase = SerialController::StartupPhase::ResetHeld;
+        serial.startupTimer.start(100);
+        serial.handleResponse(QByteArray::fromHex("ffffee039090"));
+        QVERIFY(serial.response.isEmpty()); QVERIFY(!serial.replyTimer.isActive());
+        QVERIFY(!serial.hasHidReports()); QCOMPARE(activity.size(), 0);
+        serial.open("ignored-while-connecting");
+        QVERIFY(serial.isConnecting()); QVERIFY(serial.port.portName().isEmpty());
+        QCOMPARE(connecting.size(), 1);
+        serial.close();
+        QVERIFY(!serial.isConnecting()); QVERIFY(!serial.startupTimer.isActive());
+        QCOMPARE(serial.startupPhase, SerialController::StartupPhase::Idle);
+        QTest::qWait(150); QCOMPARE(timeout.size(), 0);
+        QCOMPARE(connecting.size(), 2); QVERIFY(!serial.isReady());
+    }
+    void failedOpenClearsOldConnection()
+    {
+        SerialController serial;
+        serial.ready = true; serial.hidActive = true; serial.lastHidReport = 42;
+        serial.response = QByteArray::fromHex("0390"); serial.stage = 3;
+        QSignalSpy failed(&serial, &SerialController::failed);
+        QSignalSpy activity(&serial, &SerialController::hidActivityChanged);
+        serial.open("AUTOSPLATOON-NONEXISTENT-PORT");
+        QCOMPARE(failed.size(), 1); QCOMPARE(activity.size(), 1);
+        QVERIFY(!serial.isReady()); QVERIFY(!serial.isConnecting()); QVERIFY(!serial.hasHidReports());
+        QVERIFY(serial.response.isEmpty()); QCOMPARE(serial.stage, 0); QCOMPARE(serial.lastHidReport, -1);
+        QVERIFY(!serial.startupTimer.isActive()); QVERIFY(!serial.syncTimeout.isActive());
+        QVERIFY(!serial.replyTimer.isActive()); QVERIFY(!serial.hidTimer.isActive());
+    }
+    void connectionStartupUi()
+    {
+        AutoSplatoon window; window.show();
+        auto* serial = window.findChild<SerialController*>();
+        auto* ports = window.findChild<QComboBox*>("ports");
+        ports->clear(); ports->addItem("Test port", "AUTOSPLATOON-NONEXISTENT-PORT");
+        auto* connectButton = window.findChild<QPushButton*>("connectButton");
+        auto* refresh = window.findChild<QPushButton*>("refreshButton");
+        auto* flash = window.findChild<QPushButton*>("flashButton");
+        auto* manual = window.findChild<QPushButton*>("manualButton");
+        auto* start = window.findChild<QPushButton*>("startButton");
+        auto* state = window.findChild<QLabel*>("connectionState");
+        serial->setConnecting(true);
+        emit serial->message(QString::fromUtf8("正在重启 ESP32…"));
+        QCOMPARE(connectButton->text(), QString::fromUtf8("连接中…"));
+        QVERIFY(!connectButton->isEnabled()); QVERIFY(!ports->isEnabled());
+        QVERIFY(!refresh->isEnabled()); QVERIFY(!flash->isEnabled());
+        QVERIFY(!manual->isEnabled()); QVERIFY(!start->isEnabled());
+        QTest::mouseClick(connectButton, Qt::LeftButton);
+        QVERIFY(serial->isConnecting());
+        QImage image(320,120,QImage::Format_RGB32); image.fill(Qt::black);
+        window.loadImage(image);
+        QTRY_VERIFY_WITH_TIMEOUT(!window.outputImage().isNull(), 10000);
+        QCOMPARE(state->text(), QString::fromUtf8("正在重启 ESP32…"));
+        // Simulated handshake completion checks UI transitions, not hardware reset.
+        serial->ready = true; serial->setConnecting(false); emit serial->connectionChanged(true);
+        QCOMPARE(connectButton->text(), QString::fromUtf8("断开连接"));
+        QVERIFY(connectButton->isEnabled()); QVERIFY(manual->isEnabled());
+        QVERIFY(!start->isEnabled()); QVERIFY(!ports->isEnabled());
+        serial->handleResponse(QByteArray(1, char(0x90))); QVERIFY(start->isEnabled());
+        serial->close();
+        serial->setConnecting(true);
+        serial->fail(QString::fromUtf8("测试连接失败"));
+        QCOMPARE(state->text(), QString::fromUtf8("测试连接失败"));
+        QCOMPARE(connectButton->text(), QString::fromUtf8("连接"));
+        QVERIFY(connectButton->isEnabled()); QVERIFY(ports->isEnabled());
+        QVERIFY(refresh->isEnabled()); QVERIFY(flash->isEnabled());
+        QVERIFY(!manual->isEnabled()); QVERIFY(!start->isEnabled());
     }
     void pairingAllowsManualButBlocksDrawing()
     {

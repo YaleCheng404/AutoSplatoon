@@ -11,7 +11,7 @@ body:
     attributes:
       label: AutoSplatoon 版本
       description: 填写发行包版本；自行编译时填写提交号。
-      placeholder: 例如 v1.0.5
+      placeholder: 例如 v1.0.6
     validations:
       required: true
   - type: input

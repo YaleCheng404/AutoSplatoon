@@ -14,7 +14,10 @@ $env:PATH = "$PWD/.deps/venv/Scripts;$PWD/.deps/compiler/mingw64/bin;$PWD/.deps/
 python tools/fetch_assets.py --platform windows-amd64 --output build/release/assets
 cmake --preset release -DCMAKE_PREFIX_PATH="$PWD/.deps/qt" -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
 cmake --build --preset release --parallel 3
-windeployqt --release --no-opengl-sw --no-system-d3d-compiler --no-system-dxc-compiler --include-plugins qoffscreen build/release/autosplatoon_tests.exe
+windeployqt --release --no-opengl-sw --no-system-d3d-compiler --no-system-dxc-compiler --skip-plugin-types generic,networkinformation,tls --include-plugins qoffscreen build/release/autosplatoon_tests.exe
+New-Item -ItemType Directory -Force build/test-temp | Out-Null
+$env:TEMP = (Resolve-Path build/test-temp).Path
+$env:TMP = $env:TEMP
 ctest --preset release
 cmake --install build/release --prefix "$PWD/dist/stage" --component Unspecified
 python tools/verify_package.py dist/stage --platform windows-amd64
@@ -34,7 +37,7 @@ Linux 使用官方 linuxdeploy Qt 插件的 `EXTRA_PLATFORM_PLUGINS` 和 `EXTRA_
 ## 发布
 
 1. 更新 CMake 项目版本，编写该版本的 `docs/release-notes/v<版本>.md`；应用版本由构建配置传入。
-2. 提交源码、依赖锁、资源和文档，推送 `master`。build、dist、.deps 不提交。
+2. 逐项检查并提交本次发布所需的源码、测试、构建配置和文档。程序必需的资源及许可证继续保留；构建目录、发行包、验证日志和宣传素材留在本地。
 3. 推送与项目版本相符的 `v<版本>` 标签。三平台构建、测试、最终包验证及 Linux 容器检查全部通过后，工作流统一发布 Windows ZIP、macOS DMG、Linux AppImage、目录压缩包和 `SHA256SUMS.txt`。
 4. 下载校验清单，对照各资产 SHA-256；保持已发布标签不可变。
 

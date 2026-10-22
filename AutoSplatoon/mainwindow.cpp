@@ -130,10 +130,12 @@ AutoSplatoon::AutoSplatoon(QWidget* parent) : QMainWindow(parent), serial(this),
     auto* device = new QGroupBox(tr("ESP32 设备"));
     auto* deviceLayout = new QVBoxLayout(device);
     ports = new QComboBox; ports->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    ports->setObjectName("ports");
     ports->setMinimumContentsLength(14);
-    auto* refresh = button(tr("刷新串口"));
-    deviceLayout->addWidget(ports); deviceLayout->addWidget(refresh);
-    connectButton = button(tr("连接")); flashButton = button(tr("烧录内置固件"));
+    refreshButton = button(tr("刷新串口"), "refreshButton");
+    deviceLayout->addWidget(ports); deviceLayout->addWidget(refreshButton);
+    connectButton = button(tr("连接"), "connectButton"); flashButton = button(tr("烧录内置固件"), "flashButton");
+    connectButton->setToolTip(tr("连接时自动重启 ESP32；无法配对时先断开再连接，然后在 Switch 上重新配对。"));
     manualButton = button(tr("手动控制 / 配对"), "manualButton");
     deviceLayout->addWidget(connectButton); deviceLayout->addWidget(flashButton); deviceLayout->addWidget(manualButton);
     auto* driver = new QLabel(tr("未出现串口？检查数据线和驱动。<br>Linux 串口权限需加入 dialout 组。<br>"
@@ -171,14 +173,15 @@ AutoSplatoon::AutoSplatoon(QWidget* parent) : QMainWindow(parent), serial(this),
     workbench->setWidgetResizable(true); workbench->setFrameShape(QFrame::NoFrame);
     workbench->setWidget(central); setCentralWidget(workbench);
     state = new QLabel(tr("未连接 · 可离线处理图片")); statusBar()->addWidget(state, 1);
+    state->setObjectName("connectionState");
     debounce.setSingleShot(true); debounce.setInterval(80);
     connect(&debounce, &QTimer::timeout, this, &AutoSplatoon::runProcessing);
     connect(&worker, &QFutureWatcher<ProcessResult>::finished, this, [this] {
         const auto result = worker.result();
         if (workingGeneration != generation) { debounce.start(); return; }
         processing = false;
-        if (!result.error.isEmpty()) { state->setText(result.error); output = {}; }
-        else { output = result.image; resultView->setImage(output); state->setText(tr("图片处理完成")); }
+        if (!result.error.isEmpty()) { if (!serial.isConnecting()) state->setText(result.error); output = {}; }
+        else { output = result.image; resultView->setImage(output); if (!serial.isConnecting()) state->setText(tr("图片处理完成")); }
         updatePlan(); updateButtons();
     });
     connect(compositionView, &CanvasView::compositionChanged, this, &AutoSplatoon::requestProcessing);
@@ -193,10 +196,12 @@ AutoSplatoon::AutoSplatoon(QWidget* parent) : QMainWindow(parent), serial(this),
         QSettings().setValue("theme", theme->currentIndex()); applyTheme();
     });
     connect(qApp->styleHints(), &QStyleHints::colorSchemeChanged, this, [this] { applyTheme(); });
-    connect(refresh, &QPushButton::clicked, this, &AutoSplatoon::refreshPorts);
+    connect(refreshButton, &QPushButton::clicked, this, &AutoSplatoon::refreshPorts);
     connect(connectButton, &QPushButton::clicked, this, [this] {
+        if (serial.isConnecting()) return;
         if (serial.isReady()) serial.close(); else if (!ports->currentData().toString().isEmpty()) serial.open(ports->currentData().toString());
     });
+    connect(&serial, &SerialController::connectingChanged, this, [this] { updateButtons(); });
     connect(&serial, &SerialController::connectionChanged, this, [this](bool connected) {
         if (!connected && player.isRunning()) player.stop();
         state->setText(connected ? tr("串口已连接 · 等待 Switch 配对") : tr("未连接 · 可离线处理图片")); updateButtons();
@@ -253,6 +258,7 @@ AutoSplatoon::~AutoSplatoon()
 }
 void AutoSplatoon::refreshPorts()
 {
+    if (serial.isConnecting()) return;
     const QString selected = ports->currentData().toString();
     ports->clear();
     for (const auto& port : QSerialPortInfo::availablePorts()) {
@@ -288,7 +294,7 @@ void AutoSplatoon::runProcessing()
     workingGeneration = generation;
     ProcessOptions options{ImagePreset(preset->currentIndex()), detail->value(), denoise->value(), thickness->value(), threshold->value(), inverse->isChecked()};
     const QImage image = compositionView->composition();
-    state->setText(tr("正在处理图片…"));
+    if (!serial.isConnecting()) state->setText(tr("正在处理图片…"));
     worker.setFuture(QtConcurrent::run([image, options] {
         try { return ProcessResult{processImage(image, options), {}}; }
         catch (const std::exception& e) { return ProcessResult{{}, QString::fromUtf8(e.what())}; }
@@ -304,6 +310,7 @@ void AutoSplatoon::updatePlan()
 void AutoSplatoon::updateButtons()
 {
     const bool running = player.isRunning();
+    const bool connecting = serial.isConnecting();
     startButton->setEnabled(!running && !processing && !output.isNull() && serial.isReady() && serial.hasHidReports());
     startButton->setToolTip(serial.isReady() && !serial.hasHidReports() ? tr("请先在 Switch 上配对，收到手柄报告后即可绘图。") : QString());
     pauseButton->setEnabled(running); stopButton->setEnabled(running);
@@ -312,11 +319,12 @@ void AutoSplatoon::updateButtons()
     compositionView->setEnabled(!running);
     findChild<QPushButton*>("importButton")->setEnabled(!running);
     exportButton->setEnabled(!processing && !output.isNull());
-    connectButton->setText(serial.isReady() ? tr("断开连接") : tr("连接"));
-    connectButton->setEnabled(!running && ports->count());
-    ports->setEnabled(!serial.isReady());
-    flashButton->setEnabled(!running && ports->count());
-    manualButton->setEnabled(!running && serial.isReady());
+    connectButton->setText(connecting ? tr("连接中…") : serial.isReady() ? tr("断开连接") : tr("连接"));
+    connectButton->setEnabled(!running && !connecting && ports->count());
+    ports->setEnabled(!serial.isReady() && !connecting);
+    refreshButton->setEnabled(!running && !connecting);
+    flashButton->setEnabled(!running && !connecting && ports->count());
+    manualButton->setEnabled(!running && !connecting && serial.isReady());
 }
 void AutoSplatoon::applyTheme()
 {
@@ -354,11 +362,12 @@ void AutoSplatoon::showGuide()
     guide->setPlainText(tr(
         "1. 用 USB 数据线连接传统 ESP32 开发板，选择串口。\n"
         "2. 首次使用点击“烧录内置固件”；无需另外下载工具或固件。\n"
-        "3. 点击连接，在 Switch 的“更改握法 / 顺序”中进行配对。\n"
+        "3. 点击连接，软件自动重启开发板；连接完成后，在 Switch 的“更改握法 / 顺序”中配对。\n"
         "4. 通过手动控制回到涂鸦界面，清空画布、选择最小画笔、光标移到左上角。\n"
         "5. 导入图片，选择风格并调整构图，最终效果与导出、绘图使用同一图像。\n"
         "6. 点击开始绘图；默认按下和释放各 70 ms，完成后按 − 保存。\n\n"
         "请关闭主机自动休眠。发现错位时停止，清空画布后重新开始。\n"
+        "无法配对时先断开再连接，重新配对后校准游戏光标。\n"
         "无设备也能处理、预览和导出图片。"));
     layout->addWidget(guide);
     auto* close = new QDialogButtonBox(QDialogButtonBox::Ok);
