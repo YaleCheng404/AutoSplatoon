@@ -164,22 +164,22 @@
       "sha256": "ba447149a73cab43fdaf3352d1164f2bd5e96bc01ae6564fbaebd62f1b8eb435"
     },
     "sevenzip": {
-      "version": "26.04",
+      "version": "26.05",
       "assets": {
         "windows-amd64": {
           "name": "7zr.exe",
-          "url": "https://github.com/ip7z/7zip/releases/download/26.04/7zr.exe",
-          "sha256": "256feca8e274e5da655e2a284fabafd9f554365eb164862089dacd4e8276d282"
+          "url": "https://github.com/ip7z/7zip/releases/download/26.05/7zr.exe",
+          "sha256": "9bf582b894dfa665f852d7e9112b02290a1c303c2d95a21fcdc41ffcb03143b7"
         },
         "macos-arm64": {
-          "name": "7z2604-mac.tar.xz",
-          "url": "https://github.com/ip7z/7zip/releases/download/26.04/7z2604-mac.tar.xz",
-          "sha256": "bee04358cbcbc7106273cee0e8d72916db2696c48067a3538c34d8cd6fd16578"
+          "name": "7z2605-mac.tar.xz",
+          "url": "https://github.com/ip7z/7zip/releases/download/26.05/7z2605-mac.tar.xz",
+          "sha256": "12ef6830317743cfd3f0ab1724bde43fcc270d8b6d8564f8c12c2a2b7f993570"
         },
         "linux-amd64": {
-          "name": "7z2604-linux-x64.tar.xz",
-          "url": "https://github.com/ip7z/7zip/releases/download/26.04/7z2604-linux-x64.tar.xz",
-          "sha256": "fc0327ba27e89bd086cf426dff17d77de582953cdbbc10a6576540a06853ffcd"
+          "name": "7z2605-linux-x64.tar.xz",
+          "url": "https://github.com/ip7z/7zip/releases/download/26.05/7z2605-linux-x64.tar.xz",
+          "sha256": "22cf82fcc6eb7474f1d5bb4f02c0f8ebd573a718089d6833dc30f8350a3b232e"
         }
       }
     }

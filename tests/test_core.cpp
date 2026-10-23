@@ -259,6 +259,37 @@ private slots:
             }
         }
     }
+    void pencilRetainsFlatArtwork()
+    {
+        QImage source(320, 120, QImage::Format_RGB32); source.fill(Qt::white);
+        {
+            QPainter p(&source);
+            p.setPen(Qt::NoPen);
+            p.setBrush(QColor("#D9FF43")); p.drawEllipse(20, 20, 80, 80);
+            p.setBrush(QColor("#7547FF")); p.drawEllipse(120, 20, 80, 80);
+            p.setBrush(Qt::NoBrush); p.setPen(QPen(Qt::black, 3));
+            p.drawRect(230, 20, 65, 80);
+        }
+        ProcessOptions options; options.preset = ImagePreset::Pencil;
+        const auto result = processImage(source, options);
+        const auto enlarged = processImage(source.scaled(1280, 480, Qt::IgnoreAspectRatio,
+                                                         Qt::FastTransformation), options);
+        QCOMPARE(result, enlarged);
+        for (const QRect region : {QRect(10, 10, 100, 100), QRect(110, 10, 100, 100),
+                                   QRect(220, 10, 85, 100)}) {
+            int black = 0;
+            for (int y = region.top(); y <= region.bottom(); ++y)
+                for (int x = region.left(); x <= region.right(); ++x)
+                    black += qGray(result.pixel(x, y)) == 0;
+            QVERIFY2(black > 100 && black < region.width() * region.height() / 2,
+                     qPrintable(QString("Flat artwork region %1 retained %2 black pixels")
+                                .arg(region.x()).arg(black)));
+        }
+        QCOMPARE(result.pixelColor(230, 60), QColor(Qt::black));
+        options.threshold = 255;
+        const auto dark = processImage(source, options);
+        QCOMPARE(dark.pixelColor(0, 0), QColor(Qt::black));
+    }
     void photoComparison()
     {
         QImage photo(QFINDTESTDATA("data/fruits.jpg"));

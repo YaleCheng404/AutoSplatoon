@@ -26,7 +26,7 @@ cpack --config build/release/CPackConfig.cmake -B dist
 
 macOS 使用 `macos-arm64` 和 Xcode/Apple Clang，配置时指定 `-DCMAKE_OSX_ARCHITECTURES=arm64`，最低系统版本为 14.4。Linux 使用 `linux-amd64` 和 GCC，构建基线为 Ubuntu 22.04。两者将虚拟环境的 `bin` 和 Qt 的 `bin` 加入 PATH，省略 Windows 编译器参数和 windeployqt。Linux 构建所需系统库清单见工作流；执行 `python tools/package_linux.py --qt /absolute/path/.deps/qt` 生成 AppImage 和目录包。
 
-OpenCV 从锁定源码静态构建 core、imgproc、photo 及其必需的 geometry/flann 依赖。图片格式由 Qt 插件提供。Qt 动态链接，发行包同时携带 Qt SBOM、OpenCV 第三方声明、固件、字体和烧录工具许可证。
+OpenCV 从锁定源码静态构建 core、imgproc、photo 及其必需的 geometry/flann 依赖。图片格式由 Qt 插件提供。Qt 动态链接，发行包携带各组件许可证及 Qt SBOM。MinGW 使用 Qt SDK 对应的 15.1.0 工具链，详见 [Qt 6.12 工具版本](https://wiki.qt.io/Qt_6.12_Tools_and_Versions)。
 
 ## 验证
 
@@ -37,10 +37,8 @@ Linux 使用官方 linuxdeploy Qt 插件的 `EXTRA_PLATFORM_PLUGINS` 和 `EXTRA_
 ## 发布
 
 1. 更新 CMake 项目版本，编写该版本的 `docs/release-notes/v<版本>.md`；应用版本由构建配置传入。
-2. 逐项检查并提交本次发布所需的源码、测试、构建配置和文档。程序必需的资源及许可证继续保留；构建目录、发行包、验证日志和宣传素材留在本地。
+2. 提交源码、测试、构建配置和文档；构建目录、发行包、验证日志和宣传素材由 Git 忽略。
 3. 推送与项目版本相符的 `v<版本>` 标签。三平台构建、测试、最终包验证及 Linux 容器检查全部通过后，工作流统一发布 Windows ZIP、macOS DMG、Linux AppImage、目录压缩包和 `SHA256SUMS.txt`。
 4. 下载校验清单，对照各资产 SHA-256；保持已发布标签不可变。
 
 发布任务使用 GitHub Actions 自带令牌，无需额外发布密钥。目前应用未配置正式代码签名或 macOS 公证。历史版本说明和验证日志保存在 Git、GitHub Releases 与 Actions 中。
-
-确认新版归档可用后，可清理旧 build、临时安装目录、旧版安装包和下载缓存。保留当前发行包及必要日志；.deps 中的 SDK、编译器和虚拟环境可继续使用。

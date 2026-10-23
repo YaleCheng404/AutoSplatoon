@@ -14,13 +14,21 @@ QImage processImage(const QImage& composition, const ProcessOptions& o)
     cv::Mat src(rgb.height(), rgb.width(), CV_8UC3, rgb.bits(), rgb.bytesPerLine());
     cv::Mat gray;
     if (o.preset == ImagePreset::Pencil) {
-        cv::Mat bgr, color;
-        cv::cvtColor(src, bgr, cv::COLOR_RGB2BGR);
+        // Pixel-based sketch parameters must use the drawing resolution.
+        cv::Mat drawing, bgr, color, luminance, edges;
+        cv::resize(src, drawing, cv::Size(320, 120), 0, 0, cv::INTER_AREA);
+        cv::cvtColor(drawing, luminance, cv::COLOR_RGB2GRAY);
+        cv::cvtColor(drawing, bgr, cv::COLOR_RGB2BGR);
         cv::pencilSketch(bgr, gray, color, 20.f + o.detail, .07f, .1f);
+        // Keep dark strokes and flat-colour boundaries for thresholding.
+        luminance.copyTo(gray, luminance < 32);
+        const double edgeThreshold = 20. + (100 - o.detail) / 5.;
+        cv::Canny(luminance, edges, edgeThreshold, edgeThreshold * 3.);
+        gray.setTo(0, edges);
     } else {
         cv::cvtColor(src, gray, cv::COLOR_RGB2GRAY);
+        cv::resize(gray, gray, cv::Size(320, 120), 0, 0, cv::INTER_AREA);
     }
-    cv::resize(gray, gray, cv::Size(320, 120), 0, 0, cv::INTER_AREA);
     if (o.denoise > 0 && o.preset != ImagePreset::Dither) {
         cv::Mat smooth;
         cv::bilateralFilter(gray, smooth, 5, 15. * o.denoise, 3.);

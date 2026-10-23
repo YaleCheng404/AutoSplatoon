@@ -22,7 +22,7 @@ AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 �
 
 [下载 SHA-256 校验清单](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.6/SHA256SUMS.txt) · [GitHub 官方下载与版本记录](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [v1.0.6 更新说明](docs/release-notes/v1.0.6.md)
 
-也可以打开代理首页，粘贴具体的 Release 文件链接后下载。代理输入框需要文件地址，例如包含 `releases/download/` 的 ZIP 或 DMG 链接，GitHub 官方发行页也提供各平台下载。
+也可以在代理首页粘贴包含 `releases/download/` 的具体文件地址，或通过 GitHub 官方发行页下载。
 
 发行包包含 Qt 运行库、图片插件、esptool 和 UARTSwitchCon 1.2 固件，**解压后即可运行**。升级时完整解压新包。
 
@@ -57,9 +57,7 @@ AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 �
 
 再次无法配对时，点击“断开连接”再“连接”，等待开发板重启后重新配对，随后校准游戏光标。每次连接都会重启开发板，无需重新烧录固件。
 
-### 源地 YD-ESP32 可以连接 Switch 2 绘图
-
-我使用源地 YD-ESP32 开发板和 Switch 2 完成了绘图。开发板通过 USB 连接电脑，再通过蓝牙与 Switch 2 配对。
+我使用源地 YD-ESP32 开发板和 Switch 2 完成了绘图，设备与连接恢复实测范围见 [验证说明](docs/validation.md)。
 
 ## 手动控制可以配对和校准光标
 
