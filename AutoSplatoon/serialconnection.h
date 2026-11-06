@@ -27,7 +27,6 @@ signals:
     void failed(const QString& text);
 private:
     friend class CoreTests;
-    void receive();
     void handleResponse(const QByteArray& bytes);
     void checkHidActivity(qint64 now);
     void fail(const QString& reason);

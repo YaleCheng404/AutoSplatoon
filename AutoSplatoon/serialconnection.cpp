@@ -40,7 +40,9 @@ SerialController::SerialController(QObject* parent) : QObject(parent)
     startupTimer.setSingleShot(true);
     startupTimer.setTimerType(Qt::PreciseTimer);
     hidTimer.setInterval(250);
-    connect(&port, &QSerialPort::readyRead, this, &SerialController::receive);
+    connect(&port, &QSerialPort::readyRead, this, [this] {
+        handleResponse(port.readAll());
+    });
     connect(&port, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
         if (error != QSerialPort::NoError && port.isOpen() && !changingControlLines && !closing)
             fail(port.errorString());
@@ -165,10 +167,6 @@ void SerialController::write(const QByteArray& bytes)
 void SerialController::sendAction(quint64 action)
 {
     if (ready) write(controllerPacket(action));
-}
-void SerialController::receive()
-{
-    handleResponse(port.readAll());
 }
 void SerialController::handleResponse(const QByteArray& bytes)
 {

@@ -41,7 +41,6 @@ private:
     QElapsedTimer _elapsedTimer;
     int _currentIndex = 0;
     int _expectedNextTimeoutMs = 0;
-    int _overrunThresholdMs = 25;
     int _generation = 0;
     bool _running = false;
     bool _paused = false;

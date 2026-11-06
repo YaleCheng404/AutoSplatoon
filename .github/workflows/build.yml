@@ -29,25 +29,26 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
         with:
-          python-version: '3.15.0'
-      - name: Build tools
+          python-version: '3.15.2'
+      - name: Ninja
         run: python -m pip install -r tools/requirements-build.txt
       - name: Linux system libraries
         if: runner.os == 'Linux'
         run: |
           sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
           sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y libgl1-mesa-dev libxkbcommon-dev libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-image0 libxcb-render-util0 libxcb-xinerama0 libxcb-shape0 libxcb-xfixes0 libxcb-randr0 libxcb-sync1 libxcb-xkb1 libxcb-glx0 libxcb-util1 libxcomposite1 libxcursor1 libxi6 libxrender1 libsm6 libice6 libwayland-client0 libwayland-cursor0 libwayland-egl1 libegl1 libfontconfig1 xvfb xauth weston
-      - name: Pinned Qt SDK
+      - name: Pinned Qt SDK and CMake
         run: |
-          python tools/install_qt.py --platform ${{ matrix.platform }}
-          echo "QT_ROOT=$GITHUB_WORKSPACE/.deps/qt" >> "$GITHUB_ENV"
-          echo "$GITHUB_WORKSPACE/.deps/qt/bin" >> "$GITHUB_PATH"
+          python tools/install_qt.py --platform ${{ matrix.platform }} | tee build-tools.log
+          grep '^QT_ROOT=' build-tools.log >> "$GITHUB_ENV"
+          sed -n -e 's|^QT_ROOT=\(.*\)$|\1/bin|p' -e 's/^CMAKE_BIN=//p' build-tools.log >> "$GITHUB_PATH"
           if [ "${{ runner.os }}" = Windows ]; then echo "$GITHUB_WORKSPACE/.deps/compiler/mingw64/bin" >> "$GITHUB_PATH"; fi
           if [ "${{ runner.os }}" = Linux ]; then echo "LD_LIBRARY_PATH=$GITHUB_WORKSPACE/.deps/qt/lib" >> "$GITHUB_ENV"; fi
       - name: Bundled esptool
         run: python tools/fetch_assets.py --platform ${{ matrix.platform }} --output build/release/assets
       - name: Configure
         run: |
+          for tool in cmake ctest cpack; do "$tool" --version; done
           extra=()
           if [ "${{ runner.os }}" = Windows ]; then extra+=(-DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++); fi
           if [ "${{ runner.os }}" = macOS ]; then extra+=(-DCMAKE_OSX_ARCHITECTURES=arm64); fi
@@ -60,7 +61,7 @@ jobs:
             windeployqt --release --no-opengl-sw --no-system-d3d-compiler --no-system-dxc-compiler --skip-plugin-types generic,networkinformation,tls --include-plugins qoffscreen build/release/autosplatoon_tests.exe
           fi
           for scale in 1 1.25 1.5 2 2.5 3; do
-            AUTOSPLATOON_QA_OUTPUT="$PWD/build/qa/scale-$scale" QT_QPA_PLATFORM=offscreen QT_SCALE_FACTOR=$scale ctest --preset release
+            AUTOSPLATOON_QA_OUTPUT="$PWD/build/qa/scale-$scale" QT_QPA_PLATFORM=offscreen QT_SCALE_FACTOR=$scale ctest --preset release --no-tests=error
           done
       - name: Package Windows / macOS
         if: runner.os != 'Linux'

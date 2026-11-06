@@ -157,6 +157,26 @@
     }
   },
   "build": {
+    "cmake": {
+      "version": "4.4.5",
+      "assets": {
+        "windows-amd64": {
+          "name": "cmake-4.4.5-windows-x86_64.zip",
+          "url": "https://github.com/Kitware/CMake/releases/download/v4.4.5/cmake-4.4.5-windows-x86_64.zip",
+          "sha256": "326c826486d46a23cf9d5a1c9ee3a567d427bdd02c4a34071937a2a675cff004"
+        },
+        "macos-arm64": {
+          "name": "cmake-4.4.5-macos-universal.tar.gz",
+          "url": "https://github.com/Kitware/CMake/releases/download/v4.4.5/cmake-4.4.5-macos-universal.tar.gz",
+          "sha256": "679e77a96b9ef9484cc6c1445255fc4f84206b48a65420efbedf16bdab55fbff"
+        },
+        "linux-amd64": {
+          "name": "cmake-4.4.5-linux-x86_64.tar.gz",
+          "url": "https://github.com/Kitware/CMake/releases/download/v4.4.5/cmake-4.4.5-linux-x86_64.tar.gz",
+          "sha256": "ed85135c5a5135b45e50423cb406dea04ca3338da0b8ef3c9ede963559680be0"
+        }
+      }
+    },
     "mingw": "15.1.0",
     "mingw_asset": {
       "name": "x86_64-15.1.0-release-posix-seh-msvcrt-rt_v12-rev0.7z",

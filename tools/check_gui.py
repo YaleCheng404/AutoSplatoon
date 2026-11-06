@@ -11,17 +11,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument("executable", type=Path)
 parser.add_argument("--output", type=Path, default=Path("build/qa"))
 args = parser.parse_args()
-if os.name == "nt":
-    ctypes.windll.kernel32.SetErrorMode(3)  # Tests must never spawn loader error dialogs.
 environment = os.environ.copy()
 for variable in ["LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH", "QT_PLUGIN_PATH", "QT_QPA_PLATFORM_PLUGIN_PATH", "QTDIR"]:
     environment.pop(variable, None)
-if os.name != "nt":
-    environment["PATH"] = "/usr/bin:/bin"
 if os.name == "nt":
+    ctypes.windll.kernel32.SetErrorMode(3)  # Suppress loader error dialogs during tests.
     system_root = os.environ["SystemRoot"]
     environment["PATH"] = system_root + "/System32"
     environment["QT_QPA_FONTDIR"] = system_root + "/Fonts"
+else:
+    environment["PATH"] = "/usr/bin:/bin"
 hashes = set()
 results = []
 for width, height in [(1920, 1080), (2560, 1440), (3840, 2160)]:
@@ -43,4 +42,4 @@ for width, height in [(1920, 1080), (2560, 1440), (3840, 2160)]:
         results.append({"resolution": [width, height], "scale": scale, **metadata})
 assert len(hashes) == 1, "DPI changed output pixels"
 (args.output / "gui-results.json").write_text(json.dumps({"output_sha256": hashes.pop(), "cases": results}, indent=2))
-print(f"Passed {len(results)} offscreen display cases; output identical; development PATH removed on Windows")
+print(f"Passed {len(results)} offscreen display cases with identical output")

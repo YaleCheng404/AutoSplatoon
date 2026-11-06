@@ -92,7 +92,8 @@ void ActionQueuePlayer::playNextFrame()
         } else {
             const int actualElapsed = static_cast<int>(_elapsedTimer.elapsed());
             const int lateBy = actualElapsed - _expectedNextTimeoutMs;
-            if (lateBy > _overrunThresholdMs) {
+            constexpr int overrunThresholdMs = 25;
+            if (lateBy > overrunThresholdMs) {
                 _paused = true;
                 _skipNextTimingCheck = true;
                 emit sendAction(InputEmulator::NO_INPUT);

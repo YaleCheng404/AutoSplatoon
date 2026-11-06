@@ -20,15 +20,15 @@ shutil.copy2(build / "AutoSplatoon", binary / "AutoSplatoon")
 shutil.copytree(build / "assets" / "tools", binary / "tools", dirs_exist_ok=True)
 (binary / "translations").mkdir(exist_ok=True)
 shutil.copy2(args.qt / "translations" / "qtbase_zh_CN.qm", binary / "translations" / "qtbase_zh_CN.qm")
-for folder in ["firmware", "licenses", "docs"]:
-    shutil.copytree(ROOT / folder, appdir / "usr" / "share" / "autosplatoon" / folder, dirs_exist_ok=True)
-shutil.copy2(ROOT / "LICENSE", appdir / "usr" / "share" / "autosplatoon" / "LICENSE")
-shutil.copy2(ROOT / "README.md", appdir / "usr" / "share" / "autosplatoon" / "README.md")
-shutil.copy2(ROOT / "dependencies.lock.json", appdir / "usr" / "share" / "autosplatoon" / "dependencies.lock.json")
-shutil.copytree(args.qt / "sbom", appdir / "usr" / "share" / "autosplatoon" / "licenses" / "Qt-SBOM", dirs_exist_ok=True)
+resources = appdir / "usr" / "share" / "autosplatoon"
+for folder in ("firmware", "licenses", "docs"):
+    shutil.copytree(ROOT / folder, resources / folder, dirs_exist_ok=True)
+for file in ("LICENSE", "README.md", "dependencies.lock.json"):
+    shutil.copy2(ROOT / file, resources)
+shutil.copytree(args.qt / "sbom", resources / "licenses" / "Qt-SBOM", dirs_exist_ok=True)
 subprocess.run(["cmake", "--install", str(build / "_deps" / "opencv-build"),
                 "--component", "licenses", "--prefix", str(build / "opencv-licenses")], check=True)
-shutil.copytree(build / "opencv-licenses", appdir / "usr" / "share" / "autosplatoon" / "licenses" / "OpenCV-third-party", dirs_exist_ok=True)
+shutil.copytree(build / "opencv-licenses", resources / "licenses" / "OpenCV-third-party", dirs_exist_ok=True)
 lock = json.loads((ROOT / "dependencies.lock.json").read_text())
 for asset in lock["appimage"].values():
     path = build / asset["name"]

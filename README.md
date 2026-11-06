@@ -67,19 +67,11 @@ AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 �
 
 鼠标按住按钮生效，松开释放；切换窗口或关闭弹窗也会释放输入。串口断开时弹窗关闭。重新校准时，先停止绘图再打开手动面板。
 
-## 串口连接需要数据线和对应驱动
-
-找不到串口时，先确认数据线和 USB 转串口芯片。Windows 在设备管理器查看，macOS 在系统信息查看，再按板卡选择 [Silicon Labs CP210x](https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers) 或 [WCH CH34x](https://www.wch.cn/downloads/CH341SER_EXE.html) 驱动。
-
-Linux 先检查 `/dev/ttyUSB*` 或 `/dev/ttyACM*` 的所属组。Debian/Ubuntu 常见做法是运行 `sudo usermod -aG dialout "$USER"`，然后注销并重新登录。AppImage 无 FUSE 时可以运行 `APPIMAGE_EXTRACT_AND_RUN=1 ./AutoSplatoon-*.AppImage`，或使用目录包中的 AppRun。
-
-固件来源、适用芯片和校验值见 [内置固件说明](firmware/README.md)。找不到串口、烧录失败或再次无法配对时，可以按 [故障排查](docs/hardware.md#连接问题可以逐项排查) 逐项检查。
+找不到串口、烧录失败或再次无法配对时，参见 [硬件与故障排查](docs/hardware.md#连接问题可以逐项排查)。Linux 上没有 FUSE 时，可以运行 `APPIMAGE_EXTRACT_AND_RUN=1 ./AutoSplatoon-*.AppImage`，也可使用目录包中的 AppRun。
 
 ## 问题反馈和开发说明集中在仓库
 
 遇到问题可以 [提交 Issue](https://github.com/YaleCheng404/AutoSplatoon/issues/new/choose)，选择“问题反馈”后按表单填写版本、系统、现象和复现步骤。设备相关问题可补充板卡型号、Switch 系统和游戏版本，以及错误日志；改进想法可以选择“功能建议”。
-
-项目使用 C++17、Qt Widgets、OpenCV 和 CMake。依赖版本固定在 `dependencies.lock.json`，构建用 Python 工具固定在 `tools/requirements-build.txt`。发行包已包含运行所需组件。
 
 [构建与发布](docs/building.md) · [验证方法](docs/validation.md) · [构建状态](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml) · [第三方来源与许可证](licenses/THIRD_PARTY.md)
 
