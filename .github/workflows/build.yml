@@ -49,6 +49,7 @@ jobs:
       - name: Configure
         run: |
           for tool in cmake ctest cpack; do "$tool" --version; done
+          "$QT_ROOT/bin/lrelease" -version
           extra=()
           if [ "${{ runner.os }}" = Windows ]; then extra+=(-DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++); fi
           if [ "${{ runner.os }}" = macOS ]; then extra+=(-DCMAKE_OSX_ARCHITECTURES=arm64); fi
