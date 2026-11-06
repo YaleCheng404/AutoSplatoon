@@ -13,6 +13,9 @@ class QPushButton;
 class QLabel;
 class QProgressBar;
 class QScrollArea;
+class QStackedWidget;
+class QTabWidget;
+class QToolButton;
 
 struct ProcessResult { QImage image; QString error; };
 class AutoSplatoon : public QMainWindow {
@@ -23,6 +26,7 @@ public:
     void loadImage(const QImage& image);
     QImage outputImage() const { return output; }
 private:
+    void loadSample(int index);
     void refreshPorts();
     void importImage();
     void requestProcessing();
@@ -36,7 +40,11 @@ private:
     QSpinBox *detail, *denoise, *thickness, *threshold, *interval, *startRow, *startColumn;
     QCheckBox *inverse, *saveWhenFinished;
     QPushButton *connectButton, *refreshButton, *flashButton, *startButton, *pauseButton, *stopButton, *manualButton, *exportButton;
-    QLabel *statistics, *state, *elapsed;
+    QToolButton* importButton;
+    QLabel *pixelCount, *estimate, *actionCount, *state, *connectionState, *elapsed, *completion;
+    QWidget* gallery;
+    QStackedWidget* workspace;
+    QTabWidget* tabs;
     QProgressBar* progress;
     QScrollArea* parameters;
     CanvasView *compositionView, *resultView;

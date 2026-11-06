@@ -6,6 +6,7 @@
 #include "flashdialog.h"
 #include "serialconnection.h"
 #include "manualcontroldialog.h"
+#include "samplelibrary.h"
 #include <QtTest>
 #include <QComboBox>
 #include <QSpinBox>
@@ -18,6 +19,9 @@
 #include <QDir>
 #include <QScrollArea>
 #include <QLabel>
+#include <QAction>
+#include <QCheckBox>
+#include <QToolButton>
 
 class CoreTests : public QObject {
     Q_OBJECT
@@ -161,6 +165,7 @@ private slots:
         QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, settings.path());
         QSettings().setValue("guideSeen", true);
         AutoSplatoon window;
+        QVERIFY(QApplication::font().family().startsWith("Source Han Sans"));
         QVERIFY(QFontMetrics(QApplication::font()).inFontUcs4(0x56fe));
     }
     void plannerReplay_data()
@@ -557,6 +562,56 @@ private slots:
         QVERIFY(!window.findChild<QPushButton*>("startButton")->isEnabled());
         window.resize(800,600); QTest::qWait(10);
         QCOMPARE(window.outputImage().size(), QSize(320,120));
+    }
+    void sampleImportUsesLatestSourceAndDefaults()
+    {
+        AutoSplatoon window;
+        window.show();
+        const auto& samples = sampleLibrary();
+        auto* gallery = window.findChild<QWidget*>("sampleGallery");
+        auto* first = window.findChild<QToolButton*>("squid-party");
+        auto* preset = window.findChild<QComboBox*>("preset");
+        auto* detail = window.findChild<QSpinBox*>("detail");
+        auto* startRow = window.findChild<QSpinBox*>("startRow");
+        auto* player = window.findChild<ActionQueuePlayer*>();
+        auto* connection = window.findChild<QLabel*>("connectionState");
+        auto* serial = window.findChild<SerialController*>();
+        auto* reduce = window.findChild<QCheckBox*>("reduceMotion");
+        auto* help = window.findChild<QPushButton*>("presetHelp");
+        auto* description = window.findChild<QWidget*>("presetDescriptionPanel");
+        QVERIFY(gallery && first && preset && detail && startRow && player && connection && serial && reduce);
+        QVERIFY(help && description);
+        QVERIFY(gallery->isVisible() && first->isEnabled());
+        QSignalSpy commands(player, &ActionQueuePlayer::sendAction);
+        const QString connectionBefore = connection->text();
+        const bool previousMotion = reduce->isChecked();
+        reduce->setChecked(false);
+        help->click();
+        reduce->setChecked(true);
+        QCOMPARE(QSettings().value("ui/reduceMotion").toBool(), true);
+        QCOMPARE(description->maximumHeight(), QWIDGETSIZE_MAX);
+        help->click();
+        QCOMPARE(description->maximumHeight(), 0);
+        preset->setCurrentIndex(3);
+        detail->setValue(10);
+        startRow->setValue(4);
+        QTest::mouseClick(first, Qt::LeftButton);
+        QVERIFY(!gallery->isVisible());
+        QCOMPARE(preset->currentIndex(), 0);
+        QCOMPARE(detail->value(), 50);
+        QCOMPARE(startRow->value(), 4);
+        for (const auto& sample : samples) {
+            auto* action = window.findChild<QAction*>("sampleAction-" + sample.id);
+            QVERIFY(action && action->isEnabled());
+            QCOMPARE(sample.image.size(), QSize(1280, 480));
+            action->trigger();
+        }
+        const auto expected = processImage(samples.back().image, ProcessOptions{});
+        QTRY_COMPARE_WITH_TIMEOUT(window.outputImage(), expected, 12000);
+        QCOMPARE(connection->text(), connectionBefore);
+        QVERIFY(!serial->isReady() && !serial->isConnecting() && !player->isRunning());
+        QCOMPARE(commands.size(), 0);
+        reduce->setChecked(previousMotion);
     }
 };
 QTEST_MAIN(CoreTests)

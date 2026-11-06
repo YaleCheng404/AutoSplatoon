@@ -1,0 +1,39 @@
+{
+    "output": "320x120; black or white; checked against processImage",
+    "samples": {
+        "controller-lines": {
+            "credit": "Zacksly",
+            "output_sha256": {
+                "controller-lines-dither.png": "de1d3a5c4c9d0d6faaef8263a78207819842ec1ed09ca0ad64d45cb112b96f5d",
+                "controller-lines-line-art.png": "fb8ee77156a1a02e261f56cbce0cb58a65120b0b5940681dd1eac73ea0b7ea48",
+                "controller-lines-pencil.png": "3e0927bd03347671260e6643e8f361e9f7cca2a60eb15aec70566aeabd71fa2d",
+                "controller-lines-threshold.png": "27772b5f09577c034beacfe355cd6d892875a6ad77b2b18786b0771d569b6e20"
+            },
+            "source_sha256": "5a182ce34f53edc2f556e0ce60a9cf098acb6a3fa6458e9414babeeb46b83d5d",
+            "title": "手柄线稿"
+        },
+        "ink-party": {
+            "credit": "Mzyy94 / Slidoon, 3070260 / oksmith",
+            "output_sha256": {
+                "ink-party-dither.png": "a9bebe167e9d37f00aa5bdaaccfa805ffadd22f187faea59e13cc6ae2f542073",
+                "ink-party-line-art.png": "18a67344a51fd5ceb81058d9fba78ebbb5e0d73b4503c215a8c5e15c255c8567",
+                "ink-party-pencil.png": "74ae719192b1081d3bc2a7fed78d1a3d6c593e8e7aa05212d24280749aec352d",
+                "ink-party-threshold.png": "444629bf29a805364a576b2ebf901d63efd78d34cf4c5b2d1f2c95c20c9e370e"
+            },
+            "source_sha256": "5d36ffd1d2e9dc35627ea5d4d2afdee6100707c1c46009d6dd50846afed8b8ff",
+            "title": "墨迹派对"
+        },
+        "squid-party": {
+            "credit": "Mzyy94 / Slidoon",
+            "output_sha256": {
+                "squid-party-dither.png": "87bfbfad5539abba2829eb7345ec2d72384c98288755224f12df03f7c3398c55",
+                "squid-party-line-art.png": "8e60631f11aadd1079084725e7414ef70acd0859186e81ed716888c1c89ab335",
+                "squid-party-pencil.png": "676ed24318d7db6508ac5fb323b6f5ca7be346a69fa185ef595e8b342b00ce12",
+                "squid-party-threshold.png": "396d61ada91a2444f770a439ed444fb364975887f9fa2388cfdfd4b0b14f5b86"
+            },
+            "source_sha256": "d50c28e320b9b2fd6eca12ab22f5a6440c909160c784201a17455e5f95dec56d",
+            "title": "鱿鱼集合"
+        }
+    },
+    "settings": "detail=50, denoise=1, thickness=1, threshold=160, invert=false"
+}

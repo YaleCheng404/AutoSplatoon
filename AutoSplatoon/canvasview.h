@@ -7,6 +7,7 @@ class CanvasView : public QGraphicsView {
 public:
     explicit CanvasView(bool editable, QWidget* parent = nullptr);
     void setImage(const QImage& image);
+    void highlightResult();
     void resetComposition();
     QImage composition() const;
 signals:
@@ -22,4 +23,5 @@ private:
     QGraphicsScene scene;
     QGraphicsPixmapItem* item = nullptr;
     QImage original;
+    qreal highlight = 0;
 };

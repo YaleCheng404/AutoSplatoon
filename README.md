@@ -6,21 +6,21 @@ AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 �
 
 [国内代理下载](#国内下载优先使用代理) · [GitHub 官方发行页](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [第一次使用](#首次绘图需要连接和校准) · [硬件与故障排查](docs/hardware.md)
 
-![彩色鱿鱼原图与 AutoSplatoon 清晰线稿输出](docs/images/squid-before-after.png)
+![鱿鱼集合的彩色源图与 AutoSplatoon 清晰线稿输出](docs/images/examples/squid-party-before-after.png)
 
-上方为彩色鱿鱼构图，下方为清晰线稿效果。
+左侧是工作台内置的彩色示例，右侧是软件生成的 320×120 清晰线稿。
 
 ## 国内下载优先使用代理
 
-国内用户优先使用下表的代理链接，通过 [github.sukii.net](https://github.sukii.net/) 下载本仓库的 Release 文件。下表提供 **v1.0.6** 发行包。
+国内用户优先使用下表的代理链接，通过 [github.sukii.net](https://github.sukii.net/) 下载本仓库的 Release 文件。下表提供 **v1.1.0** 发行包。
 
-| 系统 | 国内代理下载 · v1.0.6 | 使用条件 |
+| 系统 | 国内代理下载 · v1.1.0 | 使用条件 |
 | --- | --- | --- |
-| Windows | [ZIP 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.6/AutoSplatoon-1.0.6-Windows-AMD64.zip) | Windows 10/11 x64，完整解压后运行 |
-| macOS | [DMG 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.6/AutoSplatoon-1.0.6-Darwin-arm64.dmg) | macOS 14.4 或更新版本，Apple Silicon |
-| Linux | [AppImage 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.6/AutoSplatoon-linux-x64.AppImage) · [目录包下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.6/AutoSplatoon-linux-x64.tar.gz) | x64；AppImage 和目录包均可选择 |
+| Windows | [ZIP 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-1.1.0-Windows-AMD64.zip) | Windows 10/11 x64，完整解压后运行 |
+| macOS | [DMG 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-1.1.0-Darwin-arm64.dmg) | macOS 14.4 或更新版本，Apple Silicon |
+| Linux | [AppImage 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-linux-x64.AppImage) · [目录包下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-linux-x64.tar.gz) | x64；AppImage 和目录包均可选择 |
 
-[下载 SHA-256 校验清单](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.0.6/SHA256SUMS.txt) · [GitHub 官方下载与版本记录](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [v1.0.6 更新说明](docs/release-notes/v1.0.6.md)
+[下载 SHA-256 校验清单](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/SHA256SUMS.txt) · [GitHub 官方下载与版本记录](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [v1.1.0 更新说明](docs/release-notes/v1.1.0.md)
 
 也可以在代理首页粘贴包含 `releases/download/` 的具体文件地址，或通过 GitHub 官方发行页下载。
 
@@ -28,13 +28,17 @@ AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 �
 
 ## 图片可以调整构图和风格
 
-导入图片后，在“调整构图”中拖动位置、滚轮缩放。透明区域会叠到白底，只有蓝框内的画布参与导出和绘制。
+首次打开时，可以直接载入“鱿鱼集合”“墨迹派对”或“手柄线稿”。已导入图片时，展开“导入图片”右侧的菜单即可切换到内置示例。示例可离线调整和导出。
 
-![导入鱿鱼图片后的工作台](docs/images/squid-workbench.png)
+![工作台的三个内置示例](docs/images/examples/sample-gallery.png)
+
+导入图片后，在“调整构图”中拖动位置、滚轮缩放。透明区域会叠到白底，只有边框内的画布参与导出和绘制。右侧检查器集中了图像风格、ESP32 连接和绘图设置。界面使用思源黑体，支持浅色、深色、跟随系统及“减少动态效果”。
+
+![导入新鱿鱼示例后的工作台](docs/images/examples/workbench-light.png)
 
 四种预设可以直接切换，下面展示同一张鱿鱼构图的处理效果。
 
-![同一张鱿鱼构图的四种预设输出](docs/images/squid-presets.png)
+![新鱿鱼示例的四种预设输出](docs/images/examples/squid-party-presets.png)
 
 | 预设 | 可以先用在哪些图上 |
 | --- | --- |
@@ -44,6 +48,8 @@ AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 �
 | 经典抖动 | 需要用黑白点阵表现明暗的照片 |
 
 细节、去噪、线条粗细、阈值和反色可以按需调整，界面只显示当前预设用到的参数。预览、导出和绘图计划使用同一份黑白结果，画布保持 320×120 像素。不同素材的表现会有差异，开始绘图前先检查眼睛、细线和小字是否清楚。
+
+[查看三组原图、四预设结果和素材署名](docs/images/README.md)
 
 ## 首次绘图需要连接和校准
 
@@ -63,7 +69,7 @@ AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 �
 
 左侧方向键用于校准光标，右侧 ABXY 按 Switch 手柄位置排列。顶部提供 ZL、L、L + R 配对、R、ZR，中央 L3 为左摇杆按压，底部为 −、+、截图和 Home。
 
-![手动控制布局](docs/images/manual-control.png)
+![新版手动控制布局](docs/images/examples/manual-control.png)
 
 鼠标按住按钮生效，松开释放；切换窗口或关闭弹窗也会释放输入。串口断开时弹窗关闭。重新校准时，先停止绘图再打开手动面板。
 

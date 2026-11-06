@@ -1,4 +1,5 @@
 #include "flashdialog.h"
+#include "workbenchstyle.h"
 #include <QApplication>
 #include <QCryptographicHash>
 #include <QFile>
@@ -40,9 +41,11 @@ QByteArray verifiedFirmware()
 FlashDialog::FlashDialog(const QString& name, QWidget* parent, const QString& executable)
     : QDialog(parent), port(name), tool(executable)
 {
+    Q_INIT_RESOURCE(resources);
     setWindowTitle(tr("烧录 ESP32 固件"));
     resize(QSize(640, 460).boundedTo(screen()->availableGeometry().size() - QSize(32, 48)));
     auto* layout = new QVBoxLayout(this);
+    layout->addWidget(WorkbenchStyle::dialogHeading(tr("烧录 ESP32 固件"), tr("UARTSwitchCon 1.2 · UART0"), "squid-purple"));
     auto* description = new QLabel(tr("内置 UARTSwitchCon 1.2 · Pro Controller · UART0\n"
         "目标：%1 · 仅支持传统 ESP32，烧录会覆盖原固件。\n"
         "连接开发板；若连接失败，请按住 BOOT 并重新尝试。").arg(port));
@@ -56,6 +59,7 @@ FlashDialog::FlashDialog(const QString& name, QWidget* parent, const QString& ex
     auto* buttons = new QHBoxLayout;
     start = new QPushButton(tr("烧录内置固件"));
     start->setObjectName("flashStart");
+    start->setProperty("primary", true);
     cancel = new QPushButton(tr("关闭"));
     cancel->setObjectName("flashCancel");
     buttons->addStretch(); buttons->addWidget(start); buttons->addWidget(cancel);

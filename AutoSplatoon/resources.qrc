@@ -2,15 +2,32 @@
   <qresource prefix="/firmware"><file alias="PRO-UART0.bin">../firmware/PRO-UART0.bin</file></qresource>
   <qresource prefix="/icons">
     <file alias="app.svg">app.svg</file>
-    <file>Switch-Control-Up.png</file>
-    <file>Switch-Control-Down.png</file>
-    <file>Switch-Control-Left.png</file>
-    <file>Switch-Control-Right.png</file>
-    <file>Switch-Control-Press.png</file>
-    <file>Switch-Button-Top.png</file>
-    <file>Switch-Button-Left.png</file>
-    <file>Switch-Button-Right.png</file>
-    <file>Switch-Button-Bottom.png</file>
+    <file alias="chevron-up.svg">chevron-up.svg</file>
+    <file alias="chevron-down.svg">chevron-down.svg</file>
+    <file alias="chevron-light.svg">chevron-light.svg</file>
+    <file alias="checkmark.svg">checkmark.svg</file>
   </qresource>
-  <qresource prefix="/fonts"><file alias="NotoSansCJKsc-Regular.otf">fonts/NotoSansCJKsc-Regular.otf</file></qresource>
+  <qresource prefix="/art">
+    <file alias="ink-splash.svg">art/ink-splash.svg</file>
+    <file alias="pad-a.svg">art/pad-a.svg</file>
+    <file alias="pad-b.svg">art/pad-b.svg</file>
+    <file alias="pad-down.svg">art/pad-down.svg</file>
+    <file alias="pad-dpad.svg">art/pad-dpad.svg</file>
+    <file alias="pad-guide.svg">art/pad-guide.svg</file>
+    <file alias="pad-l3.svg">art/pad-l3.svg</file>
+    <file alias="pad-left.svg">art/pad-left.svg</file>
+    <file alias="pad-outline.svg">art/pad-outline.svg</file>
+    <file alias="pad-right.svg">art/pad-right.svg</file>
+    <file alias="pad-up.svg">art/pad-up.svg</file>
+    <file alias="pad-x.svg">art/pad-x.svg</file>
+    <file alias="pad-y.svg">art/pad-y.svg</file>
+    <file alias="paint-roller.svg">art/paint-roller.svg</file>
+    <file alias="pattern-dots.png">art/pattern-dots.png</file>
+    <file alias="pattern-lines.png">art/pattern-lines.png</file>
+    <file alias="splatter-purple.svg">art/splatter-purple.svg</file>
+    <file alias="squid-blue.svg">art/squid-blue.svg</file>
+    <file alias="squid-purple.svg">art/squid-purple.svg</file>
+    <file alias="squid-yellow.svg">art/squid-yellow.svg</file>
+  </qresource>
+  <qresource prefix="/fonts"><file alias="SourceHanSansCN-VF.ttf">fonts/SourceHanSansCN-VF.ttf</file></qresource>
 </RCC>

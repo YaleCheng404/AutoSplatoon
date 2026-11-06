@@ -1,4 +1,5 @@
 #include "canvasview.h"
+#include "workbenchstyle.h"
 #include <QPainter>
 #include <QPainterPath>
 #include <QWheelEvent>
@@ -28,16 +29,33 @@ void CanvasView::drawForeground(QPainter* painter, const QRectF& rect)
     outside.addRect(rect);
     canvas.addRect(scene.sceneRect());
     painter->fillPath(outside.subtracted(canvas), palette().brush(QPalette::Mid));
-    QPen border(QColor("#6c83b5"), 2);
+    QPen border(palette().dark().color(), 1);
     border.setCosmetic(true);
     painter->setPen(border);
     painter->setBrush(Qt::NoBrush);
     painter->drawRect(scene.sceneRect());
+    if (highlight > 0) {
+        QColor ink("#9D6AFF");
+        ink.setAlphaF(highlight);
+        QPen pulse(ink, 5);
+        pulse.setCosmetic(true);
+        painter->setPen(pulse);
+        painter->drawRect(scene.sceneRect());
+    }
+}
+void CanvasView::highlightResult()
+{
+    UiMotion::instance().animate(viewport(), .62, 0, 150, [this](qreal opacity) {
+        highlight = opacity;
+        viewport()->update();
+    });
 }
 void CanvasView::setImage(const QImage& image)
 {
     original = image;
     scene.clear();
+    item = nullptr;
+    if (image.isNull()) return;
     item = scene.addPixmap(QPixmap::fromImage(image));
     item->setFlag(QGraphicsItem::ItemIsMovable, editable);
     resetComposition();
@@ -48,7 +66,7 @@ void CanvasView::resetComposition()
     double scale = std::min(320. / original.width(), 120. / original.height());
     item->setScale(scale);
     item->setPos((320 - original.width() * scale) / 2, (120 - original.height() * scale) / 2);
-    fitInView(scene.sceneRect(), Qt::KeepAspectRatio);
+    fitInView(scene.sceneRect().adjusted(-7, -7, 7, 7), Qt::KeepAspectRatio);
     if (editable) emit compositionChanged();
 }
 QImage CanvasView::composition() const
@@ -67,7 +85,7 @@ QImage CanvasView::composition() const
 void CanvasView::resizeEvent(QResizeEvent* event)
 {
     QGraphicsView::resizeEvent(event);
-    fitInView(scene.sceneRect(), Qt::KeepAspectRatio);
+    fitInView(scene.sceneRect().adjusted(-7, -7, 7, 7), Qt::KeepAspectRatio);
 }
 void CanvasView::wheelEvent(QWheelEvent* event)
 {

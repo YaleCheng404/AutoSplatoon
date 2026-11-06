@@ -1,0 +1,184 @@
+[
+  {
+    "file": "squid-yellow.svg",
+    "source": "https://github.com/mzyy94/Slidoon/blob/bb718e8a3189e8a3685de0e051ecc8a25271e1e2/original/squid.svg",
+    "author": "Mzyy94",
+    "license": "CC-BY-SA-4.0",
+    "original_sha256": "f3b5701160b61dc02d6b418b7e9e19a1c061bb00e149003c17a004ecd4624dfd",
+    "changes": "Removed external DTD and adapted the green body palette.",
+    "use": "Brand, guide artwork and example compositions"
+  },
+  {
+    "file": "squid-purple.svg",
+    "source": "https://github.com/mzyy94/Slidoon/blob/bb718e8a3189e8a3685de0e051ecc8a25271e1e2/original/squid.svg",
+    "author": "Mzyy94",
+    "license": "CC-BY-SA-4.0",
+    "original_sha256": "f3b5701160b61dc02d6b418b7e9e19a1c061bb00e149003c17a004ecd4624dfd",
+    "changes": "Removed external DTD and adapted the green body palette.",
+    "use": "Completion badge, flash heading and squid example"
+  },
+  {
+    "file": "squid-blue.svg",
+    "source": "https://github.com/mzyy94/Slidoon/blob/bb718e8a3189e8a3685de0e051ecc8a25271e1e2/original/squid.svg",
+    "author": "Mzyy94",
+    "license": "CC-BY-SA-4.0",
+    "original_sha256": "f3b5701160b61dc02d6b418b7e9e19a1c061bb00e149003c17a004ecd4624dfd",
+    "changes": "Removed external DTD and adapted the green body palette.",
+    "use": "Squid and ink examples"
+  },
+  {
+    "file": "splatter-purple.svg",
+    "source": "https://github.com/mzyy94/Slidoon/blob/bb718e8a3189e8a3685de0e051ecc8a25271e1e2/original/splatter.svg",
+    "author": "Mzyy94",
+    "license": "CC-BY-SA-4.0",
+    "original_sha256": "6bbc90a207793bd378d67f7a375ba6c79f702413ee93a752aa1db57771e15646",
+    "changes": "Removed external DTD and recolored the ink violet.",
+    "use": "Banner decoration and ink example"
+  },
+  {
+    "file": "ink-splash.svg",
+    "source": "https://openclipart.org/detail/298859/ink-splash",
+    "author": "3070260; uploaded by oksmith",
+    "license": "CC0-1.0",
+    "original_sha256": "362edabc61a9c4916764b775a063c03e7552ddf99a6e33be3ea3f40809471fce",
+    "changes": "Removed external DTD and recolored dark shapes and gradient stops cyan.",
+    "use": "Gallery decoration and ink example"
+  },
+  {
+    "file": "pattern-lines.png",
+    "source": "https://opengameart.org/content/pattern-pack",
+    "archive_member": "PNG/Default size/pattern03.png",
+    "author": "Kenney",
+    "license": "CC0-1.0",
+    "original_sha256": "565ca5e3266b31242435ec7cb6760e3c1899784e6b4c4fd0464c7e3bfbe2650c",
+    "changes": "Copied from the author-published archive.",
+    "use": "Low opacity banner and gallery texture"
+  },
+  {
+    "file": "pattern-dots.png",
+    "source": "https://opengameart.org/content/pattern-pack",
+    "archive_member": "PNG/Default size/pattern71.png",
+    "author": "Kenney",
+    "license": "CC0-1.0",
+    "original_sha256": "6345534816f0eda148e444060c96c996c549948c3cab447eb71bc5cfd68b3f9b",
+    "changes": "Copied from the author-published archive.",
+    "use": "Low opacity banner and gallery texture"
+  },
+  {
+    "file": "pad-outline.svg",
+    "source": "https://splatoonwiki.org/wiki/File:Pro_Icon_Controller_Outline.svg",
+    "author": "Zacksly",
+    "license": "CC-BY-3.0",
+    "original_sha256": "32cab388317647e3b5c56a464b7972fd396569fe172cfadba968b7403e37d387",
+    "changes": "Filename adapted; display sizes set by Qt.",
+    "use": "Controller dialog and/or controller-line example"
+  },
+  {
+    "file": "pad-dpad.svg",
+    "source": "https://splatoonwiki.org/wiki/File:Pro_Icon_D-Pad.svg",
+    "author": "Zacksly",
+    "license": "CC-BY-3.0",
+    "original_sha256": "dcf9be96c989c4542923aff0929f101745c0641b7d6b88680028d3cb28255b32",
+    "changes": "Filename adapted; display sizes set by Qt.",
+    "use": "Controller dialog and/or controller-line example"
+  },
+  {
+    "file": "pad-up.svg",
+    "source": "https://splatoonwiki.org/wiki/File:Pro_Icon_D-Pad_Up.svg",
+    "author": "Zacksly",
+    "license": "CC-BY-3.0",
+    "original_sha256": "4da954a0745650614b1030454f1068472cf6537b9b837fddc069a786d127c128",
+    "changes": "Filename adapted; display sizes set by Qt.",
+    "use": "Controller dialog and/or controller-line example"
+  },
+  {
+    "file": "pad-down.svg",
+    "source": "https://splatoonwiki.org/wiki/File:Pro_Icon_D-Pad_Down.svg",
+    "author": "Zacksly",
+    "license": "CC-BY-3.0",
+    "original_sha256": "e71a933161c955290872a5261695162289dcfba55314aedf6e6600987d34f863",
+    "changes": "Filename adapted; display sizes set by Qt.",
+    "use": "Controller dialog and/or controller-line example"
+  },
+  {
+    "file": "pad-left.svg",
+    "source": "https://splatoonwiki.org/wiki/File:Pro_Icon_D-Pad_Left.svg",
+    "author": "Zacksly",
+    "license": "CC-BY-3.0",
+    "original_sha256": "e44c28cab18cea3c3e73bdcfd5cba10818a6a026bf753ccfceef95a565f1693d",
+    "changes": "Filename adapted; display sizes set by Qt.",
+    "use": "Controller dialog and/or controller-line example"
+  },
+  {
+    "file": "pad-right.svg",
+    "source": "https://splatoonwiki.org/wiki/File:Pro_Icon_D-Pad_Right.svg",
+    "author": "Zacksly",
+    "license": "CC-BY-3.0",
+    "original_sha256": "a317f3dadb553af418ce6a7b64b67531a7e907aeb0d5e1ceb91c8d6c69ef9d74",
+    "changes": "Filename adapted; display sizes set by Qt.",
+    "use": "Controller dialog and/or controller-line example"
+  },
+  {
+    "file": "pad-a.svg",
+    "source": "https://splatoonwiki.org/wiki/File:Switch_Icon_A.svg",
+    "author": "Zacksly",
+    "license": "CC-BY-3.0",
+    "original_sha256": "d1eac3f24fc083d4c487b6e3102131694b52db0df7d48c1540466de1d7272e1c",
+    "changes": "Filename adapted; display sizes set by Qt.",
+    "use": "Controller dialog and/or controller-line example"
+  },
+  {
+    "file": "pad-b.svg",
+    "source": "https://splatoonwiki.org/wiki/File:Switch_Icon_B.svg",
+    "author": "Zacksly",
+    "license": "CC-BY-3.0",
+    "original_sha256": "aee4cb5f2a4a6836c0ba28a43d38d3f6f9a8dfbc8e1219dec4de8b1d3a63381b",
+    "changes": "Filename adapted; display sizes set by Qt.",
+    "use": "Controller dialog and/or controller-line example"
+  },
+  {
+    "file": "pad-x.svg",
+    "source": "https://splatoonwiki.org/wiki/File:Switch_Icon_X.svg",
+    "author": "Zacksly",
+    "license": "CC-BY-3.0",
+    "original_sha256": "33890ca40745c09beb5157f6da1deb3073be3504dc3b2299e1b0311dc6887f37",
+    "changes": "Filename adapted; display sizes set by Qt.",
+    "use": "Controller dialog and/or controller-line example"
+  },
+  {
+    "file": "pad-y.svg",
+    "source": "https://splatoonwiki.org/wiki/File:Switch_Icon_Y.svg",
+    "author": "Zacksly",
+    "license": "CC-BY-3.0",
+    "original_sha256": "da59544f628fb803d03883a3d24395d5dac5563fc9d5451d6cda4b8b4a51d385",
+    "changes": "Filename adapted; display sizes set by Qt.",
+    "use": "Controller dialog and/or controller-line example"
+  },
+  {
+    "file": "pad-l3.svg",
+    "source": "https://splatoonwiki.org/wiki/File:Switch_Icon_Left_Stick_Click.svg",
+    "author": "Zacksly",
+    "license": "CC-BY-3.0",
+    "original_sha256": "466561b8be767f73c8f6047da00707212fbc72d13c021ac6470c9b698f95b0f1",
+    "changes": "Filename adapted; display sizes set by Qt.",
+    "use": "Controller dialog and/or controller-line example"
+  },
+  {
+    "file": "pad-guide.svg",
+    "source": "https://splatoonwiki.org/wiki/File:Pro_Icon_Controller_Outline.svg",
+    "author": "Zacksly",
+    "license": "CC-BY-3.0",
+    "original_sha256": "32cab388317647e3b5c56a464b7972fd396569fe172cfadba968b7403e37d387",
+    "changes": "Recolored violet for the dialog heading.",
+    "use": "Guide and controller dialog heading"
+  },
+  {
+    "file": "paint-roller.svg",
+    "source": "https://game-icons.net/1x1/delapouite/paint-roller.html",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "original_sha256": "cc4eaf15f7f7642f179a855a6df3d780191025798177f49da951e50681e70252",
+    "changes": "Recolored the black silhouette violet.",
+    "use": "Drawing-task heading"
+  }
+]
