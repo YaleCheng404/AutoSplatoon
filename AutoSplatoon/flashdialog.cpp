@@ -31,11 +31,12 @@ QByteArray verifiedFirmware()
 {
     Q_INIT_RESOURCE(resources);
     QFile file(":/firmware/PRO-UART0.bin");
-    if (!file.open(QIODevice::ReadOnly)) throw std::runtime_error("Bundled firmware is missing");
+    if (!file.open(QIODevice::ReadOnly))
+        throw std::runtime_error(FlashDialog::tr("缺少内置固件。").toUtf8().constData());
     const QByteArray data = file.readAll();
     if (QCryptographicHash::hash(data, QCryptographicHash::Sha256).toHex() !=
         AUTOSPLATOON_FIRMWARE_SHA256)
-        throw std::runtime_error("Firmware checksum mismatch");
+        throw std::runtime_error(FlashDialog::tr("内置固件校验失败。").toUtf8().constData());
     return data;
 }
 FlashDialog::FlashDialog(const QString& name, QWidget* parent, const QString& executable)
@@ -77,7 +78,7 @@ FlashDialog::FlashDialog(const QString& name, QWidget* parent, const QString& ex
     });
     connect(&process, &QProcess::readyReadStandardOutput, this, &FlashDialog::appendOutput);
     connect(&process, &QProcess::errorOccurred, this, [this](QProcess::ProcessError error) {
-        if (error == QProcess::FailedToStart) finish(false, process.errorString());
+        if (error == QProcess::FailedToStart) finish(false, tr("无法启动 esptool：%1").arg(process.errorString()));
     });
     connect(&process, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this,
         [this](int code, QProcess::ExitStatus status) {
@@ -105,13 +106,15 @@ void FlashDialog::begin()
 {
     if (process.state() != QProcess::NotRunning) return;
     try {
-        if (port.isEmpty()) throw std::runtime_error("No serial port selected");
-        if (!QFileInfo(tool).isExecutable()) throw std::runtime_error("Bundled esptool is missing or not executable");
+        if (port.isEmpty()) { finish(false, tr("未选择串口。")); return; }
+        if (!QFileInfo(tool).isExecutable()) { finish(false, tr("缺少内置 esptool，或文件无法执行。")); return; }
         const QByteArray data = verifiedFirmware();
         firmwarePath = temporary.filePath("PRO-UART0.bin");
         QFile file(firmwarePath);
-        if (!file.open(QIODevice::WriteOnly) || file.write(data) != data.size())
-            throw std::runtime_error("Cannot prepare firmware");
+        if (!file.open(QIODevice::WriteOnly) || file.write(data) != data.size()) {
+            finish(false, tr("无法准备固件文件：%1").arg(file.errorString()));
+            return;
+        }
         file.close();
         log->clear(); progress->setValue(0); start->setEnabled(false);
         cancel->setText(tr("取消烧录"));

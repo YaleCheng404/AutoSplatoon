@@ -55,6 +55,8 @@ jobs:
           cmake --preset release -DCMAKE_PREFIX_PATH="$QT_ROOT" "${extra[@]}"
       - name: Build
         run: cmake --build --preset release --parallel 3
+      - name: Verify translation coverage
+        run: python tools/check_translations.py --extract build/qa/translation-source.ts
       - name: Tests at multiple display scales
         run: |
           if [ "${{ runner.os }}" = Windows ]; then

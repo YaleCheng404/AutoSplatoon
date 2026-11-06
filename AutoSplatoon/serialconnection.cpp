@@ -45,7 +45,7 @@ SerialController::SerialController(QObject* parent) : QObject(parent)
     });
     connect(&port, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
         if (error != QSerialPort::NoError && port.isOpen() && !changingControlLines && !closing)
-            fail(port.errorString());
+            fail(tr("串口出错：%1").arg(port.errorString()));
     });
     connect(&syncTimeout, &QTimer::timeout, this, [this] {
         fail(resetUnavailable ? tr("连接超时，当前串口不支持自动复位；请手动按 RST 后重新连接。")
@@ -54,7 +54,7 @@ SerialController::SerialController(QObject* parent) : QObject(parent)
     connect(&startupTimer, &QTimer::timeout, this, [this] {
         if (!connecting || !port.isOpen()) return;
         if (startupPhase == StartupPhase::ResetHeld) {
-            if (!setResetLine(false)) { fail(tr("无法释放 ESP32 复位线：") + port.errorString()); return; }
+            if (!setResetLine(false)) { fail(tr("无法释放 ESP32 复位线：%1").arg(port.errorString())); return; }
             startupPhase = StartupPhase::BootWait;
             startupTimer.start(1000);
         } else if (startupPhase == StartupPhase::BootWait) {
@@ -112,10 +112,10 @@ void SerialController::open(const QString& name)
     port.setPortName(name);
     port.setBaudRate(19200);
     port.setFlowControl(QSerialPort::NoFlowControl);
-    if (!port.open(QIODevice::ReadWrite)) { fail(port.errorString()); return; }
+    if (!port.open(QIODevice::ReadWrite)) { fail(tr("无法打开串口：%1").arg(port.errorString())); return; }
     if (!setResetLine(true)) {
         if (port.error() != QSerialPort::UnsupportedOperationError) {
-            fail(tr("无法复位 ESP32：") + port.errorString()); return;
+            fail(tr("无法复位 ESP32：%1").arg(port.errorString())); return;
         }
         resetUnavailable = true;
         port.clearError();
@@ -161,7 +161,7 @@ void SerialController::write(const QByteArray& bytes)
 {
     if (!port.isOpen()) return;
     const qint64 written = port.write(bytes);
-    if (written != bytes.size()) { fail(tr("串口写入失败：") + port.errorString()); return; }
+    if (written != bytes.size()) { fail(tr("串口写入失败：%1").arg(port.errorString())); return; }
     if (port.bytesToWrite() > 256) fail(tr("串口积压，绘图已停止。"));
 }
 void SerialController::sendAction(quint64 action)

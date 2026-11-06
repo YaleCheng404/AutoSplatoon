@@ -1,54 +1,59 @@
-# 验证范围与检查方法
+# Validation and test procedures
 
-软件测试覆盖串口和烧录错误处理。开发板复位、主机配对和按键响应需实测。
+Software tests cover serial and flashing error paths. Board reset, console pairing, and controller response require hardware tests.
 
-## 已完成的连接恢复实测
+<a name="已完成的连接恢复实测"></a>
 
-2026-10-22，使用者在 Windows 测试构建中验证了连接时自动复位功能。
+## Measured connection recovery
 
-| 项目 | 结果 |
+On 2026-10-22, a user tested auto-reset on connect in a Windows test build.
+
+| Check | Result |
 | --- | --- |
-| 开发板 | YD-ESP32，CH340K，ESP32-D0WD-V3 v3.1 |
-| 主机 | Switch 2，系统 23.0.1 |
-| 首次连接 | 配对成功，方向键和 A 键响应正常 |
-| 重刷同一内置固件后连接 | 通过 |
-| 游戏内使用 Joy-Con 触发断联后恢复 | 仅用软件“断开 → 连接”，五轮成功 5/5；每轮均恢复配对、方向键和 A 键响应，期间不按 RST、不拔 USB |
+| Board | YD-ESP32, CH340K, ESP32-D0WD-V3 v3.1 |
+| Console | Switch 2, system version 23.0.1 |
+| First connection | Pairing succeeded. Directional buttons and A responded. |
+| Connection after reflashing the same firmware | Passed |
+| Recovery after using a Joy-Con in-game | Disconnect and reconnect in the app recovered pairing and button response in 5 of 5 trials, without pressing RST or unplugging USB. |
 
-游戏内使用 Joy-Con 容易立即触发断联。五轮均通过复位恢复连接，固件的无复位重连能力仍未验证。
+Using a Joy-Con in-game could trigger immediate loss of controller communication. All five trials used an ESP32 reset to recover. Firmware recovery without a reset remains unverified.
 
-上述连接恢复结果限表中设备组合。完整 320×120 绘图及保存、长时间运行、USB 断连、响应超时和其他板卡兼容性，仍需按具体版本和设备分别检查。
+These results apply to the hardware in the table. Full 320 × 120 drawing and saving, long runs, USB removal, timeouts, and compatibility with other boards need checks on the corresponding software and hardware.
 
-## 自动测试
+<a name="自动测试"></a>
 
-CTest 检查以下行为。
+## Automated tests
 
-- 绘图计划按预期覆盖像素，包括单像素、首末列、空行和指定起点，完成后发送保存动作。
-- 暂停、继续和停止能够正确切换状态，停止时释放按键。
-- 控制包与 CRC 正确，内置固件通过哈希校验。
-- 四种图像预设输出尺寸及黑白值正确，透明图和小图可处理，预览缩放不改变导出像素；铅笔素描保留平涂轮廓和深色笔画，原图与整数放大图输出一致。
-- 连续导入只保留最新结果。
-- 内置示例以默认图像参数载入并保留绘图设置。快速切换示例后只保留最后一次结果。减少动态效果时，正在展开的预设说明直接显示到最终状态。
-- 连接过程中禁用设备操作，重复点击不会重启流程；关闭或失败后取消等待并清除旧 HID 状态。
-- 模拟烧录覆盖成功、芯片探测失败、写入失败和取消。真实烧录结果单独记录。
+CTest checks drawing plans for single pixels, edge columns, empty rows, custom starts, and save at completion. It also checks pause, resume, stop, and input release, controller packets and CRC, and the firmware checksum.
 
-CI 在 100%、125%、150%、200%、250%、300% 逻辑缩放下执行同一测试。每个正式版本的运行结果见 [GitHub Actions](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml)。
+All four image presets are checked for the expected size and black-and-white output. Tests cover transparency, small images, preview scaling, and preservation of dark strokes and outlines by Pencil Sketch. Rapid imports and sample switches keep the latest result. Samples reset image settings and preserve drawing settings. Reduce motion finishes any preset explanation animation already in progress.
 
-## 发行包检查
+Connection tests check disabled controls while connecting, duplicate clicks, and cleanup of pending handshakes and old HID state after disconnect or failure. Simulated flashing covers success, unsupported chip, write failure, and cancellation.
 
-解压或挂载最终发行包后，运行 `tools/verify_package.py` 检查固件 SHA-256、esptool 版本和必要资源。再用 `tools/check_gui.py` 在隔离 SDK 搜索路径的环境中检查启动和图像输出。Linux CI 另检查 X11、Wayland 和 Ubuntu／Debian 容器启动。
+The core suite runs in separate English and Simplified Chinese processes. It checks language selection and fallback, the first-run guide, and that changing the preference leaves the current session and image intact. CI runs the suite at 100%, 125%, 150%, 200%, 250%, and 300% display scaling. See [GitHub Actions](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml).
 
-`AutoSplatoon --smoke-test` 会处理内置测试图并退出。可通过 `AUTOSPLATOON_SMOKE_OUTPUT` 指定已存在的目录，保存窗口截图和 320×120 输出。运行程序无需联网。
+<a name="发行包检查"></a>
 
-## 图像与界面检查
+## Package checks
 
-设置 `AUTOSPLATOON_QA_OUTPUT` 后，核心测试会保存四预设、照片及黑白小图的输出，可用于逐像素比较依赖或算法改动。
+After extracting or mounting a package, run `tools/verify_package.py` to check the firmware SHA-256, esptool version, plugins, and documentation, including the Chinese user guides. Use `tools/check_gui.py` to run startup checks with SDK search paths removed. Linux CI also checks X11, Wayland, and startup in Ubuntu and Debian containers.
 
-离屏检查覆盖 18 组分辨率与缩放组合，导出像素应保持一致。真实桌面仍需在 1080p、2K、4K 及跨屏场景检查窗口布局。小窗口中的参数和按钮应能通过滚动访问，X11 与 Wayland 桌面也需分别检查。
+`AutoSplatoon --smoke-test` processes a test image and exits. Set `AUTOSPLATOON_SMOKE_OUTPUT` to an existing directory to save the window screenshot, 320 × 120 image, language, and drawing plan checksum. The app runs offline.
 
-`autosplatoon_examples` 通过工作台的示例菜单载入三张源图，逐一切换四种预设。工具对照图像处理函数核验工作台结果，检查 320×120 尺寸和黑白像素，并保存对比图、界面截图和[输出文件校验值](images/examples/examples.json)。在小窗口中，画布和参数可滚动，绘图任务栏固定在底部。
+<a name="图像与界面检查"></a>
 
-## 实机复测顺序
+## Image and interface checks
 
-先检查首次烧录与配对，再校准光标并测试少量像素。随后检查暂停、继续、停止释放按键、USB 断连及超时处理，最后完成整幅绘图和保存。
+Set `AUTOSPLATOON_QA_OUTPUT` to save core test artifacts, including preset, photo, and binary outputs. Use them to compare pixels across dependency or algorithm changes.
 
-连接恢复需另做五个独立故障循环。每轮在游戏内使用 Joy-Con 触发断联，确认再次无法配对后，仅用软件“断开 → 连接”恢复，检查主机方向键和 A 键。记录板卡、USB 转串口芯片、软件及主机系统版本，以及被测程序的路径和 SHA-256。
+Packaged GUI checks cover 18 resolution and scale combinations per language. Both languages must render their own labels and produce the same image and drawing plan. On real desktops, check 1080p, 2K, 4K, and movement between monitors. Controls must remain reachable by scrolling in small windows. Check X11 and Wayland separately.
+
+The example generator loads the three samples through the workbench menu and runs all four presets. It checks the workbench results against the processor for 320 × 120 dimensions and binary pixels, saves comparison images and screenshots, and records [source and output hashes](images/examples/examples.json). The drawing task strip stays at the bottom when the canvas and inspector scroll.
+
+<a name="实机复测顺序"></a>
+
+## Hardware retest procedure
+
+Flash and pair first. Calibrate the cursor and test a few pixels. Then check pause, resume, release on stop, USB removal, and timeout handling. Finish with a complete drawing and save.
+
+To retest recovery, run five independent trials. In each trial, use a Joy-Con in the game to trigger a disconnect, confirm pairing fails again, and recover using only Disconnect and Connect in the app. Check the directional buttons and A on the console. Record the board, USB-to-serial chip, app and console system versions, and the executable path and SHA-256.

@@ -38,8 +38,8 @@ endforeach()
 set(CPU_DISPATCH "" CACHE STRING "" FORCE)
 FetchContent_Declare(opencv URL "${opencv_url}" URL_HASH "SHA256=${opencv_hash}" DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
 FetchContent_MakeAvailable(opencv)
-find_package(Qt6 ${qt_version} EXACT REQUIRED COMPONENTS Widgets SerialPort Concurrent Svg)
-qt_standard_project_setup()
+find_package(Qt6 ${qt_version} EXACT REQUIRED COMPONENTS Widgets SerialPort Concurrent Svg LinguistTools)
+qt_standard_project_setup(I18N_SOURCE_LANGUAGE zh_CN)
 set(CMAKE_AUTORCC ON)
 set(OpenCV_LIBS opencv_core opencv_imgproc opencv_photo)
 set(OpenCV_INCLUDE_DIRS "${OPENCV_CONFIG_FILE_INCLUDE_DIR}")
@@ -51,7 +51,7 @@ add_library(autosplatoon_core STATIC
     AutoSplatoon/imageprocessor.cpp AutoSplatoon/serialconnection.cpp
     AutoSplatoon/canvasview.cpp AutoSplatoon/flashdialog.cpp
     AutoSplatoon/mainwindow.cpp AutoSplatoon/manualcontroldialog.cpp
-    AutoSplatoon/workbenchstyle.cpp AutoSplatoon/samplelibrary.cpp AutoSplatoon/resources.qrc)
+    AutoSplatoon/workbenchstyle.cpp AutoSplatoon/samplelibrary.cpp AutoSplatoon/uilanguage.cpp AutoSplatoon/resources.qrc)
 target_include_directories(autosplatoon_core PUBLIC AutoSplatoon)
 target_include_directories(autosplatoon_core SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(autosplatoon_core PUBLIC Qt6::Widgets Qt6::SerialPort Qt6::Concurrent Qt6::Svg ${OpenCV_LIBS})
@@ -66,6 +66,7 @@ target_link_libraries(AutoSplatoon PRIVATE autosplatoon_core)
 target_compile_definitions(AutoSplatoon PRIVATE AUTOSPLATOON_VERSION="${PROJECT_VERSION}")
 set_target_properties(AutoSplatoon PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.autosplatoon.desktop"
     MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}" MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}")
+set(translation_targets AutoSplatoon)
 if(BUILD_TESTING)
     find_package(Qt6 ${qt_version} EXACT REQUIRED COMPONENTS Test)
     qt_add_executable(autosplatoon_tests tests/test_core.cpp)
@@ -75,9 +76,22 @@ if(BUILD_TESTING)
     target_link_libraries(autosplatoon_tests PRIVATE autosplatoon_core Qt6::Test)
     add_executable(autosplatoon_examples EXCLUDE_FROM_ALL tools/generate_examples.cpp)
     target_link_libraries(autosplatoon_examples PRIVATE autosplatoon_core Qt6::Test)
-    add_test(NAME core COMMAND autosplatoon_tests)
-    set_tests_properties(core PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    list(APPEND translation_targets autosplatoon_tests autosplatoon_examples)
+    foreach(language IN ITEMS zh_CN en)
+        add_test(NAME core-${language} COMMAND autosplatoon_tests)
+        set_tests_properties(core-${language} PROPERTIES
+            ENVIRONMENT "QT_QPA_PLATFORM=offscreen;AUTOSPLATOON_TEST_LANGUAGE=${language}")
+    endforeach()
 endif()
+qt_add_translations(TARGETS ${translation_targets} SOURCE_TARGETS autosplatoon_core
+    SOURCES tools/generate_examples.cpp
+    TS_FILES translations/autosplatoon_en.ts NO_GENERATE_PLURALS_TS_FILE
+    RESOURCE_PREFIX "/i18n" LRELEASE_OPTIONS -fail-on-unfinished)
+get_filename_component(qt_prefix "${Qt6_DIR}/../../.." ABSOLUTE)
+foreach(target IN LISTS translation_targets)
+    qt_add_resources(${target} "${target}_qtbase_zh_CN" PREFIX "/i18n"
+        BASE "${qt_prefix}/translations" FILES "${qt_prefix}/translations/qtbase_zh_CN.qm")
+endforeach()
 
 set(AUTOSPLATOON_ASSET_DIR "${CMAKE_BINARY_DIR}/assets" CACHE PATH "Output of tools/fetch_assets.py")
 set(tool_name esptool)
@@ -95,11 +109,10 @@ install(PROGRAMS "${AUTOSPLATOON_ASSET_DIR}/tools/${tool_name}" DESTINATION "${a
 install(DIRECTORY firmware licenses DESTINATION "${asset_dest}")
 install(CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" --install \"${opencv_BINARY_DIR}\" --component licenses --prefix \"\${CMAKE_INSTALL_PREFIX}/${asset_dest}/licenses/OpenCV-third-party\" COMMAND_ERROR_IS_FATAL ANY)")
 install(FILES LICENSE dependencies.lock.json DESTINATION "${asset_dest}")
-install(FILES README.md DESTINATION "${asset_dest}")
+install(FILES README.md README.zh-CN.md DESTINATION "${asset_dest}")
 install(DIRECTORY docs DESTINATION "${asset_dest}")
 # Static OpenCV is built from source; exclude its SDK from application packages.
 set(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_BINARY_DIR};AutoSplatoon;Unspecified;/")
-get_filename_component(qt_prefix "${Qt6_DIR}/../../.." ABSOLUTE)
 set(deploy_options)
 if(WIN32)
     # Widgets use raster rendering; software OpenGL and shader compilers are unused.
@@ -114,7 +127,6 @@ qt_generate_deploy_app_script(TARGET AutoSplatoon OUTPUT_SCRIPT qt_deploy NO_UNS
     EXCLUDE_PLUGIN_TYPES generic networkinformation tls INCLUDE_PLUGINS qoffscreen
     DEPLOY_TOOL_OPTIONS ${deploy_options})
 install(SCRIPT ${qt_deploy})
-install(FILES "${qt_prefix}/translations/qtbase_zh_CN.qm" DESTINATION "${asset_dest}/translations")
 install(DIRECTORY "${qt_prefix}/sbom/" DESTINATION "${asset_dest}/licenses/Qt-SBOM")
 if(MINGW)
     get_filename_component(compiler_bin "${CMAKE_CXX_COMPILER}" DIRECTORY)

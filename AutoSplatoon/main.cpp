@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "flashdialog.h"
+#include "uilanguage.h"
 
 #include <QApplication>
 #include <QTimer>
@@ -9,7 +10,12 @@
 #include <QJsonObject>
 #include <QScreen>
 #include <QTranslator>
-#include <QLibraryInfo>
+#include <QPushButton>
+#include <QMessageBox>
+#include <QSettings>
+#include <QCryptographicHash>
+#include <QDataStream>
+#include <exception>
 
 int main(int argc, char *argv[])
 {
@@ -18,19 +24,31 @@ int main(int argc, char *argv[])
     a.setApplicationName("AutoSplatoon");
     a.setApplicationVersion(AUTOSPLATOON_VERSION);
     a.setStyle("Fusion");
-    QTranslator translations;
-#ifdef Q_OS_MACOS
-    const QString translationPath = a.applicationDirPath() + "/../Resources/translations";
-#else
-    const QString translationPath = a.applicationDirPath() + "/translations";
-#endif
-    if (translations.load("qtbase_zh_CN", translationPath) ||
-        translations.load("qtbase_zh_CN", QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
-        a.installTranslator(&translations);
-    verifiedFirmware();
+    const bool smokeTest = a.arguments().contains("--smoke-test");
+    if (smokeTest) {
+        const QString settingsDirectory = qEnvironmentVariable("AUTOSPLATOON_SMOKE_SETTINGS");
+        if (!settingsDirectory.isEmpty()) {
+            QSettings::setDefaultFormat(QSettings::IniFormat);
+            QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, settingsDirectory);
+        }
+    }
+    const QString language = UiLanguage::resolve(UiLanguage::preference());
+    QTranslator translator;
+    if (!UiLanguage::install(translator, language)) {
+        qWarning("Could not load UI translations for %s", qPrintable(language));
+        if (smokeTest) return 3;
+    }
+    try {
+        verifiedFirmware();
+    } catch (const std::exception& error) {
+        const auto message = QString::fromUtf8(error.what());
+        if (smokeTest) qCritical("%s", qPrintable(message));
+        else QMessageBox::critical(nullptr, a.applicationName(), message);
+        return 2;
+    }
     AutoSplatoon w;
     w.show();
-    if (a.arguments().contains("--smoke-test")) {
+    if (smokeTest) {
         QImage sample(640, 240, QImage::Format_RGB32); sample.fill(Qt::white);
         QPainter painter(&sample); painter.setPen(QPen(Qt::black, 5));
         painter.drawEllipse(80, 30, 180, 180); painter.drawLine(320, 200, 580, 35); painter.end();
@@ -42,11 +60,20 @@ int main(int argc, char *argv[])
             if (!directory.isEmpty()) {
                 w.grab().save(directory + "/window.png");
                 w.outputImage().save(directory + "/output.png");
+                const auto& plan = w.drawingPlan();
+                QByteArray frames;
+                QDataStream stream(&frames, QIODevice::WriteOnly);
+                stream << plan.blackPixels << plan.skippedPixels << plan.durationMs;
+                for (const auto& frame : plan.frames)
+                    stream << frame.action << frame.durationMs << frame.row << frame.column;
                 QFile metadata(directory + "/window.json");
                 if (metadata.open(QIODevice::WriteOnly)) metadata.write(QJsonDocument(QJsonObject{
                     {"width", w.width()}, {"height", w.height()},
                     {"screenWidth", w.screen()->availableGeometry().width()},
                     {"screenHeight", w.screen()->availableGeometry().height()},
+                    {"language", language}, {"title", w.windowTitle()},
+                    {"exportLabel", w.findChild<QPushButton*>("exportButton")->text()},
+                    {"planHash", QString::fromLatin1(QCryptographicHash::hash(frames, QCryptographicHash::Sha256).toHex())},
                     {"dpr", w.devicePixelRatioF()}}).toJson());
             }
             a.exit(0);

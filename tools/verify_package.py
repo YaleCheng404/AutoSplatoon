@@ -33,6 +33,13 @@ assert any(plugins.rglob("*qsvg*")), "Missing SVG plugin"
 if args.platform == "linux-amd64":
     assert any(plugins.rglob("*qwayland*")), "Missing Wayland platform plugin"
 assert (resources / "licenses" / "OpenCV-third-party").is_dir(), "Missing OpenCV dependency notices"
+documents = (
+    "README.md", "README.zh-CN.md", "docs/hardware.md", "docs/hardware.zh-CN.md",
+    "docs/images/README.md", "docs/images/README.zh-CN.md", "docs/building.md", "docs/validation.md",
+    "firmware/README.md", "licenses/THIRD_PARTY.md",
+)
+for document in documents:
+    assert (resources / document).is_file(), f"Missing packaged document: {document}"
 tool = (resources if args.platform == "macos-arm64" else executable.parent) / "tools" / ("esptool.exe" if args.platform == "windows-amd64" else "esptool")
 result = subprocess.run([str(tool), "version"], capture_output=True, text=True, check=True, timeout=30)
 assert lock["esptool"]["version"] in result.stdout

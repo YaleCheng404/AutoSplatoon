@@ -25,6 +25,7 @@ public:
     ~AutoSplatoon() override;
     void loadImage(const QImage& image);
     QImage outputImage() const { return output; }
+    const DrawPlan& drawingPlan() const { return plan; }
 private:
     void loadSample(int index);
     void refreshPorts();

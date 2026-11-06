@@ -1,38 +1,46 @@
-# 开发板通过 USB 和蓝牙连接设备
+# Hardware and connection troubleshooting
 
-## 开发板需要支持经典蓝牙
+<a name="开发板需要支持经典蓝牙"></a>
 
-使用带 USB 转串口的传统 ESP32 开发板，例如上游支持的 WROOM/WROVER/PICO。内置 UARTSwitchCon 1.2 使用 Bluetooth Classic、UART0 和 19200 波特率；不支持 ESP32-S2/S3/C3/C6。参考 [固件来源与哈希](../firmware/README.md) 和 [上游项目说明](https://github.com/nullstalgia/UARTSwitchCon/tree/1.2)。
+## ESP32 board requirements
 
-通常可直接通过开发板的 USB 转串口连接；自制板或外接串口需按上游及板卡手册确认 UART0、共地和电平，不套用 UART2 固件的接线。USB 线必须支持数据传输。
+Use an original ESP32 board with USB-to-serial, such as a WROOM, WROVER, or PICO board supported upstream. The bundled UARTSwitchCon 1.2 firmware uses Bluetooth Classic and UART0 at 19200 baud. ESP32-S2, S3, C3, and C6 are unsupported. See the [firmware source and checksum](../firmware/README.md) and the [upstream project](https://github.com/nullstalgia/UARTSwitchCon/tree/1.2).
 
-## 首次使用需要烧录和配对
+A USB data cable usually connects directly to the board's built-in USB-to-serial interface. For custom boards or an external adapter, confirm UART0, the common ground, and signal levels in the board and firmware documentation. The UART2 firmware uses different wiring.
 
-按 [首次绘图步骤](../README.md#首次绘图需要连接和校准) 完成烧录、连接、配对和光标校准。Windows 串口常见描述为 CH340/CH9102 或 CP210x，应根据设备信息确认板卡。
+<a name="首次使用需要烧录和配对"></a>
 
-烧录使用包内 esptool 探测传统 ESP32，再将已校验的合并固件写入 0x0。日志显示成功后关闭烧录窗口；相同固件可重复使用，应用升级未改变固件时无需重刷。
+## Flash and pair for the first time
 
-绘图及暂停期间禁用手动面板。配对与校准按键见 [手动控制](../README.md#手动控制可以配对和校准光标)。
+Follow the [first drawing steps](../README.md#first-drawing) to flash the board, connect, pair, and calibrate the game cursor. On Windows the serial device description may contain CH340, CH9102, or CP210x. Confirm it against your board.
 
-## 连接问题可以逐项排查
+The bundled esptool detects the original ESP32 before writing the verified combined firmware to `0x0`. Close the flashing dialog when the log reports success. You can reuse the installed firmware when a software upgrade bundles the same version.
 
-| 现象 | 检查与处理 |
-|---|---|
-| 没有串口 | 检查数据线、USB 端口和板卡驱动；Windows 设备管理器确认设备，Linux 检查所属组和 dialout 权限，注销后重新登录 |
-| 串口无法打开 | 关闭串口监视器、Arduino IDE 或其他占用端口的软件；确认权限和所选端口 |
-| 烧录连接失败 | 核对端口与芯片；按住 BOOT 后重试，依据板卡说明使用 RESET；保留日志中的原始错误 |
-| 芯片不支持 | 该固件限传统 ESP32；不要绕过芯片检查写入其他系列 |
-| 串口已连接，但绘图按钮不可用 | 先完成 Switch 蓝牙配对；只有收到上游 HID 报告才启用自动绘图 |
-| 手柄通信中断或再次无法配对 | 已有报告停止超过 5 秒时自动停止绘图；点击“断开连接”再“连接”，软件重启开发板后重新握手，然后回主机配对并校准光标。无需重新烧录 |
-| 提示自动复位不可用 | 当前串口不支持控制复位线，软件继续尝试普通握手；无法配对时先断开，手动按开发板 RST，再重新连接 |
-| 绘图位置错位 | 立即停止，核对主机光标与起始行列；系统卡顿可导致时序超限暂停，应先恢复主机和软件状态再继续 |
-| 预览灰色区域或图片被裁切 | 灰色为画布外部；仅蓝框内白色画布参与导出和绘图。在“调整构图”页拖动、滚轮缩放或重置 |
-| 升级后缺少 DLL | 完整解压发行 ZIP，不单独复制 EXE；包内必须保留 Qt 插件目录、运行库、tools 和其他资源 |
+Manual Controls are disabled during drawing, including while paused. See [Manual controls](../README.md#manual-controls) for pairing and calibration buttons.
 
-Windows 在设备管理器查看 USB 转串口芯片，macOS 在系统信息查看。按板卡选择 [Silicon Labs CP210x](https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers) 或 [WCH CH34x](https://www.wch.cn/downloads/CH341SER_EXE.html) 驱动。Linux 检查 `/dev/ttyUSB*` 或 `/dev/ttyACM*` 的所属组。Debian/Ubuntu 若使用 `dialout` 组，可运行 `sudo usermod -aG dialout "$USER"`，然后注销并重新登录。
+<a name="连接问题可以逐项排查"></a>
 
-## 自动复位与验证范围
+## Troubleshooting
 
-每次点击“连接”都会通过 USB 转串口的 DTR／RTS 控制线尝试重启 ESP32，已有蓝牙连接会中断。开发板需要带对应的自动复位电路。软件收到接口调用成功的结果后，仍需等主机配对和按键响应，才能确认恢复正常。
+| Symptom | What to check |
+| --- | --- |
+| The serial port is missing | Check the USB data cable, port, and driver. Use Device Manager on Windows. On Linux, check serial device permissions and sign out and in after changing groups. |
+| The serial port will not open | Close serial monitors, Arduino IDE, or other apps using the port. Check the selected device and your permissions. |
+| esptool cannot connect | Check the port and chip. Hold BOOT and retry. Follow the board instructions for RESET and keep the original error from the log. |
+| The chip is unsupported | Use an original ESP32. Keep the chip check enabled. |
+| Serial is connected but Start Drawing is disabled | Pair on the Switch. Drawing becomes available once the application receives HID reports. |
+| Controller reports stop or pairing fails again | If reports stop for over five seconds, the app stops drawing. Click **Disconnect**, then **Connect** to restart the board and repeat the handshake. Pair on the Switch and recalibrate the cursor. |
+| Auto-reset is unavailable | The port cannot drive the reset line. AutoSplatoon still tries the normal handshake. If pairing fails, disconnect, press RST on the board, and reconnect. |
+| The drawing is offset | Stop and check that the console cursor matches the start row and column. A scheduling delay can also pause drawing. Check the console and the app before resuming. |
+| The preview has gray areas or cropped edges | Gray marks the area outside the canvas. Export and drawing use the canvas inside the blue outline. Drag, zoom, or reset the image in **Composition**. |
+| DLLs are missing after upgrading | Extract the full Windows ZIP. Keep the executable, Qt runtime and plugins, tools, and other resources together. |
 
-源地 YD-ESP32 与 Switch 2 的连接恢复实测及适用范围见 [验证说明](validation.md)。
+Use Device Manager on Windows or System Information on macOS to identify the USB-to-serial chip. Download the [Silicon Labs CP210x driver](https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers) or [WCH CH34x driver](https://www.wch.cn/downloads/CH341SER_EXE.html) as appropriate. On Linux, check the owning group for `/dev/ttyUSB*` or `/dev/ttyACM*`. On Debian or Ubuntu, when the device is owned by `dialout`, run `sudo usermod -aG dialout "$USER"` and sign out and back in.
+
+<a name="自动复位与验证范围"></a>
+
+## Auto-reset and validation
+
+Each connection attempts to reboot the ESP32 through the USB-to-serial DTR and RTS lines. A successful reboot drops the existing Bluetooth connection. The board needs the corresponding auto-reset circuit. Confirm recovery by pairing on the console and checking the controller buttons.
+
+See [validation](validation.md) for the tested YD-ESP32 and Switch 2 combination and the scope of the recovery checks.

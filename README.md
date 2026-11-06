@@ -1,84 +1,88 @@
-# AutoSplatoon 可以自动绘制广场涂鸦
+# AutoSplatoon
 
-把喜欢的图片变成 Splatoon 广场上的黑白涂鸦。
+English | [简体中文](README.zh-CN.md)
 
-AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 模拟 Pro Controller，逐步完成绘制。导入后可以拖动、缩放和调整预设，确认结果再开始。图片处理和 PNG 导出可以在电脑上独立使用。
+AutoSplatoon turns images into **320 × 120 black-and-white Splatoon plaza posts**. Compose and preview your image on Windows, macOS, or Linux, then use an ESP32 that emulates a Pro Controller to draw it on Nintendo Switch. Image editing and PNG export work offline without any hardware.
 
-[国内代理下载](#国内下载优先使用代理) · [GitHub 官方发行页](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [第一次使用](#首次绘图需要连接和校准) · [硬件与故障排查](docs/hardware.md)
+[Download](#download) · [First drawing](#first-drawing) · [Hardware and troubleshooting](docs/hardware.md) · [Build from source](docs/building.md)
 
-![鱿鱼集合的彩色源图与 AutoSplatoon 清晰线稿输出](docs/images/examples/squid-party-before-after.png)
+![Squid Party source artwork beside the 320 × 120 line art output from AutoSplatoon](docs/images/examples/en/squid-party-before-after.png)
 
-左侧是工作台内置的彩色示例，右侧是软件生成的 320×120 清晰线稿。
+<a name="国内下载优先使用代理"></a>
 
-## 国内下载优先使用代理
+## Download
 
-国内用户优先使用下表的代理链接，通过 [github.sukii.net](https://github.sukii.net/) 下载本仓库的 Release 文件。下表提供 **v1.1.0** 发行包。
+Get the latest packages from [GitHub Releases](https://github.com/YaleCheng404/AutoSplatoon/releases/latest). The links below are for **v1.1.0**.
 
-| 系统 | 国内代理下载 · v1.1.0 | 使用条件 |
+| Platform | GitHub download | Requirements |
 | --- | --- | --- |
-| Windows | [ZIP 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-1.1.0-Windows-AMD64.zip) | Windows 10/11 x64，完整解压后运行 |
-| macOS | [DMG 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-1.1.0-Darwin-arm64.dmg) | macOS 14.4 或更新版本，Apple Silicon |
-| Linux | [AppImage 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-linux-x64.AppImage) · [目录包下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-linux-x64.tar.gz) | x64；AppImage 和目录包均可选择 |
+| Windows | [ZIP](https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-1.1.0-Windows-AMD64.zip) | Windows 10 or 11, x64. Extract the full archive. |
+| macOS | [DMG](https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-1.1.0-Darwin-arm64.dmg) | macOS 14.4 or later, Apple Silicon |
+| Linux | [AppImage](https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-linux-x64.AppImage) · [Directory archive](https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-linux-x64.tar.gz) | x64. Run the AppImage or extract the archive and run `AppRun`. |
 
-[下载 SHA-256 校验清单](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/SHA256SUMS.txt) · [GitHub 官方下载与版本记录](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [v1.1.0 更新说明](docs/release-notes/v1.1.0.md)
+[SHA-256 checksums](https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/SHA256SUMS.txt) · [Release notes](docs/release-notes/v1.1.0.md) · [Mainland China download mirror](https://github.sukii.net/)
 
-也可以在代理首页粘贴包含 `releases/download/` 的具体文件地址，或通过 GitHub 官方发行页下载。
+The packages bundle the Qt runtime, image plugins, esptool, and UARTSwitchCon 1.2 firmware. When upgrading, extract the complete new package. On Linux without FUSE, run `APPIMAGE_EXTRACT_AND_RUN=1 ./AutoSplatoon-*.AppImage` or use the directory archive.
 
-发行包包含 Qt 运行库、图片插件、esptool 和 UARTSwitchCon 1.2 固件，**解压后即可运行**。升级时完整解压新包。
+<a name="图片可以调整构图和风格"></a>
 
-## 图片可以调整构图和风格
+## Prepare an image
 
-首次打开时，可以直接载入“鱿鱼集合”“墨迹派对”或“手柄线稿”。已导入图片时，展开“导入图片”右侧的菜单即可切换到内置示例。示例可离线调整和导出。
+Start with Squid Party, Ink Party, or Controller Lines from the sample gallery. After importing an image, use the dropdown on **Import Image** to load a different sample.
 
-![工作台的三个内置示例](docs/images/examples/sample-gallery.png)
+![Three built-in samples in the English workbench](docs/images/examples/en/sample-gallery.png)
 
-导入图片后，在“调整构图”中拖动位置、滚轮缩放。透明区域会叠到白底，只有边框内的画布参与导出和绘制。右侧检查器集中了图像风格、ESP32 连接和绘图设置。界面使用思源黑体，支持浅色、深色、跟随系统及“减少动态效果”。
+In **Composition**, drag the image to position it and scroll to zoom. Transparent areas are composited onto white. The bordered canvas is the area used for export and drawing. The inspector contains the image preset, ESP32 connection, and drawing controls. Choose a light, dark, or system theme, and use **Reduce motion** to disable decorative animations.
 
-![导入新鱿鱼示例后的工作台](docs/images/examples/workbench-light.png)
+In a build from the current source, use **Language / 语言** in the top bar to select **System default**, **简体中文**, or **English**. The app saves the preference and applies it on your next launch. With **System default**, a Chinese system uses Simplified Chinese and other systems use English.
 
-四种预设可以直接切换，下面展示同一张鱿鱼构图的处理效果。
+![AutoSplatoon workbench in English with the Squid Party preview and image settings](docs/images/examples/en/workbench-light.png)
 
-![新鱿鱼示例的四种预设输出](docs/images/examples/squid-party-presets.png)
+![Line Art, Pencil Sketch, Threshold, and Dither applied to the same Squid Party image](docs/images/examples/en/squid-party-presets.png)
 
-| 预设 | 可以先用在哪些图上 |
+| Preset | Try it with |
 | --- | --- |
-| 清晰线稿 | 插画和轮廓清楚的图，默认从这里开始 |
-| 铅笔素描 | 照片，尝试提取明暗和线条 |
-| 纯黑白 | 文字、已有线稿，或想直接控制黑白阈值的图 |
-| 经典抖动 | 需要用黑白点阵表现明暗的照片 |
+| Line Art | Illustrations with distinct outlines. This is the default. |
+| Pencil Sketch | Photos or artwork where shading and fine strokes matter |
+| Threshold | Text, logos, and existing line art that needs a direct black-and-white cutoff |
+| Dither | Photos or gradients that benefit from dot patterns |
 
-细节、去噪、线条粗细、阈值和反色可以按需调整，界面只显示当前预设用到的参数。预览、导出和绘图计划使用同一份黑白结果，画布保持 320×120 像素。不同素材的表现会有差异，开始绘图前先检查眼睛、细线和小字是否清楚。
+Adjust detail, denoising, line width, threshold, or inversion as needed. The inspector shows the controls used by the active preset. The preview, PNG export, and drawing plan use the same 320 × 120 image. Check small text, eyes, and thin strokes before drawing.
 
-[查看三组原图、四预设结果和素材署名](docs/images/README.md)
+[View the three source images, all preset outputs, and art credits](docs/images/README.md)
 
-## 首次绘图需要连接和校准
+<a name="首次绘图需要连接和校准"></a>
 
-自动绘制需要一块带 USB 转串口的**传统 ESP32**、一根支持数据传输的 USB 线，以及电脑和 Switch。内置固件使用经典蓝牙。板卡选择和接线细节见 [硬件说明](docs/hardware.md)。
+## First drawing
 
-1. 将开发板连接电脑，刷新并选择串口。
-2. 点击“烧录内置固件”。程序确认芯片后写入 UARTSwitchCon 1.2，**这会覆盖开发板原有固件**。烧录完成后可以重复使用。
-3. 点击“连接”，等待开发板重启并完成串口连接，再打开“手动控制 / 配对”。在 Switch 的“更改握法 / 顺序”中，按住软件的 **L + R 配对**按钮，等待“Switch 手柄通信正常”。
-4. 进入游戏绘图界面，校准光标。软件默认起点是左上角 **(0,0)**，主机上的实际位置要与它一致。先用少量像素检查方向和位置。
-5. 导入图片、调整构图和预设，检查黑白结果后开始绘图。过程中可以暂停、继续或停止，结束可自动保存。默认按下和释放各 70 ms，绘图期间保持主机光标和页面稳定。
+You need an **original ESP32** with a USB-to-serial interface, a USB data cable, and a Nintendo Switch. The bundled firmware uses Bluetooth Classic. See [supported boards and wiring](docs/hardware.md).
 
-再次无法配对时，点击“断开连接”再“连接”，等待开发板重启后重新配对，随后校准游戏光标。每次连接都会重启开发板，无需重新烧录固件。
+1. Connect the board, refresh the port list, and select the correct serial port.
+2. Click **Flash Firmware**. AutoSplatoon checks the chip and writes UARTSwitchCon 1.2. **Flashing overwrites the board's existing firmware.** You can reuse the board without flashing it again.
+3. Click **Connect** and wait for the board to reboot and the serial connection to open. Open **Manual Controls / Pairing** and hold **Pair with L + R** on the Switch's **Change Grip/Order** screen. Wait for the app to report that the controller is active.
+4. Open the game's drawing screen, choose the smallest brush, and calibrate the cursor. The default start is the top-left corner at row 0, column 0. Draw a few pixels to check direction and position.
+5. Import an image, adjust it, and check the black-and-white preview before you start. You can pause, resume, or stop while drawing. The app can press **−** to save at the end. Each press and release lasts 70 ms by default. Keep the console on the drawing screen with the cursor undisturbed.
 
-我使用源地 YD-ESP32 开发板和 Switch 2 完成了绘图，设备与连接恢复实测范围见 [验证说明](docs/validation.md)。
+If pairing fails again, disconnect and reconnect in the app, wait for the board to reboot, then pair and recalibrate the cursor. See the [connection recovery tests on YD-ESP32 and Switch 2](docs/validation.md) for the hardware and conditions tested.
 
-## 手动控制可以配对和校准光标
+<a name="手动控制可以配对和校准光标"></a>
 
-左侧方向键用于校准光标，右侧 ABXY 按 Switch 手柄位置排列。顶部提供 ZL、L、L + R 配对、R、ZR，中央 L3 为左摇杆按压，底部为 −、+、截图和 Home。
+## Manual controls
 
-![新版手动控制布局](docs/images/examples/manual-control.png)
+The directional buttons move the cursor and ABXY follow the Switch layout. The shoulder row includes ZL, L, Pair with L + R, R, and ZR. L3 presses the left stick. The bottom row contains −, +, Capture, and Home.
 
-鼠标按住按钮生效，松开释放；切换窗口或关闭弹窗也会释放输入。串口断开时弹窗关闭。重新校准时，先停止绘图再打开手动面板。
+![English Manual Controls dialog with Switch controller buttons and the pairing button](docs/images/examples/en/manual-control.png)
 
-找不到串口、烧录失败或再次无法配对时，参见 [硬件与故障排查](docs/hardware.md#连接问题可以逐项排查)。Linux 上没有 FUSE 时，可以运行 `APPIMAGE_EXTRACT_AND_RUN=1 ./AutoSplatoon-*.AppImage`，也可使用目录包中的 AppRun。
+Hold a button with the mouse to press it. Releasing the mouse, switching windows, or closing the dialog releases the input. The dialog closes if the serial connection drops. Stop drawing before opening Manual Controls to recalibrate.
 
-## 问题反馈和开发说明集中在仓库
+[Connection and flashing troubleshooting](docs/hardware.md#troubleshooting)
 
-遇到问题可以 [提交 Issue](https://github.com/YaleCheng404/AutoSplatoon/issues/new/choose)，选择“问题反馈”后按表单填写版本、系统、现象和复现步骤。设备相关问题可补充板卡型号、Switch 系统和游戏版本，以及错误日志；改进想法可以选择“功能建议”。
+<a name="问题反馈和开发说明集中在仓库"></a>
 
-[构建与发布](docs/building.md) · [验证方法](docs/validation.md) · [构建状态](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml) · [第三方来源与许可证](licenses/THIRD_PARTY.md)
+## Support and development
 
-本项目在 [jiangotto/AutoSplatoon](https://github.com/jiangotto/AutoSplatoon) 和相关上游工作基础上继续维护，感谢原作者及贡献者。代码采用 GPL-3.0，见 [LICENSE](LICENSE)。固件、字体和示例图片按各自的来源声明使用，Splatoon 相关角色归 Nintendo 所有。
+[Open an issue](https://github.com/YaleCheng404/AutoSplatoon/issues/new/choose) to report a problem or suggest a feature. For a bug, include the application version, operating system, steps to reproduce, and any relevant logs. For a device issue, include your board, console, system, and game versions.
+
+[Build and release](docs/building.md) · [Validation](docs/validation.md) · [Build status](https://github.com/YaleCheng404/AutoSplatoon/actions/workflows/build.yml) · [Third-party sources and licenses](licenses/THIRD_PARTY.md)
+
+AutoSplatoon continues work from [jiangotto/AutoSplatoon](https://github.com/jiangotto/AutoSplatoon) and related projects. The code is available under [GPL-3.0](LICENSE). The firmware, font, and sample artwork have their own notices. Splatoon characters belong to Nintendo.
