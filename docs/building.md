@@ -1,10 +1,12 @@
-# 构建与发布
+# Build and release
 
-构建使用 C++17、CMake、Ninja 和 Python 3.15。下载资产的版本及 SHA-256 见 [依赖锁文件](../dependencies.lock.json)，Ninja 版本见 [构建依赖清单](../tools/requirements-build.txt)。
+The project uses C++17, CMake, Ninja, and Python 3.15. See the [dependency lockfile](../dependencies.lock.json) for versions and SHA-256 hashes and the [build requirements](../tools/requirements-build.txt) for the Ninja version.
 
-## 本地构建
+<a name="本地构建"></a>
 
-安装 Python 3.15.2，然后执行以下 Windows x64 示例。`install_qt.py` 下载并校验官方 CMake、Qt、匹配的 MinGW 和 7-Zip，并输出 `CMAKE_BIN` 和 `QT_ROOT`。
+## Local build
+
+Install Python 3.15.2, then follow this Windows x64 example. The SDK installer downloads and verifies CMake, Qt, the matching MinGW compiler, and 7-Zip. It prints `CMAKE_BIN` and `QT_ROOT`.
 
 ```powershell
 python -m venv .deps/venv
@@ -22,18 +24,26 @@ ctest --preset release --no-tests=error
 cpack --config build/release/CPackConfig.cmake -B dist
 ```
 
-macOS 使用 `macos-arm64` 和 Xcode/Apple Clang，配置时指定 `-DCMAKE_OSX_ARCHITECTURES=arm64`，最低系统版本为 14.4。Linux 使用 `linux-amd64` 和 GCC，构建基线为 Ubuntu 22.04。两者将 `CMAKE_BIN`、虚拟环境的 `bin` 和 Qt 的 `bin` 加入 PATH，省略 Windows 编译器参数和 windeployqt。Linux 构建所需系统库清单见 [工作流](../.github/workflows/build.yml)。执行 `python tools/package_linux.py --qt "$QT_ROOT"` 生成 AppImage 和目录包。
+On macOS, use `macos-arm64` with Xcode and Apple Clang. Configure with `-DCMAKE_OSX_ARCHITECTURES=arm64`. The minimum macOS version is 14.4. On Linux, use `linux-amd64` with GCC. The build baseline is Ubuntu 22.04. Add `CMAKE_BIN`, the virtual environment's `bin`, and Qt's `bin` to PATH. Omit the Windows compiler flags and the windeployqt step. See the [build workflow](../.github/workflows/build.yml) for Linux system libraries. Run `python tools/package_linux.py --qt "$QT_ROOT"` to build the AppImage and directory archive.
 
-OpenCV 从锁定源码静态构建 core、imgproc、photo 及其必需的 geometry/flann 依赖。图片格式由 Qt 插件提供。Qt 动态链接，发行包携带各组件许可证及 Qt SBOM。MinGW 使用 Qt SDK 对应的 15.1.0 工具链，详见 [Qt 6.12 工具版本](https://wiki.qt.io/Qt_6.12_Tools_and_Versions)。
+OpenCV is built statically from the pinned source, with core, imgproc, photo, and their required geometry and flann modules. Qt plugins provide image formats. Qt is dynamically linked and packages include the component notices and Qt SBOM. The Windows build uses the Qt SDK's matching MinGW 15.1.0 toolchain. See [Qt 6.12 tool versions](https://wiki.qt.io/Qt_6.12_Tools_and_Versions).
 
-## 验证
+## Interface translations
 
-按 [验证方法](validation.md) 检查最终归档解压或挂载后的文件。Linux 使用官方 linuxdeploy Qt 插件部署 offscreen、Wayland 与 SVG。
+Mark user-visible Simplified Chinese source strings with Qt's `tr()` or `QCoreApplication::translate()`. Edit [the English catalog](../translations/autosplatoon_en.ts), then run `python tools/check_translations.py --extract build/qa/translation-source.ts` to check coverage and placeholders. The command also writes a source-only catalog for review. With a full Qt SDK that includes QML, you can run the `update_translations` target to update source entries. Ordinary builds use Qt Linguist's `lrelease` to compile the catalog. The executable embeds the English catalog and the Chinese Qt base catalog.
 
-## 发布
+<a name="验证"></a>
 
-1. 更新 CMake 项目版本，编写该版本的 `docs/release-notes/v<版本>.md`；应用版本由构建配置传入。
-2. 提交改动，推送与项目版本相符的 `v<版本>` 标签。各平台通过 CI 后，工作流发布 Windows ZIP、macOS DMG、Linux AppImage、目录包及 `SHA256SUMS.txt`。
-3. 下载校验清单，对照各资产 SHA-256。已发布标签应保持不变。
+## Validation
 
-发布任务使用 GitHub Actions 自带令牌。当前发行包没有正式代码签名或 macOS 公证。
+Follow the [validation instructions](validation.md) with the extracted or mounted packages. Linux uses the official linuxdeploy Qt plugin to deploy the offscreen, Wayland, and SVG plugins.
+
+<a name="发布"></a>
+
+## Release
+
+1. Update the CMake project version and write the English notes in `docs/release-notes/v<version>.md`. The build passes the project version to the app.
+2. Commit the changes and push a `v<version>` tag that matches the project version. After CI passes, the workflow publishes a Windows ZIP, macOS DMG, Linux AppImage and directory archive, and `SHA256SUMS.txt`.
+3. Download the checksum list and verify each asset. Keep published tags intact.
+
+The workflow uses the GitHub Actions token. Current packages lack formal code signing and macOS notarization.

@@ -1,31 +1,35 @@
-# AutoSplatoon 的内置示例与处理效果
+# Built-in samples and preset results
 
-在空白工作台点击示例卡，或从“导入图片”的展开菜单选择“示例素材”。这三组示例在软件内可以离线处理、调整和导出。
+Select a sample card in the empty workbench or open **Samples** from the **Import Image** dropdown. All three samples can be edited, processed, and exported offline.
 
-| 示例 | 彩色源图 | 清晰线稿对照 | 四预设对照 | 320×120 原始输出 |
+| Sample | Color source | Line Art comparison | All four presets | Original 320 × 120 output |
 | --- | --- | --- | --- | --- |
-| 鱿鱼集合 | [源图](examples/squid-party-source.png) | [前后对比](examples/squid-party-before-after.png) | [预设对比](examples/squid-party-presets.png) | [线稿](examples/squid-party-line-art.png) · [素描](examples/squid-party-pencil.png) · [阈值](examples/squid-party-threshold.png) · [抖动](examples/squid-party-dither.png) |
-| 墨迹派对 | [源图](examples/ink-party-source.png) | [前后对比](examples/ink-party-before-after.png) | [预设对比](examples/ink-party-presets.png) | [线稿](examples/ink-party-line-art.png) · [素描](examples/ink-party-pencil.png) · [阈值](examples/ink-party-threshold.png) · [抖动](examples/ink-party-dither.png) |
-| 手柄线稿 | [源图](examples/controller-lines-source.png) | [前后对比](examples/controller-lines-before-after.png) | [预设对比](examples/controller-lines-presets.png) | [线稿](examples/controller-lines-line-art.png) · [素描](examples/controller-lines-pencil.png) · [阈值](examples/controller-lines-threshold.png) · [抖动](examples/controller-lines-dither.png) |
+| Squid Party | [Source](examples/squid-party-source.png) | [Comparison](examples/en/squid-party-before-after.png) | [Preset grid](examples/en/squid-party-presets.png) | [Line Art](examples/squid-party-line-art.png) · [Pencil Sketch](examples/squid-party-pencil.png) · [Threshold](examples/squid-party-threshold.png) · [Dither](examples/squid-party-dither.png) |
+| Ink Party | [Source](examples/ink-party-source.png) | [Comparison](examples/en/ink-party-before-after.png) | [Preset grid](examples/en/ink-party-presets.png) | [Line Art](examples/ink-party-line-art.png) · [Pencil Sketch](examples/ink-party-pencil.png) · [Threshold](examples/ink-party-threshold.png) · [Dither](examples/ink-party-dither.png) |
+| Controller Lines | [Source](examples/controller-lines-source.png) | [Comparison](examples/en/controller-lines-before-after.png) | [Preset grid](examples/en/controller-lines-presets.png) | [Line Art](examples/controller-lines-line-art.png) · [Pencil Sketch](examples/controller-lines-pencil.png) · [Threshold](examples/controller-lines-threshold.png) · [Dither](examples/controller-lines-dither.png) |
 
-工作台截图可查看[示例页](examples/sample-gallery.png)、[浅色主题](examples/workbench-light.png)、[深色主题](examples/workbench-dark.png)和[手动控制](examples/manual-control.png)。
+[Sample gallery](examples/en/sample-gallery.png) · [Light workbench](examples/en/workbench-light.png) · [Dark workbench](examples/en/workbench-dark.png) · [Small window](examples/en/workbench-small.png) · [Manual Controls](examples/en/manual-control.png) · [Flashing](examples/en/flash-dialog.png) · [Getting Started](examples/en/guide-dialog.png)
 
-## 示例采用同一组图像参数
+<a name="示例采用同一组图像参数"></a>
 
-| 参数 | 值 |
+## Image settings
+
+| Setting | Value |
 | --- | --- |
-| 细节 | 50 |
-| 去噪 | 1 |
-| 线条粗细 | 1 |
-| 阈值 | 160 |
-| 反色 | 关闭 |
+| Detail | 50 |
+| Denoise | 1 |
+| Line width | 1 |
+| Threshold | 160 |
+| Invert black and white | Off |
 
-原始输出由工作台载入示例并逐一切换预设后保存。图像尺寸和黑白像素已核对，效果对比图以整数倍放大。源图和输出文件的校验值见[生成记录](examples/examples.json)。
+The workbench loaded each sample and saved the result of each preset. The original outputs were checked for dimensions and binary pixels. The comparison images enlarge them by an integer factor. See the [generation manifest](examples/examples.json) for source and output checksums.
 
-## 生成方式与素材署名
+<a name="生成方式与素材署名"></a>
 
-使用 `cmake --build --preset release --target autosplatoon_examples` 构建示例生成工具。将 Qt 运行库加入运行环境后，设置 `QT_QPA_PLATFORM=offscreen` 并运行 `build/release/autosplatoon_examples docs/images/examples`。Windows 可执行文件后缀为 `.exe`。
+## Generate examples and credit artwork
 
-新界面使用 Mzyy94 的 Slidoon 鱿鱼和墨迹、Openclipart 的 Ink Splash、Kenney 纹理、Zacksly 的 Switch 图标以及 Delapouite 的滚筒图标。逐文件来源、许可、改动与校验值见[美术素材清单](../../licenses/ARTWORK.json)和[第三方声明](../../licenses/THIRD_PARTY.md)。
+Build the tool with `cmake --build --preset release --target autosplatoon_examples`. Make the Qt runtime available, set `QT_QPA_PLATFORM=offscreen`, and run `build/release/autosplatoon_examples docs/images/examples en`. Use `zh_CN` for Simplified Chinese. The tool writes screenshots and captioned comparisons to `en/` and `zh-CN/` respectively and shares the source images and unlabelled outputs. On Windows, the executable has an `.exe` suffix.
 
-同目录原有 `squid-*.png` 为历史示例，使用 [Keebo 的 Splatoon Cursors](https://www.rw-designer.com/cursor-set/splatoon)，发布条款为 Public Domain。原始文件及作者声明位于 `squid-originals/`。Splatoon 角色版权归 Nintendo 所有。
+The interface uses Mzyy94's Slidoon squid and ink artwork, Openclipart's Ink Splash, Kenney textures, Zacksly's Switch icons, and Delapouite's paint roller. See the [artwork manifest](../../licenses/ARTWORK.json) and [third-party notices](../../licenses/THIRD_PARTY.md) for per-file attribution, licenses, changes, and checksums.
+
+The original `squid-*.png` files in this directory are historical examples using [Keebo's Splatoon Cursors](https://www.rw-designer.com/cursor-set/splatoon), released into the public domain. The original files and author's notice are in `squid-originals/`. Splatoon characters belong to Nintendo.

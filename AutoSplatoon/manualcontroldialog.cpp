@@ -69,7 +69,7 @@ ManualControlDialog::ManualControlDialog(QWidget* parent) : QDialog(parent)
         auto* button = new ControllerButton(iconOnly ? QString() : text, icon);
         button->setObjectName("manual_" + name);
         button->setAccessibleName(name == "LClick" ? tr("左摇杆按压") : text);
-        button->setToolTip(button->accessibleName() + tr(" · 按住生效，松开释放"));
+        button->setToolTip(tr("%1 · 按住生效，松开释放").arg(button->accessibleName()));
         button->setAutoDefault(false);
         button->setAutoRepeat(false);
         button->setFocusPolicy(Qt::NoFocus);
@@ -101,7 +101,7 @@ ManualControlDialog::ManualControlDialog(QWidget* parent) : QDialog(parent)
     add(system, 0, 0, "−", "Minus", I::BTN_MINUS);
     add(system, 0, 1, "+", "Plus", I::BTN_PLUS);
     add(system, 0, 2, tr("截图"), "Capture", I::BTN_CAPTURE);
-    add(system, 0, 3, "Home", "Home", I::BTN_HOME);
+    add(system, 0, 3, tr("主页"), "Home", I::BTN_HOME);
     layout->addLayout(shoulders);
     layout->addSpacing(12);
     layout->addLayout(controls);

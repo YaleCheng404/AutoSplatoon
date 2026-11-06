@@ -7,6 +7,7 @@
 #include "serialconnection.h"
 #include "manualcontroldialog.h"
 #include "samplelibrary.h"
+#include "uilanguage.h"
 #include <QtTest>
 #include <QComboBox>
 #include <QSpinBox>
@@ -22,10 +23,14 @@
 #include <QAction>
 #include <QCheckBox>
 #include <QToolButton>
+#include <QTextBrowser>
+#include <QTranslator>
 
 class CoreTests : public QObject {
     Q_OBJECT
     QTemporaryDir settings;
+    QTranslator translator;
+    QString language;
 private slots:
     void manualButtons_data()
     {
@@ -104,10 +109,7 @@ private slots:
     void manualLayout()
     {
         AutoSplatoon window;
-        QComboBox* theme = nullptr;
-        // Select by its three theme labels rather than child creation order.
-        for (auto* combo : window.findChildren<QComboBox*>())
-            if (combo->count() == 3 && combo->itemText(1) == QString::fromUtf8("浅色")) theme = combo;
+        auto* theme = window.findChild<QComboBox*>("theme");
         QVERIFY(theme);
         for (int mode : {1, 2}) {
             theme->setCurrentIndex(mode);
@@ -164,9 +166,74 @@ private slots:
         QSettings::setDefaultFormat(QSettings::IniFormat);
         QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, settings.path());
         QSettings().setValue("guideSeen", true);
+        language = qEnvironmentVariable("AUTOSPLATOON_TEST_LANGUAGE", "zh_CN");
+        QVERIFY(UiLanguage::install(translator, language));
+        const auto qa = qEnvironmentVariable("AUTOSPLATOON_QA_OUTPUT");
+        if (!qa.isEmpty()) qputenv("AUTOSPLATOON_QA_OUTPUT", (qa + "/" + language).toUtf8());
         AutoSplatoon window;
         QVERIFY(QApplication::font().family().startsWith("Source Han Sans"));
         QVERIFY(QFontMetrics(QApplication::font()).inFontUcs4(0x56fe));
+    }
+    void languageResolution()
+    {
+        QCOMPARE(UiLanguage::resolve("system", QLocale("zh_CN")), QString("zh_CN"));
+        QCOMPARE(UiLanguage::resolve("system", QLocale("zh_TW")), QString("zh_CN"));
+        QCOMPARE(UiLanguage::resolve({}, QLocale("en_GB")), QString("en"));
+        QCOMPARE(UiLanguage::resolve("invalid", QLocale("ja_JP")), QString("en"));
+        QCOMPARE(UiLanguage::resolve("en", QLocale("zh_CN")), QString("en"));
+        QCOMPARE(UiLanguage::resolve("zh_CN", QLocale("en_US")), QString("zh_CN"));
+        QSettings().setValue(UiLanguage::settingKey, "invalid");
+        QCOMPARE(UiLanguage::preference(), QString("system"));
+        QSettings().remove(UiLanguage::settingKey);
+        QCOMPARE(UiLanguage::preference(), QString("system"));
+    }
+    void languagePreferenceIsDeferred()
+    {
+        QSettings().setValue(UiLanguage::settingKey, language);
+        QSettings().setValue("guideSeen", false);
+        AutoSplatoon window;
+        bool localizedGuide = false;
+        QTimer::singleShot(0, &window, [&] {
+            auto* guide = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+            if (!guide) return;
+            const auto* text = guide->findChild<QTextBrowser*>();
+            localizedGuide = text && text->toPlainText().startsWith(
+                language == "en" ? QString("Load a sample") : QString::fromUtf8("可以先在工作台载入示例"));
+            guide->accept();
+        });
+        window.show();
+        QTRY_VERIFY(localizedGuide);
+        QVERIFY(QSettings().value("guideSeen").toBool());
+        auto* languageBox = window.findChild<QComboBox*>("language");
+        auto* pending = window.findChild<QLabel*>("languagePending");
+        auto* sample = window.findChild<QAction*>("sampleAction-squid-party");
+        auto* row = window.findChild<QSpinBox*>("startRow");
+        auto* serial = window.findChild<SerialController*>();
+        auto* player = window.findChild<ActionQueuePlayer*>();
+        QVERIFY(languageBox && pending && sample && row && serial && player);
+        QCOMPARE(sample->text(), language == "en" ? QString("Squid Party") : QString::fromUtf8("鱿鱼集合"));
+        QCOMPARE(languageBox->currentData().toString(), language);
+        QVERIFY(pending->isHidden());
+        row->setValue(3);
+        sample->trigger();
+        QTRY_VERIFY_WITH_TIMEOUT(!window.outputImage().isNull(), 12000);
+        const auto image = window.outputImage();
+        const auto title = window.windowTitle();
+        const auto manualTitle = ManualControlDialog().windowTitle();
+        QSignalSpy commands(player, &ActionQueuePlayer::sendAction);
+        QSignalSpy connections(serial, &SerialController::connectionChanged);
+        const QString next = language == "en" ? QString("zh_CN") : QString("en");
+        languageBox->setCurrentIndex(languageBox->findData(next));
+        QCOMPARE(QSettings().value(UiLanguage::settingKey).toString(), next);
+        QVERIFY(!pending->isHidden());
+        QCOMPARE(window.windowTitle(), title);
+        QCOMPARE(ManualControlDialog().windowTitle(), manualTitle);
+        QCOMPARE(window.outputImage(), image);
+        QCOMPARE(row->value(), 3);
+        QVERIFY(commands.isEmpty() && connections.isEmpty());
+        languageBox->setCurrentIndex(languageBox->findData(language));
+        QVERIFY(pending->isHidden());
+        QSettings().remove(UiLanguage::settingKey);
     }
     void plannerReplay_data()
     {
@@ -302,8 +369,8 @@ private slots:
         CanvasView canvas(true); canvas.setImage(photo);
         QImage comparison(660, 320, QImage::Format_RGB32); comparison.fill(Qt::white);
         QPainter painter(&comparison);
-        const QStringList titles = {QString::fromUtf8("清晰线稿"), QString::fromUtf8("铅笔素描"),
-            QString::fromUtf8("纯黑白"), QString::fromUtf8("经典抖动")};
+        const QStringList titles = {AutoSplatoon::tr("清晰线稿"), AutoSplatoon::tr("铅笔素描"),
+            AutoSplatoon::tr("纯黑白"), AutoSplatoon::tr("经典抖动")};
         for (int mode = 0; mode < 4; ++mode) {
             ProcessOptions options; options.preset = ImagePreset(mode);
             const auto result = processImage(canvas.composition(), options);
@@ -441,7 +508,7 @@ private slots:
         auto* state = window.findChild<QLabel*>("connectionState");
         serial->setConnecting(true);
         emit serial->message(QString::fromUtf8("正在重启 ESP32…"));
-        QCOMPARE(connectButton->text(), QString::fromUtf8("连接中…"));
+        QCOMPARE(connectButton->text(), AutoSplatoon::tr("连接中…"));
         QVERIFY(!connectButton->isEnabled()); QVERIFY(!ports->isEnabled());
         QVERIFY(!refresh->isEnabled()); QVERIFY(!flash->isEnabled());
         QVERIFY(!manual->isEnabled()); QVERIFY(!start->isEnabled());
@@ -453,7 +520,7 @@ private slots:
         QCOMPARE(state->text(), QString::fromUtf8("正在重启 ESP32…"));
         // Simulated handshake completion checks UI transitions, not hardware reset.
         serial->ready = true; serial->setConnecting(false); emit serial->connectionChanged(true);
-        QCOMPARE(connectButton->text(), QString::fromUtf8("断开连接"));
+        QCOMPARE(connectButton->text(), AutoSplatoon::tr("断开连接"));
         QVERIFY(connectButton->isEnabled()); QVERIFY(manual->isEnabled());
         QVERIFY(!start->isEnabled()); QVERIFY(!ports->isEnabled());
         serial->handleResponse(QByteArray(1, char(0x90))); QVERIFY(start->isEnabled());
@@ -461,7 +528,7 @@ private slots:
         serial->setConnecting(true);
         serial->fail(QString::fromUtf8("测试连接失败"));
         QCOMPARE(state->text(), QString::fromUtf8("测试连接失败"));
-        QCOMPARE(connectButton->text(), QString::fromUtf8("连接"));
+        QCOMPARE(connectButton->text(), AutoSplatoon::tr("连接"));
         QVERIFY(connectButton->isEnabled()); QVERIFY(ports->isEnabled());
         QVERIFY(refresh->isEnabled()); QVERIFY(flash->isEnabled());
         QVERIFY(!manual->isEnabled()); QVERIFY(!start->isEnabled());
@@ -538,7 +605,7 @@ private slots:
         QCOMPARE(flashed.size(), failure.isEmpty() ? 1 : 0);
         const auto log = dialog.findChild<QPlainTextEdit*>()->toPlainText();
         if (failure == "probe") QVERIFY(!log.contains("Writing"));
-        if (failure == "cancel") QVERIFY(log.contains(QString::fromUtf8("取消")));
+        if (failure == "cancel") QVERIFY(log.contains(FlashDialog::tr("烧录已取消，请重新烧录后再连接。")));
         qunsetenv("AUTOSPLATOON_FAKE_FAILURE");
     }
     void canvasIsIndependentOfViewport()

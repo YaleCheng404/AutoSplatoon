@@ -1,5 +1,8 @@
 blank_issues_enabled: true
 contact_links:
-  - name: 使用说明与设备连接
+  - name: User guide and hardware setup
     url: https://github.com/YaleCheng404/AutoSplatoon#readme
+    about: Download the app, prepare an image, pair your board, and draw your first image.
+  - name: 中文使用说明与设备连接
+    url: https://github.com/YaleCheng404/AutoSplatoon/blob/master/README.zh-CN.md
     about: 查看下载、图片处理、开发板配对和首次绘图步骤。

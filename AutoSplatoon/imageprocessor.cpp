@@ -1,4 +1,5 @@
 #include "imageprocessor.h"
+#include <QCoreApplication>
 #include <QPainter>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/photo.hpp>
@@ -6,7 +7,8 @@
 
 QImage processImage(const QImage& composition, const ProcessOptions& o)
 {
-    if (composition.isNull()) throw std::invalid_argument("Empty image");
+    if (composition.isNull())
+        throw std::invalid_argument(QCoreApplication::translate("ImageProcessing", "图片为空。").toUtf8().constData());
     // Own the RGB storage and honor QImage's padded stride.
     QImage rgb(composition.size(), QImage::Format_RGB888);
     rgb.fill(Qt::white);

@@ -2,6 +2,7 @@
 #include "flashdialog.h"
 #include "manualcontroldialog.h"
 #include "samplelibrary.h"
+#include "uilanguage.h"
 #include "workbenchstyle.h"
 #include <QtConcurrent>
 #include <QAccessibilityHints>
@@ -71,33 +72,42 @@ public:
 
 class WorkbenchToolbar : public QWidget {
 public:
-    explicit WorkbenchToolbar(QWidget* brand, QWidget* controls)
-        : row(new QBoxLayout(QBoxLayout::LeftToRight, this)), actions(controls)
+    WorkbenchToolbar(QWidget* brand, QWidget* files, QWidget* preferences)
+        : row(new QBoxLayout(QBoxLayout::LeftToRight, this)),
+          controls(new QBoxLayout(QBoxLayout::LeftToRight)), brand(brand), files(files), preferences(preferences)
     {
         setObjectName("workbenchToolbar");
         setAttribute(Qt::WA_StyledBackground);
         row->setContentsMargins(14, 5, 16, 6);
         row->setSpacing(8);
         row->addWidget(brand, 1);
-        row->addWidget(actions);
+        controls->setSpacing(8);
+        controls->addWidget(files, 0, Qt::AlignLeft);
+        controls->addWidget(preferences, 0, Qt::AlignLeft);
+        row->addLayout(controls);
     }
 
     QSize minimumSizeHint() const override
     {
-        return {actions->minimumSizeHint().width() + 30, row->minimumSize().height()};
+        return {qMax(files->minimumSizeHint().width(), preferences->minimumSizeHint().width()) + 30,
+                row->minimumSize().height()};
     }
 
 protected:
     void resizeEvent(QResizeEvent* event) override
     {
         QWidget::resizeEvent(event);
-        row->setDirection(width() < actions->minimumSizeHint().width() + 247
+        const int controlWidth = files->minimumSizeHint().width() + preferences->minimumSizeHint().width() + controls->spacing();
+        const int available = width() - row->contentsMargins().left() - row->contentsMargins().right();
+        row->setDirection(available < controlWidth + brand->sizeHint().width() + row->spacing()
             ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight);
+        controls->setDirection(available < controlWidth ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight);
     }
 
 private:
     QBoxLayout* row;
-    QWidget* actions;
+    QBoxLayout* controls;
+    QWidget *brand, *files, *preferences;
 };
 
 class InkTabBar : public QTabBar {
@@ -216,10 +226,37 @@ AutoSplatoon::AutoSplatoon(QWidget* parent) : QMainWindow(parent), serial(this),
     reduceMotion->setObjectName("reduceMotion");
     reduceMotion->setChecked(QSettings().value("ui/reduceMotion", false).toBool());
     reduceMotion->setToolTip(tr("勾选后停用装饰动画。未勾选时遵循系统的动态效果偏好。"));
+    auto* language = new QComboBox;
+    language->setObjectName("language");
+    auto* languageLabel = new QLabel(QStringLiteral("Language / 语言"));
+    languageLabel->setBuddy(language);
+    language->setAccessibleName(languageLabel->text());
+    language->addItem(tr("跟随系统"), "system");
+    language->addItem(QStringLiteral("简体中文"), "zh_CN");
+    language->addItem(QStringLiteral("English"), "en");
+    const QString startupPreference = UiLanguage::preference();
+    language->setCurrentIndex(language->findData(startupPreference));
+    auto* pending = label(tr("下次启动生效"), "muted");
+    pending->setObjectName("languagePending");
+    pending->setContentsMargins(14, 2, 16, 0);
+    pending->setAlignment(Qt::AlignRight);
+    pending->setWordWrap(true);
+    pending->hide();
+    connect(language, &QComboBox::currentIndexChanged, this, [language, pending, startupPreference] {
+        const QString preference = language->currentData().toString();
+        QSettings().setValue(UiLanguage::settingKey, preference);
+        pending->setVisible(preference != startupPreference);
+    });
     toolbar->addWidget(importButton);
-    toolbar->addWidget(exportButton); toolbar->addWidget(help); toolbar->addWidget(theme);
-    toolbar->addWidget(reduceMotion);
-    root->addWidget(new WorkbenchToolbar(brand, controls));
+    toolbar->addWidget(exportButton); toolbar->addWidget(help); toolbar->addWidget(reduceMotion);
+    auto* preferences = new QWidget;
+    auto* preferenceRow = new QHBoxLayout(preferences);
+    preferenceRow->setContentsMargins(0, 0, 0, 0);
+    preferenceRow->addWidget(theme);
+    preferenceRow->addWidget(languageLabel);
+    preferenceRow->addWidget(language);
+    root->addWidget(new WorkbenchToolbar(brand, controls, preferences));
+    root->addWidget(pending);
     auto* splitter = new QSplitter;
     splitter->setChildrenCollapsible(false);
     splitter->setHandleWidth(7);
@@ -325,7 +362,8 @@ AutoSplatoon::AutoSplatoon(QWidget* parent) : QMainWindow(parent), serial(this),
     threshold = spin(0, 255, 160, "threshold");
     inverse = new QCheckBox(tr("黑白反色"));
     form->addRow(tr("预设"), preset);
-    auto* presetHelp = button(tr("预设用途 ▸"), "presetHelp");
+    auto* presetHelp = button(tr("预设用途"), "presetHelp");
+    presetHelp->setIcon(QIcon(":/icons/chevron-down.svg"));
     presetHelp->setCheckable(true);
     form->addRow(presetHelp);
     auto* presetDescription = label({}, "muted");
@@ -339,7 +377,7 @@ AutoSplatoon::AutoSplatoon(QWidget* parent) : QMainWindow(parent), serial(this),
     descriptionPanel->setMaximumHeight(0);
     form->addRow(descriptionPanel);
     connect(presetHelp, &QPushButton::toggled, this, [presetHelp, descriptionPanel, presetDescription](bool open) {
-        presetHelp->setText(open ? tr("预设用途 ▾") : tr("预设用途 ▸"));
+        presetHelp->setIcon(QIcon(open ? ":/icons/chevron-up.svg" : ":/icons/chevron-down.svg"));
         const int from = descriptionPanel->height();
         const int to = open ? qMax(presetDescription->sizeHint().height(),
             presetDescription->heightForWidth(descriptionPanel->width())) : 0;
@@ -450,7 +488,7 @@ AutoSplatoon::AutoSplatoon(QWidget* parent) : QMainWindow(parent), serial(this),
     completion->setPixmap(WorkbenchStyle::artwork("squid-purple", QSize(24, 24), devicePixelRatioF()));
     completion->hide();
     taskButtons->addWidget(completion);
-    elapsed = label(tr("已用 00:00:00"), "muted"); taskButtons->addWidget(elapsed);
+    elapsed = label(tr("已用 %1").arg(duration(0)), "muted"); taskButtons->addWidget(elapsed);
     startButton = button(tr("开始绘图"), "startButton"); startButton->setProperty("primary", true);
     pauseButton = button(tr("暂停"), "pauseButton"); stopButton = button(tr("停止"), "stopButton");
     stopButton->setProperty("stop", true);
@@ -556,7 +594,7 @@ AutoSplatoon::AutoSplatoon(QWidget* parent) : QMainWindow(parent), serial(this),
         UiMotion::instance().setDrawing(true);
         completion->hide();
         updatePlan(); taskClock.start(); elapsedTimer.start(250); progress->setValue(0);
-        elapsed->setText(tr("已用 00:00:00"));
+        elapsed->setText(tr("已用 %1").arg(duration(0)));
         player.start(plan); updateButtons();
     });
     connect(pauseButton, &QPushButton::clicked, this, [this] {
@@ -572,7 +610,7 @@ AutoSplatoon::AutoSplatoon(QWidget* parent) : QMainWindow(parent), serial(this),
     });
     connect(&player, &ActionQueuePlayer::finished, this, [this] {
         elapsedTimer.stop(); progress->setValue(100); state->setText(tr("绘图完成")); updateButtons();
-        elapsed->setText(tr("已用 ") + duration(taskClock.elapsed()));
+        elapsed->setText(tr("已用 %1").arg(duration(taskClock.elapsed())));
         UiMotion::instance().setDrawing(false);
         completion->show();
         UiMotion::instance().reveal(completion, 260);
@@ -584,7 +622,7 @@ AutoSplatoon::AutoSplatoon(QWidget* parent) : QMainWindow(parent), serial(this),
     connect(&player, &ActionQueuePlayer::timingOverrun, this, [this](int, int late) {
         pauseButton->setText(tr("继续")); state->setText(tr("调度延迟 %1 ms，已暂停；检查游戏光标后继续。").arg(late));
     });
-    connect(&elapsedTimer, &QTimer::timeout, this, [this] { elapsed->setText(tr("已用 ") + duration(taskClock.elapsed())); });
+    connect(&elapsedTimer, &QTimer::timeout, this, [this] { elapsed->setText(tr("已用 %1").arg(duration(taskClock.elapsed()))); });
     refreshPorts(); applyTheme(); updateButtons();
     const QSize available = screen()->availableGeometry().size();
     resize(QSize(1100, 720).boundedTo(available - QSize(32, 64)));
@@ -615,7 +653,10 @@ void AutoSplatoon::importImage()
     const QSize size = reader.size();
     if (size.width() > 8192 || size.height() > 8192) reader.setScaledSize(size.scaled(8192, 8192, Qt::KeepAspectRatio));
     QImage image = reader.read();
-    if (image.isNull()) { QMessageBox::warning(this, tr("无法读取图片"), reader.errorString()); return; }
+    if (image.isNull()) {
+        QMessageBox::warning(this, tr("无法读取图片"), tr("无法读取所选文件。\n%1").arg(reader.errorString()));
+        return;
+    }
     loadImage(image);
 }
 void AutoSplatoon::loadSample(int index)
@@ -666,7 +707,7 @@ void AutoSplatoon::runProcessing()
     const QImage image = compositionView->composition();
     worker.setFuture(QtConcurrent::run([image, options] {
         try { return ProcessResult{processImage(image, options), {}}; }
-        catch (const std::exception& e) { return ProcessResult{{}, QString::fromUtf8(e.what())}; }
+        catch (const std::exception& e) { return ProcessResult{{}, tr("图像处理失败：%1").arg(QString::fromUtf8(e.what()))}; }
     }));
 }
 void AutoSplatoon::updatePlan()

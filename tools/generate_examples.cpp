@@ -3,6 +3,7 @@
 #include "mainwindow.h"
 #include "manualcontroldialog.h"
 #include "samplelibrary.h"
+#include "uilanguage.h"
 
 #include <QAction>
 #include <QApplication>
@@ -19,6 +20,7 @@
 #include <QTemporaryDir>
 #include <QTest>
 #include <QTimer>
+#include <QTranslator>
 #include <iostream>
 #include <stdexcept>
 
@@ -65,7 +67,7 @@ void screenshots(AutoSplatoon& window, QComboBox* theme, const QDir& directory)
         require(dialog.grab().save(directory.filePath("manual-control.png")), "Cannot save manual control");
     }
     {
-        FlashDialog dialog("COM (示例)", &window);
+        FlashDialog dialog("COM3", &window);
         dialog.show();
         QTest::qWait(35);
         require(dialog.grab().save(directory.filePath("flash-dialog.png")), "Cannot save flash dialog");
@@ -106,25 +108,32 @@ int main(int argc, char** argv)
     app.setStyle("Fusion");
     const QTemporaryDir settings;
     try {
-        require(app.arguments().size() == 2, "Usage: autosplatoon_examples <output-directory>");
+        const auto arguments = app.arguments();
+        require(arguments.size() == 2 || arguments.size() == 3,
+                "Usage: autosplatoon_examples <output-directory> [en|zh_CN]");
+        const QString language = arguments.value(2, "zh_CN");
+        require(language == "en" || language == "zh_CN", "Expected en or zh_CN");
         require(settings.isValid(), "Cannot create isolated settings");
         QSettings::setDefaultFormat(QSettings::IniFormat);
         QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, settings.path());
         QSettings().setValue("guideSeen", true);
         QSettings().setValue("theme", 1);
         QSettings().setValue("ui/reduceMotion", true);
-        const QDir output(app.arguments().at(1));
-        require(QDir().mkpath(output.absolutePath()), "Cannot create output directory");
+        QSettings().setValue(UiLanguage::settingKey, language);
+        QTranslator translator;
+        require(UiLanguage::install(translator, language), "Cannot load " + language + " translations");
+        const QDir output(arguments.at(1));
+        const QDir localized(output.filePath(language == "en" ? "en" : "zh-CN"));
+        require(QDir().mkpath(localized.absolutePath()), "Cannot create output directory");
         AutoSplatoon window;
         window.resize(1100, 720);
         window.show();
         QTest::qWait(35);
-        require(window.grab().save(output.filePath("sample-gallery.png")), "Cannot save sample gallery");
+        require(window.grab().save(localized.filePath("sample-gallery.png")), "Cannot save sample gallery");
         auto* canvas = window.findChild<CanvasView*>("compositionView");
         auto* preset = window.findChild<QComboBox*>("preset");
         auto* theme = window.findChild<QComboBox*>("theme");
         auto* exportButton = window.findChild<QPushButton*>("exportButton");
-        const QStringList names{"清晰线稿", "铅笔素描", "纯黑白", "经典抖动"};
         const QStringList filenames{"line-art", "pencil", "threshold", "dither"};
         QJsonObject manifest;
         for (const auto& sample : sampleLibrary()) {
@@ -139,7 +148,7 @@ int main(int argc, char** argv)
             grid.fill(QColor("#F1EFF5"));
             QPainter comparison(&grid);
             QJsonObject hashes;
-            for (int index = 0; index < names.size(); ++index) {
+            for (int index = 0; index < filenames.size(); ++index) {
                 preset->setCurrentIndex(index);
                 ProcessOptions options;
                 options.preset = ImagePreset(index);
@@ -159,28 +168,33 @@ int main(int argc, char** argv)
                 hashes[file] = digest(output.filePath(file));
                 const int x = 24 + (index % 2) * 656;
                 const int y = 24 + (index / 2) * 300;
-                caption(comparison, x, y + 25, names[index]);
+                caption(comparison, x, y + 25, preset->itemText(index));
                 comparison.drawImage(x, y + 39, actual.scaled(640, 240, Qt::IgnoreAspectRatio, Qt::FastTransformation));
                 if (index == 0) {
                     QImage pair(1344, 365, QImage::Format_RGB32);
                     pair.fill(QColor("#F1EFF5"));
                     QPainter painter(&pair);
                     caption(painter, 24, 42, sample.title);
-                    caption(painter, 24, 78, "01  示例原图");
-                    caption(painter, 680, 78, "02  清晰线稿 · 320 × 120");
+                    caption(painter, 24, 78, QCoreApplication::translate("Examples", "01  示例原图"));
+                    caption(painter, 680, 78, QCoreApplication::translate("Examples", "02  清晰线稿 · 320 × 120"));
                     painter.setRenderHint(QPainter::SmoothPixmapTransform);
                     painter.drawImage(QRect(24, 96, 640, 240), sample.image);
                     painter.setRenderHint(QPainter::SmoothPixmapTransform, false);
                     painter.drawImage(680, 96, actual.scaled(640, 240, Qt::IgnoreAspectRatio, Qt::FastTransformation));
                     painter.end();
-                    save(pair, output.filePath(sample.id + "-before-after.png"));
-                    if (sample.id == "squid-party") screenshots(window, theme, output);
+                    save(pair, localized.filePath(sample.id + "-before-after.png"));
+                    if (sample.id == "squid-party") screenshots(window, theme, localized);
                 }
             }
             comparison.end();
-            save(grid, output.filePath(sample.id + "-presets.png"));
+            save(grid, localized.filePath(sample.id + "-presets.png"));
             manifest[sample.id] = QJsonObject{{"title", sample.title}, {"credit", sample.credit},
                 {"source_sha256", digest(sourcePath)}, {"output_sha256", hashes}};
+        }
+        // Keep the shared manifest in its original language regardless of generation order.
+        if (language == "en") {
+            std::cout << "Verified 3 samples, 4 presets each, 320 x 120 binary output.\n";
+            return 0;
         }
         QFile record(output.filePath("examples.json"));
         require(record.open(QIODevice::WriteOnly), "Cannot write verification manifest");
