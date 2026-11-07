@@ -48,7 +48,7 @@ Set `AUTOSPLATOON_QA_OUTPUT` to save core test artifacts, including preset, phot
 
 Packaged GUI checks cover 18 resolution and scale combinations per language. Both languages must render their own labels and produce the same image and drawing plan. On real desktops, check 1080p, 2K, 4K, and movement between monitors. Controls must remain reachable by scrolling in small windows. Check X11 and Wayland separately.
 
-The example generator loads the three samples through the workbench menu and runs all four presets. It checks the workbench results against the processor for 320 × 120 dimensions and binary pixels, saves comparison images and screenshots, and records [source and output hashes](images/examples/examples.json). The drawing task strip stays at the bottom when the canvas and inspector scroll.
+The [example generator](building.md#generate-example-images) compares the workbench and processor results for all three samples and four presets. It verifies 320 × 120 binary output and records [source and output hashes](images/examples/examples.json). Check that the task strip stays at the bottom while scrolling the canvas and inspector.
 
 <a name="实机复测顺序"></a>
 

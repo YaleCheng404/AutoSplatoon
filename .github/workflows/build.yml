@@ -49,7 +49,12 @@ jobs:
       - name: Configure
         run: |
           for tool in cmake ctest cpack; do "$tool" --version; done
-          "$QT_ROOT/bin/lrelease" -version
+          qt_version=$(python -c 'import json; print(json.load(open("dependencies.lock.json"))["qt"]["version"])')
+          for tool in lupdate lrelease; do
+            version=$("$QT_ROOT/bin/$tool" -version)
+            echo "$version"
+            test "$version" = "$tool version $qt_version"
+          done
           extra=()
           if [ "${{ runner.os }}" = Windows ]; then extra+=(-DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++); fi
           if [ "${{ runner.os }}" = macOS ]; then extra+=(-DCMAKE_OSX_ARCHITECTURES=arm64); fi

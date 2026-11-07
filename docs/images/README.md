@@ -22,14 +22,12 @@ Select a sample card in the empty workbench or open **Samples** from the **Impor
 | Threshold | 160 |
 | Invert black and white | Off |
 
-The workbench loaded each sample and saved the result of each preset. The original outputs were checked for dimensions and binary pixels. The comparison images enlarge them by an integer factor. See the [generation manifest](examples/examples.json) for source and output checksums.
+See the [sample checksums](examples/examples.json) and [build instructions](../building.md#generate-example-images).
 
 <a name="生成方式与素材署名"></a>
 
-## Generate examples and credit artwork
-
-Build the tool with `cmake --build --preset release --target autosplatoon_examples`. Make the Qt runtime available, set `QT_QPA_PLATFORM=offscreen`, and run `build/release/autosplatoon_examples docs/images/examples en`. Use `zh_CN` for Simplified Chinese. The tool writes screenshots and captioned comparisons to `en/` and `zh-CN/` respectively and shares the source images and unlabelled outputs. On Windows, the executable has an `.exe` suffix.
+## Artwork credits
 
 The interface uses Mzyy94's Slidoon squid and ink artwork, Openclipart's Ink Splash, Kenney textures, Zacksly's Switch icons, and Delapouite's paint roller. See the [artwork manifest](../../licenses/ARTWORK.json) and [third-party notices](../../licenses/THIRD_PARTY.md) for per-file attribution, licenses, changes, and checksums.
 
-The original `squid-*.png` files in this directory are historical examples using [Keebo's Splatoon Cursors](https://www.rw-designer.com/cursor-set/splatoon), released into the public domain. The original files and author's notice are in `squid-originals/`. Splatoon characters belong to Nintendo.
+The [squid source image](squid-source.png) uses [Keebo's Splatoon Cursors](https://www.rw-designer.com/cursor-set/splatoon), released into the public domain. See the [original assets and author's notice](squid-originals/ORIGINAL-README.txt). Splatoon characters belong to Nintendo.

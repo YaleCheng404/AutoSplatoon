@@ -63,13 +63,13 @@ You need an **original ESP32** with a USB-to-serial interface, a USB data cable,
 4. Open the game's drawing screen, choose the smallest brush, and calibrate the cursor. The default start is the top-left corner at row 0, column 0. Draw a few pixels to check direction and position.
 5. Import an image, adjust it, and check the black-and-white preview before you start. You can pause, resume, or stop while drawing. The app can press **−** to save at the end. Each press and release lasts 70 ms by default. Keep the console on the drawing screen with the cursor undisturbed.
 
-If pairing fails again, disconnect and reconnect in the app, wait for the board to reboot, then pair and recalibrate the cursor. See the [connection recovery tests on YD-ESP32 and Switch 2](docs/validation.md) for the hardware and conditions tested.
+If pairing fails again, see [connection troubleshooting](docs/hardware.md#troubleshooting).
 
 <a name="手动控制可以配对和校准光标"></a>
 
 ## Manual controls
 
-The directional buttons move the cursor and ABXY follow the Switch layout. The shoulder row includes ZL, L, Pair with L + R, R, and ZR. L3 presses the left stick. The bottom row contains −, +, Capture, and Home.
+Use the directional buttons to calibrate the cursor and **Pair with L + R** to pair the controller.
 
 ![English Manual Controls dialog with Switch controller buttons and the pairing button](docs/images/examples/en/manual-control.png)
 

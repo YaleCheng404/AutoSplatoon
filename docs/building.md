@@ -30,7 +30,11 @@ OpenCV is built statically from the pinned source, with core, imgproc, photo, an
 
 ## Interface translations
 
-Mark user-visible Simplified Chinese source strings with Qt's `tr()` or `QCoreApplication::translate()`. Edit [the English catalog](../translations/autosplatoon_en.ts), then run `python tools/check_translations.py --extract build/qa/translation-source.ts` to check coverage and placeholders. The command also writes a source-only catalog for review. With a Qt SDK that includes QML, you can run the `update_translations` target to update source entries. Ordinary builds use Qt Linguist's `lrelease` to compile the catalog. The pinned Linux and macOS SDKs include Qt Declarative so that `lrelease` can load Qt QML. The executable embeds the English catalog and the Chinese Qt base catalog.
+Mark user-visible Chinese strings with Qt's `tr()` or `QCoreApplication::translate()`. Build the `update_translations` target to update the [English catalog](../translations/autosplatoon_en.ts). After editing the translations, run `python tools/check_translations.py --extract build/qa/translation-source.ts` with the Qt SDK's `bin` on PATH. The checker uses `lupdate` and verifies coverage and placeholders. The SDK includes Qt Declarative for the Linguist tools. The executable embeds the English app catalog and the Chinese Qt base catalog.
+
+## Generate example images
+
+Build with `cmake --build --preset release --target autosplatoon_examples`. With the Qt runtime on the library search path and `QT_QPA_PLATFORM=offscreen`, run `build/release/autosplatoon_examples docs/images/examples zh_CN` and repeat with `en`. On Windows, use `autosplatoon_examples.exe`. Captions and screenshots go to the language subdirectories. The source images, unlabelled outputs, and checksums are shared.
 
 <a name="验证"></a>
 

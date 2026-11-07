@@ -12,11 +12,7 @@ A USB data cable usually connects directly to the board's built-in USB-to-serial
 
 ## Flash and pair for the first time
 
-Follow the [first drawing steps](../README.md#first-drawing) to flash the board, connect, pair, and calibrate the game cursor. On Windows the serial device description may contain CH340, CH9102, or CP210x. Confirm it against your board.
-
-The bundled esptool detects the original ESP32 before writing the verified combined firmware to `0x0`. Close the flashing dialog when the log reports success. You can reuse the installed firmware when a software upgrade bundles the same version.
-
-Manual Controls are disabled during drawing, including while paused. See [Manual controls](../README.md#manual-controls) for pairing and calibration buttons.
+Follow the [first drawing steps](../README.md#first-drawing). The bundled esptool checks the chip before writing the verified firmware to `0x0`. When an upgrade bundles the same firmware, you can keep using the installed copy.
 
 <a name="连接问题可以逐项排查"></a>
 

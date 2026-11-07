@@ -20,12 +20,12 @@
 | 阈值 | 160 |
 | 反色 | 关闭 |
 
-原始输出由工作台载入示例并逐一切换预设后保存。图像尺寸和黑白像素已核对，效果对比图以整数倍放大。源图和输出文件的校验值见[生成记录](examples/examples.json)。
+参见[示例校验值](examples/examples.json)及[生成命令（英文）](../building.md#generate-example-images)。
 
-## 生成方式与素材署名
+<a name="生成方式与素材署名"></a>
 
-使用 `cmake --build --preset release --target autosplatoon_examples` 构建示例生成工具。将 Qt 运行库加入运行环境后，设置 `QT_QPA_PLATFORM=offscreen` 并运行 `build/release/autosplatoon_examples docs/images/examples zh_CN`。生成英文图片时将参数改为 `en`。界面截图和带文字的对比图分别写入 `zh-CN/` 和 `en/`，源图和无文字输出共用。Windows 可执行文件后缀为 `.exe`。
+## 素材署名
 
-新界面使用 Mzyy94 的 Slidoon 鱿鱼和墨迹、Openclipart 的 Ink Splash、Kenney 纹理、Zacksly 的 Switch 图标以及 Delapouite 的滚筒图标。逐文件来源、许可、改动与校验值见[美术素材清单](../../licenses/ARTWORK.json)和[第三方声明（英文）](../../licenses/THIRD_PARTY.md)。
+界面使用 Mzyy94 的 Slidoon 鱿鱼和墨迹、Openclipart 的 Ink Splash、Kenney 纹理、Zacksly 的 Switch 图标以及 Delapouite 的滚筒图标。逐文件来源、许可、改动与校验值见[美术素材清单](../../licenses/ARTWORK.json)和[第三方声明（英文）](../../licenses/THIRD_PARTY.md)。
 
-同目录原有 `squid-*.png` 为历史示例，使用 [Keebo 的 Splatoon Cursors](https://www.rw-designer.com/cursor-set/splatoon)，发布条款为 Public Domain。原始文件及作者声明位于 `squid-originals/`。Splatoon 角色版权归 Nintendo 所有。
+[鱿鱼源图](squid-source.png)采用 [Keebo 的 Splatoon Cursors](https://www.rw-designer.com/cursor-set/splatoon)，素材已释入公有领域。参见[原始素材及作者声明](squid-originals/ORIGINAL-README.txt)。Splatoon 角色版权归 Nintendo 所有。
