@@ -75,8 +75,6 @@ Use the directional buttons to calibrate the cursor and **Pair with L + R** to p
 
 Hold a button with the mouse to press it. Releasing the mouse, switching windows, or closing the dialog releases the input. The dialog closes if the serial connection drops. Stop drawing before opening Manual Controls to recalibrate.
 
-[Connection and flashing troubleshooting](docs/hardware.md#troubleshooting)
-
 <a name="问题反馈和开发说明集中在仓库"></a>
 
 ## Support and development

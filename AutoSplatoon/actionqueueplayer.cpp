@@ -134,8 +134,9 @@ void ActionQueuePlayer::playNextFrame()
         return;
     }
     _currentIndex++;
-    _expectedNextTimeoutMs += qMax(0, frame.durationMs);
-    _timer.start(qMax(0, frame.durationMs));
+    const int durationMs = qMax(0, frame.durationMs);
+    _expectedNextTimeoutMs += durationMs;
+    _timer.start(durationMs);
 }
 
 void ActionQueuePlayer::resetState()

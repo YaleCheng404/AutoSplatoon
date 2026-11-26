@@ -1,126 +1,126 @@
 {
   "qt": {
-    "version": "6.12.0",
+    "version": "6.12.1",
     "sdk": {
       "windows-amd64": [
         {
           "name": "qtimageformats-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6120/qt6_6120_mingw/qt.qt6.6120.addons.qtimageformats.win64_mingw/6.12.0-0-202609280346qtimageformats-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "sha256": "822d37a7f2f30a69eefad60f8dc6b17549b11b8b51e62fc9b47259ce3c3ea4de"
+          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6121/qt6_6121_mingw/qt.qt6.6121.addons.qtimageformats.win64_mingw/6.12.1-0-202611180427qtimageformats-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
+          "sha256": "ace858959f7d2f4474d798e0e31b4153e08d9ce1e9bd758507ab4285d3ab673a"
         },
         {
           "name": "qtserialport-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6120/qt6_6120_mingw/qt.qt6.6120.addons.qtserialport.win64_mingw/6.12.0-0-202609280346qtserialport-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "sha256": "35d5f57a63987a702151789b5102fb842969172384a1ec1a9f8fbd69492b1b15"
+          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6121/qt6_6121_mingw/qt.qt6.6121.addons.qtserialport.win64_mingw/6.12.1-0-202611180427qtserialport-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
+          "sha256": "9edeeacb726a2d82a6ed7138de3e70746664c95631ee25975188d8720dabca8c"
         },
         {
           "name": "qtbase-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6120/qt6_6120_mingw/qt.qt6.6120.win64_mingw/6.12.0-0-202609280346qtbase-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "sha256": "3356346505113242a4f7c0b09ba46188424ee7938232166655f794c28a3477fc"
+          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6121/qt6_6121_mingw/qt.qt6.6121.win64_mingw/6.12.1-0-202611180427qtbase-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
+          "sha256": "3331d18efd754166872246e04e32e25809f748a487f04cf2ca3d7d37945e21ae"
         },
         {
           "name": "qtsvg-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6120/qt6_6120_mingw/qt.qt6.6120.win64_mingw/6.12.0-0-202609280346qtsvg-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "sha256": "8dd193d39e21395f8fcb802f543f6e43e13a5caf5dd6f94cab731a53c598496a"
+          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6121/qt6_6121_mingw/qt.qt6.6121.win64_mingw/6.12.1-0-202611180427qtsvg-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
+          "sha256": "e270a1f19a031429c2c717a63ddb2d2190f6ac78b25705eb9014c2e45915ea43"
         },
         {
           "name": "qttools-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6120/qt6_6120_mingw/qt.qt6.6120.win64_mingw/6.12.0-0-202609280346qttools-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "sha256": "e3de8f2cf8746be88fbeec08993575744dbe3d6ccc532f3b59777938fc03bd94"
+          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6121/qt6_6121_mingw/qt.qt6.6121.win64_mingw/6.12.1-0-202611180427qttools-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
+          "sha256": "a64857cb59f492ae4557cb4ff48bd70e2a92981642343d3ec53934df8fcdb9e0"
         },
         {
           "name": "qtdeclarative-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6120/qt6_6120_mingw/qt.qt6.6120.win64_mingw/6.12.0-0-202609280346qtdeclarative-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "sha256": "a567789b9c142da546db76ceaa47aa0ee92bb780d7102d1adb905d39a3bf441b"
+          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6121/qt6_6121_mingw/qt.qt6.6121.win64_mingw/6.12.1-0-202611180427qtdeclarative-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
+          "sha256": "e281137356b62dbb84eb8eaf52a6829a7ba16797965d89b1ac6c8586ccf41fe5"
         },
         {
           "name": "qttranslations-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6120/qt6_6120_mingw/qt.qt6.6120.win64_mingw/6.12.0-0-202609280346qttranslations-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
-          "sha256": "4c8151e7d0cbcb7bcdd7e36d5a45b1d525b0873987a8a55f590a25eaab308c69"
+          "url": "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6121/qt6_6121_mingw/qt.qt6.6121.win64_mingw/6.12.1-0-202611180427qttranslations-Windows-Windows_11_24H2-Mingw-Windows-Windows_11_24H2-X86_64.7z",
+          "sha256": "e3cf771153cd020c6f4289b5109fe9ae340e23fc80b4117465471eddbf345f1c"
         }
       ],
       "macos-arm64": [
         {
           "name": "qtimageformats-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.addons.qtimageformats.clang_64/6.12.0-0-202609280346qtimageformats-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "sha256": "f4b4ed77d79050263e04941d4060c4e1c1d7e279c4c89c059b7805752c1fba1d"
+          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.addons.qtimageformats.clang_64/6.12.1-0-202611180803qtimageformats-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
+          "sha256": "3fb74cea5f8105f023082ddc0e4b62e6be5225cc431eab5a0c224f5a061cabd4"
         },
         {
           "name": "qtserialport-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.addons.qtserialport.clang_64/6.12.0-0-202609280346qtserialport-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "sha256": "e081ba338837893acd0f9be2d1f4c8cc12be379409aeec586a10945d9aa6ac32"
+          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.addons.qtserialport.clang_64/6.12.1-0-202611180803qtserialport-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
+          "sha256": "e46cacbb273d2280a01ed1ff901b38036ff68d6a09d0e0e81a5a9f3889a95325"
         },
         {
           "name": "qtbase-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.clang_64/6.12.0-0-202609280346qtbase-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "sha256": "1e0df66ed17ae97997971ff481983c5c0b7497a52ef52f699725701401fd80ee"
+          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.clang_64/6.12.1-0-202611180803qtbase-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
+          "sha256": "e62976c77ce878b1aa04eac204a5e77eafe08cba7aae7fbf545f00b7df12978c"
         },
         {
           "name": "qtsvg-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.clang_64/6.12.0-0-202609280346qtsvg-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "sha256": "428c6d02a7bdaf832463aa97a19c1c0920a8e840c751499d05fa9e43dc69f172"
+          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.clang_64/6.12.1-0-202611180803qtsvg-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
+          "sha256": "ea786535052c13deea2a54124572df363a5c29d4de0908995f13ce2130df3860"
         },
         {
           "name": "qttools-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.clang_64/6.12.0-0-202609280346qttools-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "sha256": "c503c114fbb96a2c2dad07fae4d195cb800ab498c9deb440c879e657ec14e8f8"
+          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.clang_64/6.12.1-0-202611180803qttools-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
+          "sha256": "779177796274ab02f296dfed1b79bb1cb78ef6e678ba156c04b6bf48673f4bec"
         },
         {
           "name": "qtdeclarative-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.clang_64/6.12.0-0-202609280346qtdeclarative-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "sha256": "6b070cade4201db28ed34f65331085c3916a718bc6a30ea24c2f57e67debacea"
+          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.clang_64/6.12.1-0-202611180803qtdeclarative-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
+          "sha256": "08f53c1a370e2f86f9bc5f7c6b4987b385069f1573fc20555208b54040415106"
         },
         {
           "name": "qttranslations-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.clang_64/6.12.0-0-202609280346qttranslations-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
-          "sha256": "274dd3952f8b8b2b42e3e10887cb228b67e4a004f4ea8f0adb538f24abc0b58a"
+          "url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.clang_64/6.12.1-0-202611180803qttranslations-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
+          "sha256": "9a7ad0eafc1d81580d1bf13cbc722560a850f3fb266bee04dcafb4dea9219bd9"
         }
       ],
       "linux-amd64": [
         {
           "name": "qtimageformats-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.addons.qtimageformats.linux_gcc_64/6.12.0-0-202609280346qtimageformats-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "sha256": "a94de54e4d4c695bb61d6dc1041f9673c67c6dd5336b4df63da3198da6d1ed09"
+          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.addons.qtimageformats.linux_gcc_64/6.12.1-0-202611180427qtimageformats-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
+          "sha256": "11e6010aa7cacf0cc64ed42f15828b5af567756ca0b7f6dcff069e6abae9b83e"
         },
         {
           "name": "qtserialport-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.addons.qtserialport.linux_gcc_64/6.12.0-0-202609280346qtserialport-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "sha256": "e2bfe95a989699831d09143e830276707c1fd4e64af78ad05ab8cdf59f32e6b1"
+          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.addons.qtserialport.linux_gcc_64/6.12.1-0-202611180427qtserialport-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
+          "sha256": "ab103adcc100df6e5f7587bee495d955a60c1085f4271275332f6a04eaa7c95c"
         },
         {
           "name": "qtbase-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.linux_gcc_64/6.12.0-0-202609280346qtbase-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "sha256": "943023b929d0c08eafe7341700b5ed7601284410b7afd6093f950be291d1d7cd"
+          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.linux_gcc_64/6.12.1-0-202611180427qtbase-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
+          "sha256": "4d788ab11c38af56f0d6fead23cf6e133e5fb9c8c31ffe41bfc1df2a21c1dc39"
         },
         {
           "name": "qtsvg-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.linux_gcc_64/6.12.0-0-202609280346qtsvg-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "sha256": "22a7404505a2883c54556183f19adfff1cdbea30664e34bfd4171180802142e9"
+          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.linux_gcc_64/6.12.1-0-202611180427qtsvg-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
+          "sha256": "7f1be015cf4adb403e671410931605da3ec4d446cd18407fdac16199dab2e75e"
         },
         {
           "name": "qttools-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.linux_gcc_64/6.12.0-0-202609280346qttools-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "sha256": "5d6f90961df3a1e5a57fac69bbbe6983860bad11c419a49736b84914588b4334"
+          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.linux_gcc_64/6.12.1-0-202611180427qttools-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
+          "sha256": "a1933d2e769cb6492fb175f12bbf4541b7adcd205366108e1d1c37614c58bd98"
         },
         {
           "name": "qtdeclarative-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.linux_gcc_64/6.12.0-0-202609280346qtdeclarative-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "sha256": "0c719e17ea9fbd37aa615595149dca2578985656433f27bf2846cffe4b687d3e"
+          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.linux_gcc_64/6.12.1-0-202611180427qtdeclarative-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
+          "sha256": "f1099a9debf5c610ea4d59504dda85b62536febc62e68f47e47cb65c870f08d5"
         },
         {
           "name": "qttranslations-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.linux_gcc_64/6.12.0-0-202609280346qttranslations-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "sha256": "bd10fbbce93b076d9bc29576f41e9ccbaf3f7782625f9bebb418d2d9b9f97c47"
+          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.linux_gcc_64/6.12.1-0-202611180427qttranslations-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
+          "sha256": "08a80343d60079d763e92d12a8be58240a35677ccdcfc1beabe41164fef69546"
         },
         {
           "name": "qtwayland-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.linux_gcc_64/6.12.0-0-202609280346qtwayland-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
-          "sha256": "14c0dc4c8147cf9f7f64909b27ae5c9ab2aaa8ad6625bc2248c693c2a327ab5b"
+          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.linux_gcc_64/6.12.1-0-202611180427qtwayland-Linux-RHEL_9_6-GCC-Linux-RHEL_9_6-X86_64.7z",
+          "sha256": "df935afbc94287e2f916ce24d27758cbc63c3368eb194ba815c434ee8fc56565"
         },
         {
           "name": "icu-linux-Rhel8.6-x86_64.7z",
-          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.linux_gcc_64/6.12.0-0-202609280346icu-linux-Rhel8.6-x86_64.7z",
-          "sha256": "1fdbcd67b1760f3a3f031c64637a9f19992aed2f35aa615e12a468f8c655d4da"
+          "url": "https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_6121/qt6_6121/qt.qt6.6121.linux_gcc_64/6.12.1-0-202611180427icu-linux-Rhel8.6-x86_64.7z",
+          "sha256": "5e2f2e0016e4c3264a2eb38073e65f4a39b7aea8d48424e205551b3ac44c5937"
         }
       ]
     }
@@ -131,22 +131,22 @@
     "sha256": "638c1dae7e37e45afea21aa217dc667ad7cf57acc66cdf652c074f1e0e5ad6d2"
   },
   "esptool": {
-    "version": "5.6.0",
+    "version": "5.7.0",
     "assets": {
       "windows-amd64": {
-        "name": "esptool-v5.6.0-windows-amd64.zip",
-        "url": "https://github.com/espressif/esptool/releases/download/v5.6.0/esptool-v5.6.0-windows-amd64.zip",
-        "sha256": "d55a96fbeb97fd4cb05bd93f201e5c8f6518b7bfcde2fc6966fd0190fd891629"
+        "name": "esptool-v5.7.0-windows-amd64.zip",
+        "url": "https://github.com/espressif/esptool/releases/download/v5.7.0/esptool-v5.7.0-windows-amd64.zip",
+        "sha256": "c97911246149141eab535b3a6dd5367cd3c16ba17098bce27ac6af780708c9e9"
       },
       "macos-arm64": {
-        "name": "esptool-v5.6.0-macos-arm64.tar.gz",
-        "url": "https://github.com/espressif/esptool/releases/download/v5.6.0/esptool-v5.6.0-macos-arm64.tar.gz",
-        "sha256": "08a58829a3f14bb08f2e39f4cad48dcb14b7000384268e7f06689836332d6e25"
+        "name": "esptool-v5.7.0-macos-arm64.tar.gz",
+        "url": "https://github.com/espressif/esptool/releases/download/v5.7.0/esptool-v5.7.0-macos-arm64.tar.gz",
+        "sha256": "91ed98320f1f591ba9c2895bf3b85bdda1a64542447fc314547dbd67cd43623c"
       },
       "linux-amd64": {
-        "name": "esptool-v5.6.0-linux-amd64.tar.gz",
-        "url": "https://github.com/espressif/esptool/releases/download/v5.6.0/esptool-v5.6.0-linux-amd64.tar.gz",
-        "sha256": "1590723cfa9675983f49d0bf2895b8507f8d2879082e51bb7ef02a8bca88d354"
+        "name": "esptool-v5.7.0-linux-amd64.tar.gz",
+        "url": "https://github.com/espressif/esptool/releases/download/v5.7.0/esptool-v5.7.0-linux-amd64.tar.gz",
+        "sha256": "f35ac7ab299b1fcdcf2a583ef447705dcc2409c48ecf34178bb30587253b042b"
       }
     }
   },
@@ -173,22 +173,22 @@
   },
   "build": {
     "cmake": {
-      "version": "4.4.5",
+      "version": "4.5.1",
       "assets": {
         "windows-amd64": {
-          "name": "cmake-4.4.5-windows-x86_64.zip",
-          "url": "https://github.com/Kitware/CMake/releases/download/v4.4.5/cmake-4.4.5-windows-x86_64.zip",
-          "sha256": "326c826486d46a23cf9d5a1c9ee3a567d427bdd02c4a34071937a2a675cff004"
+          "name": "cmake-4.5.1-windows-x86_64.zip",
+          "url": "https://github.com/Kitware/CMake/releases/download/v4.5.1/cmake-4.5.1-windows-x86_64.zip",
+          "sha256": "bfe6eadb245dc8213e0d3feea316b520cb2aae92f5667ffd76059ba6b05c430c"
         },
         "macos-arm64": {
-          "name": "cmake-4.4.5-macos-universal.tar.gz",
-          "url": "https://github.com/Kitware/CMake/releases/download/v4.4.5/cmake-4.4.5-macos-universal.tar.gz",
-          "sha256": "679e77a96b9ef9484cc6c1445255fc4f84206b48a65420efbedf16bdab55fbff"
+          "name": "cmake-4.5.1-macos-universal.tar.gz",
+          "url": "https://github.com/Kitware/CMake/releases/download/v4.5.1/cmake-4.5.1-macos-universal.tar.gz",
+          "sha256": "e1fb288543e4eb2a410e385ecebc64323bda51f0205782f2b094ccd5d572ca2d"
         },
         "linux-amd64": {
-          "name": "cmake-4.4.5-linux-x86_64.tar.gz",
-          "url": "https://github.com/Kitware/CMake/releases/download/v4.4.5/cmake-4.4.5-linux-x86_64.tar.gz",
-          "sha256": "ed85135c5a5135b45e50423cb406dea04ca3338da0b8ef3c9ede963559680be0"
+          "name": "cmake-4.5.1-linux-x86_64.tar.gz",
+          "url": "https://github.com/Kitware/CMake/releases/download/v4.5.1/cmake-4.5.1-linux-x86_64.tar.gz",
+          "sha256": "83b71181fb62b4fe8f26067a9321448572e7a43bd04ff6c7f54a24c33698f16d"
         }
       }
     },
@@ -199,22 +199,22 @@
       "sha256": "ba447149a73cab43fdaf3352d1164f2bd5e96bc01ae6564fbaebd62f1b8eb435"
     },
     "sevenzip": {
-      "version": "26.05",
+      "version": "26.06",
       "assets": {
         "windows-amd64": {
           "name": "7zr.exe",
-          "url": "https://github.com/ip7z/7zip/releases/download/26.05/7zr.exe",
-          "sha256": "9bf582b894dfa665f852d7e9112b02290a1c303c2d95a21fcdc41ffcb03143b7"
+          "url": "https://github.com/ip7z/7zip/releases/download/26.06/7zr.exe",
+          "sha256": "e80db2dad715a6c5adabe292d31ed54e11f4e9b99ca349827b50573b175891bc"
         },
         "macos-arm64": {
-          "name": "7z2605-mac.tar.xz",
-          "url": "https://github.com/ip7z/7zip/releases/download/26.05/7z2605-mac.tar.xz",
-          "sha256": "12ef6830317743cfd3f0ab1724bde43fcc270d8b6d8564f8c12c2a2b7f993570"
+          "name": "7z2606-mac.tar.xz",
+          "url": "https://github.com/ip7z/7zip/releases/download/26.06/7z2606-mac.tar.xz",
+          "sha256": "b6f17920b4240940461dac8ef4009891881ac44d2a5ead625ede2ec8472185dd"
         },
         "linux-amd64": {
-          "name": "7z2605-linux-x64.tar.xz",
-          "url": "https://github.com/ip7z/7zip/releases/download/26.05/7z2605-linux-x64.tar.xz",
-          "sha256": "22cf82fcc6eb7474f1d5bb4f02c0f8ebd573a718089d6833dc30f8350a3b232e"
+          "name": "7z2606-linux-x64.tar.xz",
+          "url": "https://github.com/ip7z/7zip/releases/download/26.06/7z2606-linux-x64.tar.xz",
+          "sha256": "2b539cf067b2ad48e1baa5093dbaa8818b73542d1222a0ffde9dc5f2922ea62e"
         }
       }
     }

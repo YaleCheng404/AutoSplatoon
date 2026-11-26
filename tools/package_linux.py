@@ -14,19 +14,8 @@ parser.add_argument("--qt", type=Path, required=True)
 args = parser.parse_args()
 build = args.build.resolve()
 appdir = build / "AutoSplatoon.AppDir"
-binary = appdir / "usr" / "bin"
-binary.mkdir(parents=True, exist_ok=True)
-shutil.copy2(build / "AutoSplatoon", binary / "AutoSplatoon")
-shutil.copytree(build / "assets" / "tools", binary / "tools", dirs_exist_ok=True)
-resources = appdir / "usr" / "share" / "autosplatoon"
-for folder in ("firmware", "licenses", "docs"):
-    shutil.copytree(ROOT / folder, resources / folder, dirs_exist_ok=True)
-for file in ("LICENSE", "README.md", "README.zh-CN.md", "dependencies.lock.json"):
-    shutil.copy2(ROOT / file, resources)
-shutil.copytree(args.qt / "sbom", resources / "licenses" / "Qt-SBOM", dirs_exist_ok=True)
-subprocess.run(["cmake", "--install", str(build / "_deps" / "opencv-build"),
-                "--component", "licenses", "--prefix", str(build / "opencv-licenses")], check=True)
-shutil.copytree(build / "opencv-licenses", resources / "licenses" / "OpenCV-third-party", dirs_exist_ok=True)
+subprocess.run(["cmake", "--install", build, "--prefix", appdir / "usr",
+                "--component", "Unspecified"], check=True)
 lock = json.loads((ROOT / "dependencies.lock.json").read_text())
 for asset in lock["appimage"].values():
     path = build / asset["name"]
@@ -45,7 +34,7 @@ environment["PATH"] = str(build) + os.pathsep + str(args.qt.resolve() / "bin") +
 # Wayland plugins may depend on QtWayland libraries; the Qt plugin resolves them.
 icon = build / "autosplatoon.svg"
 shutil.copy2(ROOT / "AutoSplatoon" / "app.svg", icon)
-subprocess.run([str(build / "linuxdeploy-x86_64.AppImage"), "--appdir", str(appdir), "--executable", str(binary / "AutoSplatoon"),
+subprocess.run([build / "linuxdeploy-x86_64.AppImage", "--appdir", appdir, "--executable", appdir / "usr/bin/AutoSplatoon",
                 "--desktop-file", str(ROOT / "tools" / "AutoSplatoon.desktop"), "--icon-file", str(icon),
                 "--plugin", "qt", "--output", "appimage"], env=environment, check=True)
 with tarfile.open(build / "AutoSplatoon-linux-x64.tar.gz", "w:gz") as archive:

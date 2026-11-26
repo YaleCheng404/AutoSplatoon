@@ -2,31 +2,29 @@
 
 [English](README.md) | 简体中文
 
-把喜欢的图片变成 Splatoon 广场上的黑白涂鸦。
-
 AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 模拟 Pro Controller，逐步完成绘制。导入后可以拖动、缩放和调整预设，确认结果再开始。图片处理和 PNG 导出可以在电脑上独立使用。
 
 [国内代理下载](#国内下载优先使用代理) · [GitHub 官方发行页](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [第一次使用](#首次绘图需要连接和校准) · [硬件与故障排查](docs/hardware.zh-CN.md)
 
 ![鱿鱼集合的彩色源图与 AutoSplatoon 清晰线稿输出](docs/images/examples/zh-CN/squid-party-before-after.png)
 
-左侧是工作台内置的彩色示例，右侧是软件生成的 320×120 清晰线稿。
-
 ## 国内下载优先使用代理
 
-国内用户优先使用下表的代理链接，通过 [github.sukii.net](https://github.sukii.net/) 下载本仓库的 Release 文件。下表提供 **v1.1.0** 发行包。
+下表通过 [github.sukii.net](https://github.sukii.net/) 提供 **v1.1.0** 下载。
 
 | 系统 | 国内代理下载 · v1.1.0 | 使用条件 |
 | --- | --- | --- |
 | Windows | [ZIP 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-1.1.0-Windows-AMD64.zip) | Windows 10/11 x64，完整解压后运行 |
 | macOS | [DMG 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-1.1.0-Darwin-arm64.dmg) | macOS 14.4 或更新版本，Apple Silicon |
-| Linux | [AppImage 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-linux-x64.AppImage) · [目录包下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-linux-x64.tar.gz) | x64；AppImage 和目录包均可选择 |
+| Linux | [AppImage 下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-linux-x64.AppImage) · [目录包下载](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/AutoSplatoon-linux-x64.tar.gz) | x64 |
 
 [下载 SHA-256 校验清单](https://github.sukii.net/https://github.com/YaleCheng404/AutoSplatoon/releases/download/v1.1.0/SHA256SUMS.txt) · [GitHub 官方下载与版本记录](https://github.com/YaleCheng404/AutoSplatoon/releases/latest) · [v1.1.0 更新说明（英文）](docs/release-notes/v1.1.0.md)
 
 也可以在代理首页粘贴包含 `releases/download/` 的具体文件地址，或通过 GitHub 官方发行页下载。
 
 发行包包含 Qt 运行库、图片插件、esptool 和 UARTSwitchCon 1.2 固件，**解压后即可运行**。升级时完整解压新包。
+
+Linux 上没有 FUSE 时，可运行 `APPIMAGE_EXTRACT_AND_RUN=1 ./AutoSplatoon-*.AppImage`，也可使用目录包中的 `AppRun`。
 
 ## 图片可以调整构图和风格
 
@@ -38,11 +36,9 @@ AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 �
 
 从当前源码构建后，可以在顶部 **Language / 语言** 中选择“跟随系统”“简体中文”或“English”。软件会记住选择，下次启动生效。默认跟随系统，中文系统显示简体中文，其他系统显示英文。
 
-![导入新鱿鱼示例后的工作台](docs/images/examples/zh-CN/workbench-light.png)
+![载入鱿鱼集合的工作台](docs/images/examples/zh-CN/workbench-light.png)
 
-四种预设可以直接切换，下面展示同一张鱿鱼构图的处理效果。
-
-![新鱿鱼示例的四种预设输出](docs/images/examples/zh-CN/squid-party-presets.png)
+![鱿鱼集合的四种预设输出](docs/images/examples/zh-CN/squid-party-presets.png)
 
 | 预设 | 可以先用在哪些图上 |
 | --- | --- |
@@ -74,8 +70,6 @@ AutoSplatoon 先把图片处理成 **320×120 黑白画布**，再通过 ESP32 �
 ![手动控制与配对窗口](docs/images/examples/zh-CN/manual-control.png)
 
 鼠标按住按钮生效，松开释放；切换窗口或关闭弹窗也会释放输入。串口断开时弹窗关闭。重新校准时，先停止绘图再打开手动面板。
-
-找不到串口、烧录失败或再次无法配对时，参见 [硬件与故障排查](docs/hardware.zh-CN.md#连接问题可以逐项排查)。Linux 上没有 FUSE 时，可以运行 `APPIMAGE_EXTRACT_AND_RUN=1 ./AutoSplatoon-*.AppImage`，也可使用目录包中的 AppRun。
 
 ## 问题反馈和开发说明集中在仓库
 

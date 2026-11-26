@@ -33,9 +33,11 @@ def install_cmake(cmake, platform, cache):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--platform", required=True, choices=["windows-amd64", "macos-arm64", "linux-amd64"])
-    parser.add_argument("--output", type=Path, default=ROOT / ".deps" / "qt")
+    parser.add_argument("--output", type=Path, help="Qt SDK directory (defaults to .deps/qt-<version>)")
     args = parser.parse_args()
     lock = json.loads((ROOT / "dependencies.lock.json").read_text())
+    qt_version = lock["qt"]["version"]
+    output = (args.output or ROOT / ".deps" / f"qt-{qt_version}").resolve()
     assets = lock["qt"]["sdk"][args.platform]
     cache = ROOT / ".deps" / "downloads" / args.platform
     cmake_bin = install_cmake(lock["build"]["cmake"], args.platform, cache)
@@ -55,21 +57,21 @@ def main():
     sevenzip = str(sevenzip)
 
     def fetch(asset):
-        path = cache / asset["name"]
+        path = cache / f"qt-{qt_version}" / asset["name"]
         download(asset["url"], path, asset["sha256"])
         print("Verified:", asset["name"], flush=True)
         return path
 
-    args.output.mkdir(parents=True, exist_ok=True)
+    output.mkdir(parents=True, exist_ok=True)
     with ThreadPoolExecutor(max_workers=3) as executor:
         for archive in executor.map(fetch, assets):
             # Verified Qt SDKs contain framework / .so symlinks pointing to other symlinks.
             links = ["-snld20"] if args.platform != "windows-amd64" else []
-            subprocess.run([sevenzip, "x", "-y", *links, str(archive), f"-o{args.output.resolve()}"], check=True, stdout=subprocess.DEVNULL)
+            subprocess.run([sevenzip, "x", "-y", *links, archive, f"-o{output}"], check=True, stdout=subprocess.DEVNULL)
     platform_folder = {"windows-amd64": "mingw_64", "macos-arm64": "macos", "linux-amd64": "gcc_64"}[args.platform]
-    prefix = args.output.resolve()
+    prefix = output
     if not (prefix / "lib" / "cmake" / "Qt6" / "Qt6Config.cmake").is_file():
-        prefix = prefix / lock["qt"]["version"] / platform_folder
+        prefix = output / qt_version / platform_folder
     if not (prefix / "lib" / "cmake" / "Qt6" / "Qt6Config.cmake").is_file():
         raise RuntimeError(f"Missing SDK configuration: {prefix}")
     (prefix / "bin" / "qt.conf").write_text("[Paths]\nPrefix=..\n")

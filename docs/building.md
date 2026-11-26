@@ -6,15 +6,16 @@ The project uses C++17, CMake, Ninja, and Python 3.15. See the [dependency lockf
 
 ## Local build
 
-Install Python 3.15.2, then follow this Windows x64 example. The SDK installer downloads and verifies CMake, Qt, the matching MinGW compiler, and 7-Zip. It prints `CMAKE_BIN` and `QT_ROOT`.
+Install Python 3.15.2, then follow this Windows x64 example. The SDK installer verifies the archives against the lockfile and installs Qt and CMake in versioned directories under `.deps`.
 
 ```powershell
 python -m venv .deps/venv
 .deps/venv/Scripts/python -m pip install -r tools/requirements-build.txt
-.deps/venv/Scripts/python tools/install_qt.py --platform windows-amd64
-$env:PATH = "$PWD/.deps/cmake/4.4.5/bin;$PWD/.deps/venv/Scripts;$PWD/.deps/compiler/mingw64/bin;$PWD/.deps/qt/bin;$env:PATH"
+$buildTools = .deps/venv/Scripts/python tools/install_qt.py --platform windows-amd64 |
+    Where-Object { $_ -match '^(QT_ROOT|CMAKE_BIN)=' } | Out-String | ConvertFrom-StringData
+$env:PATH = "$($buildTools.CMAKE_BIN);$PWD/.deps/venv/Scripts;$PWD/.deps/compiler/mingw64/bin;$($buildTools.QT_ROOT)/bin;$env:PATH"
 python tools/fetch_assets.py --platform windows-amd64 --output build/release/assets
-cmake --preset release -DCMAKE_PREFIX_PATH="$PWD/.deps/qt" -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
+cmake --preset release --fresh -DCMAKE_PREFIX_PATH="$($buildTools.QT_ROOT)" -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
 cmake --build --preset release --parallel 3
 windeployqt --release --no-opengl-sw --no-system-d3d-compiler --no-system-dxc-compiler --skip-plugin-types generic,networkinformation,tls --include-plugins qoffscreen build/release/autosplatoon_tests.exe
 New-Item -ItemType Directory -Force build/test-temp | Out-Null
@@ -26,7 +27,7 @@ cpack --config build/release/CPackConfig.cmake -B dist
 
 On macOS, use `macos-arm64` with Xcode and Apple Clang. Configure with `-DCMAKE_OSX_ARCHITECTURES=arm64`. The minimum macOS version is 14.4. On Linux, use `linux-amd64` with GCC. The build baseline is Ubuntu 22.04. Add `CMAKE_BIN`, the virtual environment's `bin`, and Qt's `bin` to PATH. Omit the Windows compiler flags and the windeployqt step. See the [build workflow](../.github/workflows/build.yml) for Linux system libraries. Run `python tools/package_linux.py --qt "$QT_ROOT"` to build the AppImage and directory archive.
 
-OpenCV is built statically from the pinned source, with core, imgproc, photo, and their required geometry and flann modules. Qt plugins provide image formats. Qt is dynamically linked and packages include the component notices and Qt SBOM. The Windows build uses the Qt SDK's matching MinGW 15.1.0 toolchain. See [Qt 6.12 tool versions](https://wiki.qt.io/Qt_6.12_Tools_and_Versions).
+OpenCV is built statically with core, imgproc, photo, geometry and flann. The Windows build uses the Qt SDK's matching MinGW 15.1.0 toolchain. See [Qt 6.12 tool versions](https://wiki.qt.io/Qt_6.12_Tools_and_Versions).
 
 ## Interface translations
 
@@ -46,8 +47,8 @@ Follow the [validation instructions](validation.md) with the extracted or mounte
 
 ## Release
 
-1. Update the CMake project version and write the English notes in `docs/release-notes/v<version>.md`. The build passes the project version to the app.
+1. Update the CMake project version and add `docs/release-notes/v<version>.md`.
 2. Commit the changes and push a `v<version>` tag that matches the project version. After CI passes, the workflow publishes a Windows ZIP, macOS DMG, Linux AppImage and directory archive, and `SHA256SUMS.txt`.
 3. Download the checksum list and verify each asset. Keep published tags intact.
 
-The workflow uses the GitHub Actions token. Current packages lack formal code signing and macOS notarization.
+Current packages lack formal code signing and macOS notarization.

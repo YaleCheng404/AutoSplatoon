@@ -6,7 +6,7 @@ Software tests cover serial and flashing error paths. Board reset, console pairi
 
 ## Measured connection recovery
 
-On 2026-10-22, a user tested auto-reset on connect in a Windows test build.
+The 2026-10-22 connection recovery test used a Windows build with auto-reset on connect.
 
 | Check | Result |
 | --- | --- |

@@ -191,18 +191,16 @@ int main(int argc, char** argv)
             manifest[sample.id] = QJsonObject{{"title", sample.title}, {"credit", sample.credit},
                 {"source_sha256", digest(sourcePath)}, {"output_sha256", hashes}};
         }
-        // Keep the shared manifest in its original language regardless of generation order.
-        if (language == "en") {
-            std::cout << "Verified 3 samples, 4 presets each, 320 x 120 binary output.\n";
-            return 0;
+        // The shared manifest uses Chinese sample titles.
+        if (language == "zh_CN") {
+            QFile record(output.filePath("examples.json"));
+            require(record.open(QIODevice::WriteOnly), "Cannot write example manifest");
+            const QByteArray json = QJsonDocument(QJsonObject{
+                {"output", "320x120 monochrome"},
+                {"settings", "detail=50, denoise=1, thickness=1, threshold=160, invert=false"},
+                {"samples", manifest}}).toJson();
+            require(record.write(json) == json.size(), "Cannot write example manifest");
         }
-        QFile record(output.filePath("examples.json"));
-        require(record.open(QIODevice::WriteOnly), "Cannot write verification manifest");
-        const QByteArray json = QJsonDocument(QJsonObject{
-            {"output", "320x120; black or white; checked against processImage"},
-            {"settings", "detail=50, denoise=1, thickness=1, threshold=160, invert=false"},
-            {"samples", manifest}}).toJson();
-        require(record.write(json) == json.size(), "Cannot write verification manifest");
         std::cout << "Verified 3 samples, 4 presets each, 320 x 120 binary output.\n";
         return 0;
     } catch (const std::exception& error) {

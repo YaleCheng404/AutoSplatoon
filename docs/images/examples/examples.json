@@ -1,5 +1,5 @@
 {
-    "output": "320x120; black or white; checked against processImage",
+    "output": "320x120 monochrome",
     "samples": {
         "controller-lines": {
             "credit": "Zacksly",

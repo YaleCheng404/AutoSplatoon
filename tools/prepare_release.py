@@ -1,8 +1,8 @@
 """Require all four native packages before publishing a tagged release."""
-import hashlib
 from pathlib import Path
 import re
 import sys
+from fetch_assets import file_sha256
 
 root = Path(__file__).resolve().parents[1]
 directory, tag = Path(sys.argv[1]), sys.argv[2]
@@ -18,7 +18,6 @@ for pattern in [f"AutoSplatoon-{version}-Windows-*.zip", f"AutoSplatoon-{version
     if len(matches) != 1 or matches[0].stat().st_size == 0:
         raise SystemExit(f"Expected one nonempty package: {pattern}")
     packages.extend(matches)
-checksums = "".join(f"{hashlib.sha256(file.read_bytes()).hexdigest()}  {file.name}\n"
-                    for file in sorted(packages))
+checksums = "".join(f"{file_sha256(file)}  {file.name}\n" for file in sorted(packages))
 (directory / "SHA256SUMS.txt").write_text(checksums)
 print("Release complete: Windows x64, macOS ARM64, Linux AppImage and directory archive")
